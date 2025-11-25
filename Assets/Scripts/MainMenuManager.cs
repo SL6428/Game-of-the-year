@@ -29,15 +29,15 @@ public class MainMenuManager : MonoBehaviour
         CreditsPanel.SetActive(true);
 
         // Запускаем прокрутку титров
-        if (creditsScroller != null)
-            creditsScroller.StartScrolling();
+        if (СreditsScroller != null)
+            СreditsScroller.StartScrolling();
     }
 
     public void ReturnToMainMenu()
     {
         // Останавливаем прокрутку при возврате
-        if (creditsScroller != null)
-            creditsScroller.StopScrolling();
+        if (СreditsScroller != null)
+            СreditsScroller.StopScrolling();
 
         SettingsPanel.SetActive(false);
         CreditsPanel.SetActive(false);
