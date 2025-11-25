@@ -4,7 +4,6 @@ using TMPro;
 using System.Collections;
 
 public class GameMenu : MonoBehaviour
-
 {
     [Header("Основные панели")]
     public GameObject GameMenuPanel;
@@ -17,23 +16,40 @@ public class GameMenu : MonoBehaviour
     private bool isMenuOpen = false;
     private float gameStartTime;
     private bool isGameStarted = false;
+    private string mainMenuSceneName = "MainMenu"; // имя вашей сцены главного меню
 
     void Start()
     {
-        // Скрываем все меню при старте
-        CloseAllMenus();
+        // Проверяем, находимся ли мы в главном меню
+        if (IsInMainMenu())
+        {
+            // В главном меню полностью отключаем функционал игрового меню
+            this.enabled = false;
+            return;
+        }
 
-        // Запоминаем время начала игры
+        // Инициализация для игровой сцены
+        InitializeInGameMenu();
+    }
+
+    bool IsInMainMenu()
+    {
+        return SceneManager.GetActiveScene().name == mainMenuSceneName;
+    }
+
+    void InitializeInGameMenu()
+    {
+        CloseAllMenus();
         gameStartTime = Time.time;
         isGameStarted = true;
-
-        // Запускаем обновление времени
         StartCoroutine(UpdateGameTime());
     }
 
     void Update()
     {
-        // Открываем/закрываем меню по ESC
+        // Если скрипт отключен (в главном меню), не обрабатываем ESC
+        if (!this.enabled) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!isMenuOpen)
