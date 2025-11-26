@@ -16,20 +16,22 @@ public class GameMenu : MonoBehaviour
     private bool isMenuOpen = false;
     private float gameStartTime;
     private bool isGameStarted = false;
-    private string mainMenuSceneName = "MainMenu"; // имя вашей сцены главного меню
+    private Coroutine timeCoroutine;
+    private string mainMenuSceneName = "Sinematic";
 
     void Start()
     {
-        // Проверяем, находимся ли мы в главном меню
-        if (IsInMainMenu())
-        {
-            // В главном меню полностью отключаем функционал игрового меню
-            this.enabled = false;
-            return;
-        }
+        CloseAllMenus();
 
-        // Инициализация для игровой сцены
-        InitializeInGameMenu();
+        // Сбрасываем время при старте
+        gameStartTime = Time.time;
+        isGameStarted = true;
+
+        // Запускаем обновление времени сразу при старте сцены
+        if (timeCoroutine != null) StopCoroutine(timeCoroutine);
+        timeCoroutine = StartCoroutine(UpdateGameTime());
+
+        Debug.Log("InGameMenuManager инициализирован. Счетчик времени запущен.");
     }
 
     bool IsInMainMenu()
@@ -47,19 +49,24 @@ public class GameMenu : MonoBehaviour
 
     void Update()
     {
-        // Если скрипт отключен (в главном меню), не обрабатываем ESC
-        if (!this.enabled) return;
+        // Обрабатываем ESC только в игровой сцене
+        if (SceneManager.GetActiveScene().name == "MainMenu") return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!isMenuOpen)
-            {
-                OpenMainMenu();
-            }
-            else
-            {
-                CloseAllMenus();
-            }
+            ToggleMenu();
+        }
+    }
+
+    void ToggleMenu()
+    {
+        if (!isMenuOpen)
+        {
+            OpenMainMenu();
+        }
+        else
+        {
+            CloseAllMenus();
         }
     }
 
@@ -67,32 +74,41 @@ public class GameMenu : MonoBehaviour
     {
         while (isGameStarted)
         {
-            if (GameTimeText != null && GameTimeText.gameObject.activeInHierarchy)
+                // Обновляем время даже если текст не активен
+            if (GameTimeText != null)
             {
                 float currentTime = Time.time - gameStartTime;
                 string timeString = FormatTime(currentTime);
                 GameTimeText.text = "Время игры: " + timeString;
+                Debug.Log("Время обновлено: " + timeString);
             }
             yield return new WaitForSeconds(1f);
         }
     }
 
-    string FormatTime(float timeInSeconds)
-    {
-        int hours = (int)(timeInSeconds / 3600);
-        int minutes = (int)((timeInSeconds % 3600) / 60);
-        int seconds = (int)(timeInSeconds % 60);
-        return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
-    }
+        string FormatTime(float timeInSeconds)
+        {
+            int hours = (int)(timeInSeconds / 3600);
+            int minutes = (int)((timeInSeconds % 3600) / 60);
+            int seconds = (int)(timeInSeconds % 60);
+            return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
+        }
 
-    // ОСНОВНЫЕ МЕТОДЫ МЕНЮ
     public void OpenMainMenu()
     {
+        // Проверяем, что мы не в главном меню
+        if (SceneManager.GetActiveScene().name == "Sinematic")
+        {
+            Debug.LogWarning("Попытка открыть игровое меню в главном меню!");
+            return;
+        }
+
         GameMenuPanel.SetActive(true);
         SystemSubMenu.SetActive(false);
         QuitConfirmationPanel.SetActive(false);
         isMenuOpen = true;
-        Time.timeScale = 0f; // Пауза игры
+        Time.timeScale = 0f;
+        Debug.Log("Игровое меню открыто");
     }
 
     public void CloseAllMenus()
@@ -101,7 +117,13 @@ public class GameMenu : MonoBehaviour
         SystemSubMenu.SetActive(false);
         QuitConfirmationPanel.SetActive(false);
         isMenuOpen = false;
-        Time.timeScale = 1f; // Возобновление игры
+
+        // Восстанавливаем время только в игровой сцене
+        if (SceneManager.GetActiveScene().name != "Sinematic")
+        {
+            Time.timeScale = 1f;
+        }
+        Debug.Log("Все меню закрыты");
     }
 
     // КНОПКИ ГЛАВНОГО МЕНЮ
@@ -153,9 +175,35 @@ public class GameMenu : MonoBehaviour
     // КНОПКИ ПОДТВЕРЖДЕНИЯ ВЫХОДА
     public void OnQuitToMenuConfirmed()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // Ваша сцена главного меню
+        Debug.Log("Загрузка главного меню...");
+        Time.timeScale = 1f; // Важно: сбрасываем timescale перед сменой сцены
+
+        // Сохраняем время игры перед выходом (опционально)
+        PlayerPrefs.SetFloat("LastSessionTime", Time.time - gameStartTime);
+        StartCoroutine(LoadMainMenuWithDelay());
+        SceneManager.LoadScene("Sinematic");
     }
+
+    IEnumerator LoadMainMenuWithDelay()
+    {
+        // Короткая задержка для обработки всех событий
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        try
+        {
+            SceneManager.LoadScene("Sinematic");
+            Debug.Log("Сцена главного меню загружается...");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Ошибка загрузки главного меню: " + e.Message);
+
+            // Альтернативный способ - по индексу сцены
+            // Убедитесь, что главное меню имеет индекс 0 в Build Settings
+            SceneManager.LoadScene(1);
+        }
+    }
+
 
     public void OnQuitToDesktopConfirmed()
     {
