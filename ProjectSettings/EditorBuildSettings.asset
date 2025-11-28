@@ -9,10 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Sinematic.unity
+    path: Assets/Scenes/Sinematic.unity
     guid: 6234b821910103440af8e6b679de517c
   - enabled: 1
-    path: Assets/Gail map (first map).unity
+    path: Assets/Scenes/Gail map (first map).unity
     guid: b78511d0d25958c469eb4698dec26631
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
@@ -13,6 +14,9 @@ public class GameMenu : MonoBehaviour
     [Header("Время игры")]
     public TextMeshProUGUI GameTimeText;
 
+    [Header("Кнопки")] 
+    public Button resumeButton;
+
     private bool isMenuOpen = false;
     private float gameStartTime;
     private bool isGameStarted = false;
@@ -22,6 +26,15 @@ public class GameMenu : MonoBehaviour
     void Start()
     {
         CloseAllMenus();
+
+        if (resumeButton != null)
+        {
+            resumeButton.onClick.AddListener(OnResumeClicked);
+        }
+        else
+        {
+            Debug.LogWarning("Resume button not assigned in inspector!");
+        }
 
         // Сбрасываем время при старте
         gameStartTime = Time.time;
@@ -130,6 +143,11 @@ public class GameMenu : MonoBehaviour
     public void OnResumeClicked()
     {
         CloseAllMenus();
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SetPause(false);
+        }
     }
 
     public void OnInventoryClicked()
@@ -158,7 +176,6 @@ public class GameMenu : MonoBehaviour
     // КНОПКИ ПОДМЕНЮ СИСТЕМЫ
     public void OnSystemSettingsClicked()
     {
-        // Можно переиспользовать вашу панель настроек из главного меню
         Debug.Log("Открыты настройки");
     }
 
