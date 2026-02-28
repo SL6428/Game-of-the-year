@@ -1214,7 +1214,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 8d21612129e9c2446952328ccc48028a, type: 2}
     - target: {fileID: 919132149155446097, guid: 4b4bb9ceb6731a649b6f813c97caba8c, type: 3}
       propertyPath: m_Name
-      value: T-Pose
+      value: "\u0413\u0413 \u041F\u0435\u0440\u0432\u044B\u0439"
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4b4bb9ceb6731a649b6f813c97caba8c, type: 3}
       propertyPath: m_TagString
@@ -7223,6 +7223,9 @@ MonoBehaviour:
   walkSpeed: 3
   runSpeed: 6
   rotationSpeed: 6
+  gravity: -9.81
+  jumpHeight: 1.2
+  playerVelocity: {x: 0, y: 0, z: 0}
 --- !u!143 &1957377283
 CharacterController:
   m_ObjectHideFlags: 0
