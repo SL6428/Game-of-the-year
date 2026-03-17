@@ -1,0 +1,538 @@
+fileFormatVersion: 2
+guid: 809610e1ab732e54cbfed363041f6513
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: mixamo.com
+      takeName: mixamo.com
+      internalID: -203655887218126122
+      firstFrame: 0
+      lastFrame: 38
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human:
+    - boneName: ArmStrap_Rings_low4:Hips
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftUpLeg
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightUpLeg
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftLeg
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightLeg
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftFoot
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightFoot
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:Spine
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:Spine1
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:Neck
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:Head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftShoulder
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightShoulder
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftArm
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightArm
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftForeArm
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightForeArm
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftHand
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightHand
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftToeBase
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightToeBase
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftHandIndex1
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftHandIndex2
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:LeftHandIndex3
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightHandIndex1
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightHandIndex2
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:RightHandIndex3
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ArmStrap_Rings_low4:Spine2
+      humanName: UpperChest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: Knight (Redact)(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Group9510
+      parentName: Knight (Redact)(Clone)
+      position: {x: -0.013067089, y: -2.220446e-18, z: -0.011318378}
+      rotation: {x: -0.000000037462154, y: -0.13037989, z: -0.000000004652308, w: 0.99146414}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Hips
+      parentName: Knight (Redact)(Clone)
+      position: {x: 0.000076381446, y: 1.0454051, z: -0.0067569213}
+      rotation: {x: -0.00008947323, y: 0.000020212903, z: -0.0006961321, w: 0.99999976}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Spine
+      parentName: ArmStrap_Rings_low4:Hips
+      position: {x: -0, y: 0.09930321, z: -0.011171417}
+      rotation: {x: -0.055894904, y: -0.000059153892, z: 0.0006939087, w: 0.99843645}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Spine1
+      parentName: ArmStrap_Rings_low4:Spine
+      position: {x: -0, y: 0.11658454, z: 4.457877e-10}
+      rotation: {x: -6.938894e-18, y: -1.1862181e-13, z: 6.73079e-13, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Spine2
+      parentName: ArmStrap_Rings_low4:Spine1
+      position: {x: -0, y: 0.13323937, z: 4.9062693e-10}
+      rotation: {x: -6.938894e-18, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftShoulder
+      parentName: ArmStrap_Rings_low4:Spine2
+      position: {x: -0.059975658, y: 0.119103774, z: -0.00014415759}
+      rotation: {x: 0.5602669, y: -0.43630534, z: 0.5452155, w: 0.44550964}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftArm
+      parentName: ArmStrap_Rings_low4:LeftShoulder
+      position: {x: 1.436937e-10, y: 0.13701503, z: -6.343242e-11}
+      rotation: {x: -0.111121215, y: -0.058666863, z: 0.016000414, w: 0.9919447}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftForeArm
+      parentName: ArmStrap_Rings_low4:LeftArm
+      position: {x: -6.47353e-11, y: 0.21394195, z: 8.8418085e-11}
+      rotation: {x: 0.00000004009765, y: -0.0023620266, z: 0.000000009462577, w: 0.9999972}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHand
+      parentName: ArmStrap_Rings_low4:LeftForeArm
+      position: {x: -9.620347e-10, y: 0.27671698, z: 0.0000000029672416}
+      rotation: {x: -0.00000025564552, y: -0.0024267565, z: -0.00000023181104, w: 0.9999971}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex1
+      parentName: ArmStrap_Rings_low4:LeftHand
+      position: {x: 6.501147e-10, y: 0.0713639, z: 3.926587e-11}
+      rotation: {x: -0.00000041381085, y: -0.0068530114, z: -0.00000020056852, w: 0.9999765}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex2
+      parentName: ArmStrap_Rings_low4:LeftHandIndex1
+      position: {x: 4.658254e-11, y: 0.06462124, z: 4.547619e-10}
+      rotation: {x: -0.21418712, y: 0.00000007912029, z: 0.14362493, w: 0.96617585}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex3
+      parentName: ArmStrap_Rings_low4:LeftHandIndex2
+      position: {x: 0.013961193, y: 0.043612618, z: 0.020819664}
+      rotation: {x: -0.12353663, y: 0.020865984, z: 0.03912906, w: 0.9913487}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex4
+      parentName: ArmStrap_Rings_low4:LeftHandIndex3
+      position: {x: 0.016931018, y: 0.038013075, z: 0.033183105}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightShoulder
+      parentName: ArmStrap_Rings_low4:Spine2
+      position: {x: 0.059975658, y: 0.11984136, z: -0.0067006326}
+      rotation: {x: -0.5225188, y: -0.45477057, z: 0.5768431, w: -0.4329088}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightArm
+      parentName: ArmStrap_Rings_low4:RightShoulder
+      position: {x: 2.9874692e-10, y: 0.13701504, z: 0.00000000284068}
+      rotation: {x: -0.10832656, y: 0.09616747, z: 0.026416713, w: 0.9891003}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightForeArm
+      parentName: ArmStrap_Rings_low4:RightArm
+      position: {x: -3.9935474e-10, y: 0.21482372, z: -0.0000000011791443}
+      rotation: {x: -0.0000000745877, y: 0.01592137, z: -0.00000042826122, w: 0.9998733}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHand
+      parentName: ArmStrap_Rings_low4:RightForeArm
+      position: {x: 0.0000000019123334, y: 0.28233746, z: 0.0000000034115861}
+      rotation: {x: 0.0000000060049237, y: 0.00019579913, z: -0.00000035480403, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex1
+      parentName: ArmStrap_Rings_low4:RightHand
+      position: {x: 0.0000000021742927, y: 0.1882115, z: 0.0000000019908257}
+      rotation: {x: 0.00000017495928, y: 0.016176037, z: 0.00000038534472, w: 0.99986917}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex2
+      parentName: ArmStrap_Rings_low4:RightHandIndex1
+      position: {x: 3.6569417e-10, y: 0.017605696, z: -4.8581567e-10}
+      rotation: {x: -0.023821985, y: -0.000000008966416, z: 0.112921864, w: 0.99331826}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex3
+      parentName: ArmStrap_Rings_low4:RightHandIndex2
+      position: {x: 0.005346809, y: 0.02320049, z: 0.0011280559}
+      rotation: {x: 0.28941172, y: -0.07284986, z: 0.12644775, w: 0.9460152}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex4
+      parentName: ArmStrap_Rings_low4:RightHandIndex3
+      position: {x: 0.0065143174, y: 0.011587924, z: -0.008233455}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Neck
+      parentName: ArmStrap_Rings_low4:Spine2
+      position: {x: -0, y: 0.14989437, z: 0.0000000055272174}
+      rotation: {x: 0.036182653, y: 0.0000075756716, z: -0.000014988978, w: 0.99934524}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Head
+      parentName: ArmStrap_Rings_low4:Neck
+      position: {x: -0, y: 0.07867493, z: 0.034377847}
+      rotation: {x: 0.00000001491194, y: -1.7e-44, z: -1.1017504e-36, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:HeadTop_End
+      parentName: ArmStrap_Rings_low4:Head
+      position: {x: -0, y: 0.20726882, z: 0.09056835}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftUpLeg
+      parentName: ArmStrap_Rings_low4:Hips
+      position: {x: -0.09574769, y: -0.055206373, z: 0.01805561}
+      rotation: {x: -0.003522559, y: 0.0067779273, z: 0.9999323, w: 0.008783335}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftLeg
+      parentName: ArmStrap_Rings_low4:LeftUpLeg
+      position: {x: 9.322785e-10, y: 0.44516402, z: 6.111266e-10}
+      rotation: {x: -0.05773147, y: -0.0019539078, z: 0.017693298, w: 0.9981735}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftFoot
+      parentName: ArmStrap_Rings_low4:LeftLeg
+      position: {x: 4.668021e-10, y: 0.4508853, z: -4.062082e-10}
+      rotation: {x: 0.5555986, y: 0.026563706, z: -0.04430466, w: 0.82984436}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftToeBase
+      parentName: ArmStrap_Rings_low4:LeftFoot
+      position: {x: -2.8228545e-10, y: 0.18016687, z: -0.0000000024987452}
+      rotation: {x: 0.25503963, y: 0.036312982, z: -0.009585241, w: 0.96620095}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftToe_End
+      parentName: ArmStrap_Rings_low4:LeftToeBase
+      position: {x: 7.5716483e-10, y: 0.07898301, z: 1.2186077e-10}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightUpLeg
+      parentName: ArmStrap_Rings_low4:Hips
+      position: {x: 0.09574769, y: -0.055206373, z: -0.006557026}
+      rotation: {x: -0.001299429, y: -0.0067174793, z: 0.99992406, w: -0.010249806}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightLeg
+      parentName: ArmStrap_Rings_low4:RightUpLeg
+      position: {x: 0.0000000014483725, y: 0.44244143, z: -4.789046e-10}
+      rotation: {x: -0.0035135562, y: -0.00018621451, z: -0.018075772, w: 0.9998305}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightFoot
+      parentName: ArmStrap_Rings_low4:RightLeg
+      position: {x: 8.402641e-10, y: 0.45101392, z: -3.6689603e-11}
+      rotation: {x: 0.5209648, y: -0.023528548, z: 0.0495874, w: 0.8518117}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightToeBase
+      parentName: ArmStrap_Rings_low4:RightFoot
+      position: {x: -1.3447783e-10, y: 0.18004353, z: -0.000000005755059}
+      rotation: {x: 0.25539026, y: -0.042905755, z: 0.011345519, w: 0.96581894}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightToe_End
+      parentName: ArmStrap_Rings_low4:RightToeBase
+      position: {x: -5.190792e-10, y: 0.07761084, z: 2.837332e-11}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: ArmStrap_Rings_low4:Spine2
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: d564d1859633778468aad8ea1e351495, type: 3}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 2
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
