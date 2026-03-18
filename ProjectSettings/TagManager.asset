@@ -5,15 +5,16 @@ TagManager:
   serializedVersion: 3
   tags:
   - Courpse
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
+  - Enemy
+  - NPC
   - 
   - 
   - 

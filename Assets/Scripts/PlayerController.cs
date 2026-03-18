@@ -25,10 +25,7 @@ public class LocomotionState : PlayerState
 
     public LocomotionState(PlayerController controller) : base(controller) { }
 
-    public override void Enter()
-    {
-        // Можно сбросить триггеры анимаций, если нужно
-    }
+    public override void Enter() { }
 
     public override void Update()
     {
@@ -49,64 +46,120 @@ public class LocomotionState : PlayerState
     private void HandleMovement()
     {
         float currentSpeed = isRunning ? controller.runSpeed : controller.walkSpeed;
+        Vector3 move = Vector3.zero;
 
+        // Проверка: захват активен?
+        if (controller.lockOnSystem != null && controller.lockOnSystem.isLocked && controller.lockOnSystem.currentTarget != null)
+        {
+            move = GetLockOnMovement();
+        }
+        else
+        {
+            move = GetFreeMovement();
+        }
+
+        controller.controller.Move(move * currentSpeed * Time.deltaTime);
+    }
+
+    private Vector3 GetFreeMovement()
+    {
         Vector3 cameraForward = controller.cameraTransform.forward;
         Vector3 cameraRight = controller.cameraTransform.right;
         cameraForward.y = 0; cameraRight.y = 0;
         cameraForward.Normalize(); cameraRight.Normalize();
 
-        Vector3 move = (cameraForward * verticalInput + cameraRight * horizontalInput).normalized;
-        controller.controller.Move(move * currentSpeed * Time.deltaTime);
+        return (cameraForward * verticalInput + cameraRight * horizontalInput).normalized;
+    }
+
+    private Vector3 GetLockOnMovement()
+    {
+        Transform target = controller.lockOnSystem.currentTarget;
+        Vector3 directionToTarget = (target.position - controller.transform.position).normalized;
+        directionToTarget.y = 0;
+        Vector3 rightVector = Vector3.Cross(directionToTarget, Vector3.up).normalized;
+
+        return (directionToTarget * verticalInput + rightVector * horizontalInput).normalized;
     }
 
     private void HandleRotation()
     {
+        if (controller.lockOnSystem != null && controller.lockOnSystem.isLocked && controller.lockOnSystem.currentTarget != null)
+        {
+            HandleLockOnRotation();
+            return;
+        }
+
         if (new Vector3(horizontalInput, 0, verticalInput).magnitude > 0.1f)
         {
             Vector3 direction = new Vector3(horizontalInput, 0, verticalInput).normalized;
             direction = controller.cameraTransform.TransformDirection(direction);
             direction.y = 0;
 
-            if (direction.magnitude > 0.1f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, targetRotation, controller.rotationSpeed * Time.deltaTime);
-            }
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, targetRotation, controller.rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void HandleLockOnRotation()
+    {
+        Transform target = controller.lockOnSystem.currentTarget;
+        if (target != null)
+        {
+            Vector3 dirToTarget = (target.position - controller.transform.position).normalized;
+            dirToTarget.y = 0;
+            Quaternion targetRotation = Quaternion.LookRotation(dirToTarget);
+            controller.transform.rotation = Quaternion.Slerp(controller.transform.rotation, targetRotation, controller.rotationSpeed * Time.deltaTime);
         }
     }
 
     private void UpdateAnimations()
     {
-        float speedPercent = (new Vector3(horizontalInput, 0, verticalInput).magnitude > 0.1f) ?
-                            (isRunning ? 1f : 0.5f) : 0f;
-        controller.animator.SetFloat("Speed", speedPercent, 0.1f, Time.deltaTime);
+        // Определяем вектор движения в зависимости от режима
+        Vector3 moveVector;
+        if (controller.lockOnSystem != null && controller.lockOnSystem.isLocked && controller.lockOnSystem.currentTarget != null)
+        {
+            Transform target = controller.lockOnSystem.currentTarget;
+            Vector3 forward = (target.position - controller.transform.position).normalized;
+            forward.y = 0;
+            Vector3 right = Vector3.Cross(forward, Vector3.up).normalized;
+            moveVector = (forward * verticalInput) + (right * horizontalInput);
+        }
+        else
+        {
+            Vector3 cameraForward = controller.cameraTransform.forward;
+            cameraForward.y = 0;
+            Vector3 cameraRight = controller.cameraTransform.right;
+            cameraRight.y = 0;
+            moveVector = (cameraForward * verticalInput) + (cameraRight * horizontalInput);
+        }
+
+        // Конвертируем в локальные координаты персонажа
+        Vector3 localMove = controller.transform.InverseTransformDirection(moveVector);
+
+        // Передаём ДВА параметра вместо одного Speed
+        controller.animator.SetFloat("VelocityX", localMove.x, 0.1f, Time.deltaTime);
+        controller.animator.SetFloat("VelocityZ", localMove.z, 0.1f, Time.deltaTime);
         controller.animator.SetBool("IsGrounded", controller.isGrounded);
+        controller.animator.SetBool("IsRunning", isRunning);
     }
 
     private void CheckTransitions()
     {
-        // Прыжок
         if (Input.GetKeyDown(KeyCode.Space))
         {
             controller.ChangeState(new JumpState(controller));
             return;
         }
-
-        // Кувырок
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
             controller.ChangeState(new RollState(controller));
             return;
         }
-
-        // Атака
         if (Input.GetMouseButtonDown(0))
         {
             controller.ChangeState(new AttackState(controller));
             return;
         }
-
-        // Лечение
         if (Input.GetKeyDown(KeyCode.H))
         {
             controller.ChangeState(new HealState(controller));
@@ -255,6 +308,9 @@ public class PlayerController : MonoBehaviour
     public float gravity = -9.81f;
     public float jumpHeight = 1.2f;
 
+    [Header("Combat Settings")]
+    public LockOnSystem lockOnSystem;
+
     // Компоненты
     public Animator animator { get; private set; }
     public CharacterController controller { get; private set; }
@@ -283,14 +339,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Проверка grounded
+        // 1. Применяем гравитацию только если мы не в состоянии, которое управляет Y (например, прыжок)
+        // Но для простоты оставим здесь, но уберем дублирование Move из состояний
         if (isGrounded && playerVelocity.y < 0)
             playerVelocity.y = -2f;
 
-        // Обновление текущего состояния
+        // 2. Обновляем состояние
         currentState?.Update();
 
-        // Применение гравитации (вертикальная скорость)
+        // 3. Применяем вертикальную скорость (Гравитация)
+        // Важно: CharacterController.Move должен вызываться ОДИН раз за кадр ideally, 
+        // но в твоей архитектуре состояния вызывают Move. 
+        // Давай оставим как есть для начала, но в LocomotionState уберем вертикальное движение.
         playerVelocity.y += gravity * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
     }
