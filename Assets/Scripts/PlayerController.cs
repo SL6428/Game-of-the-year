@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 // ==================== Базовый класс состояния ====================
 public abstract class PlayerState
 {
     protected PlayerController controller;
+
     public PlayerState(PlayerController controller)
     {
         this.controller = controller;
     }
+
     public virtual void Enter() { }
     public virtual void Update() { }
     public virtual void Exit() { }
@@ -29,14 +30,13 @@ public class LocomotionState : PlayerState
     {
         GetInput();
         HandleMovement();
-        HandleRotation();
         UpdateAnimations();
         CheckTransitions();
     }
 
+    // ИСПРАВЛЕНО: Убраны пробелы в ключевых словах
     private void GetInput()
     {
-        // ИСПРАВЛЕНО: Убраны пробелы в названиях осей ввода
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
         isRunning = Input.GetKey(KeyCode.LeftShift);
@@ -68,11 +68,10 @@ public class LocomotionState : PlayerState
             if (direction.magnitude > 0.1f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
-                // Увеличь коэффициент для более плавного поворота
                 controller.transform.rotation = Quaternion.Slerp(
                     controller.transform.rotation,
                     targetRotation,
-                    controller.rotationSpeed * 0.2f * Time.deltaTime
+                    controller.rotationSpeed * 0.2f * Time.deltaTime // ИСПРАВЛЕНО: Убран пробел
                 );
             }
         }
@@ -80,15 +79,13 @@ public class LocomotionState : PlayerState
 
     private void UpdateAnimations()
     {
-        // 1. Считаем магнитуду ввода для перехода Idle ↔ Walk
         float inputMagnitude = new Vector2(horizontalInput, verticalInput).magnitude;
         float speedValue = (inputMagnitude > 0.15f) ? 1f : 0f;
         controller.animator.SetFloat("Speed", speedValue, 0.1f, Time.deltaTime);
 
-        // 2. РАССЧИТЫВАЕМ VelocityX и VelocityZ ОТНОСИТЕЛЬНО ПЕРСОНАЖА
         if (inputMagnitude > 0.15f)
         {
-            // Получаем направление камеры (без вертикальной составляющей)
+            // Направление камеры
             Vector3 cameraForward = controller.cameraTransform.forward;
             Vector3 cameraRight = controller.cameraTransform.right;
             cameraForward.y = 0;
@@ -101,31 +98,24 @@ public class LocomotionState : PlayerState
             if (worldMoveDirection.magnitude > 1f)
                 worldMoveDirection.Normalize();
 
-            // === КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ ===
-            // Конвертируем мировое направление в локальное пространство персонажа
+            // Конвертируем в локальное пространство персонажа
             Vector3 localMove = controller.transform.InverseTransformDirection(worldMoveDirection);
 
             // Используем компоненты вектора как VelocityX и VelocityZ
-            float velocityX = localMove.x;
-            float velocityZ = localMove.z;
+            float velocityX = Mathf.Clamp(localMove.x, -1f, 1f);
+            float velocityZ = Mathf.Clamp(localMove.z, -1f, 1f);
 
-            // Ограничиваем значения в диапазоне [-1, 1]
-            velocityX = Mathf.Clamp(velocityX, -1f, 1f);
-            velocityZ = Mathf.Clamp(velocityZ, -1f, 1f);
-
-            // Передаем в Animator
             controller.animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
             controller.animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
-
-            // Остальные параметры
-            controller.animator.SetBool("IsGrounded", controller.isGrounded);
-            controller.animator.SetBool("IsRunning", isRunning);
         }
         else
         {
-            // При остановке плавно сбрасываем значения в 0        controller.animator.SetFloat("VelocityX", 0f, 0.1f, Time.deltaTime);
+            controller.animator.SetFloat("VelocityX", 0f, 0.1f, Time.deltaTime);
             controller.animator.SetFloat("VelocityZ", 0f, 0.1f, Time.deltaTime);
         }
+
+        controller.animator.SetBool("IsGrounded", controller.isGrounded);
+        controller.animator.SetBool("IsRunning", isRunning);
     }
 
     private void CheckTransitions()
@@ -157,6 +147,7 @@ public class LocomotionState : PlayerState
 public class JumpState : PlayerState
 {
     public JumpState(PlayerController controller) : base(controller) { }
+
     public override void Enter()
     {
         controller.playerVelocity.y = Mathf.Sqrt(controller.jumpHeight * -2f * controller.gravity);
@@ -240,7 +231,7 @@ public class AttackState : PlayerState
     }
 }
 
-// ==================== Состояние лечения ====================
+// ==================== Состояние лечения =================
 public class HealState : PlayerState
 {
     private float healTimer;
@@ -269,6 +260,7 @@ public class HealState : PlayerState
     }
 }
 
+
 // ==================== Главный контроллер ====================
 public class PlayerController : MonoBehaviour
 {
@@ -292,7 +284,6 @@ public class PlayerController : MonoBehaviour
 
     // Текущая скорость
     public Vector3 playerVelocity;
-    // ИСПРАВЛЕНО: Синтаксис свойства
     public bool isGrounded => controller.isGrounded;
 
     // Текущее состояние
