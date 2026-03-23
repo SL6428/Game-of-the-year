@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 // ==================== Базовый класс состояния ====================
 public abstract class PlayerState
 {
     protected PlayerController controller;
-
     public PlayerState(PlayerController controller)
     {
         this.controller = controller;
     }
-
     public virtual void Enter() { }
     public virtual void Update() { }
     public virtual void Exit() { }
@@ -30,13 +29,14 @@ public class LocomotionState : PlayerState
     {
         GetInput();
         HandleMovement();
+        HandleRotation();
         UpdateAnimations();
         CheckTransitions();
     }
 
-    // ИСПРАВЛЕНО: Убраны пробелы в ключевых словах
     private void GetInput()
     {
+        // ИСПРАВЛЕНО: Убраны пробелы в названиях осей ввода
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
         isRunning = Input.GetKey(KeyCode.LeftShift);
@@ -46,24 +46,30 @@ public class LocomotionState : PlayerState
     {
         float currentSpeed = isRunning ? controller.runSpeed : controller.walkSpeed;
 
-        Vector3 cameraForward = controller.cameraTransform.forward;
-        Vector3 cameraRight = controller.cameraTransform.right;
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
+        // Получаем направление от CameraPivot (только горизонтальное)
+        Vector3 cameraForward = controller.cameraPivot.GetForwardDirection();
+        Vector3 cameraRight = controller.cameraPivot.GetRightDirection();
 
-        Vector3 move = (cameraForward * verticalInput + cameraRight * horizontalInput).normalized;
-        controller.controller.Move(move * currentSpeed * Time.deltaTime);
+        Vector3 move = (cameraForward * verticalInput + cameraRight * horizontalInput);
+        
+        // Двигаем только если есть ввод
+        if (move.magnitude > 0.1f)
+        {
+            move.Normalize();
+            controller.controller.Move(move * currentSpeed * Time.deltaTime);
+        }
     }
 
     private void HandleRotation()
     {
+        // В Lock-On режиме не поворачиваем
+        if (controller.lockOnSystem != null && controller.lockOnSystem.IsLockedOn())
+            return;
+
         if (new Vector3(horizontalInput, 0, verticalInput).magnitude > 0.1f)
         {
-            Vector3 direction = new Vector3(horizontalInput, 0, verticalInput).normalized;
-            direction = controller.cameraTransform.TransformDirection(direction);
-            direction.y = 0;
+            Vector3 direction = (controller.cameraPivot.GetForwardDirection() * verticalInput + 
+                                controller.cameraPivot.GetRightDirection() * horizontalInput).normalized;
 
             if (direction.magnitude > 0.1f)
             {
@@ -71,7 +77,7 @@ public class LocomotionState : PlayerState
                 controller.transform.rotation = Quaternion.Slerp(
                     controller.transform.rotation,
                     targetRotation,
-                    controller.rotationSpeed * 0.2f * Time.deltaTime // ИСПРАВЛЕНО: Убран пробел
+                    controller.rotationSpeed * Time.deltaTime
                 );
             }
         }
@@ -79,19 +85,17 @@ public class LocomotionState : PlayerState
 
     private void UpdateAnimations()
     {
+        // 1. Считаем магнитуду ввода для перехода Idle ↔ Walk
         float inputMagnitude = new Vector2(horizontalInput, verticalInput).magnitude;
         float speedValue = (inputMagnitude > 0.15f) ? 1f : 0f;
         controller.animator.SetFloat("Speed", speedValue, 0.1f, Time.deltaTime);
 
+        // 2. РАССЧИТЫВАЕМ VelocityX и VelocityZ ОТНОСИТЕЛЬНО ПЕРСОНАЖА
         if (inputMagnitude > 0.15f)
         {
-            // Направление камеры
-            Vector3 cameraForward = controller.cameraTransform.forward;
-            Vector3 cameraRight = controller.cameraTransform.right;
-            cameraForward.y = 0;
-            cameraRight.y = 0;
-            cameraForward.Normalize();
-            cameraRight.Normalize();
+            // Получаем направление от CameraPivot (только горизонтальное)
+            Vector3 cameraForward = controller.cameraPivot.GetForwardDirection();
+            Vector3 cameraRight = controller.cameraPivot.GetRightDirection();
 
             // Направление движения в мировом пространстве
             Vector3 worldMoveDirection = (cameraForward * verticalInput + cameraRight * horizontalInput);
@@ -105,11 +109,13 @@ public class LocomotionState : PlayerState
             float velocityX = Mathf.Clamp(localMove.x, -1f, 1f);
             float velocityZ = Mathf.Clamp(localMove.z, -1f, 1f);
 
+            // Передаем в Animator
             controller.animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
             controller.animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
         }
         else
         {
+            // При остановке плавно сбрасываем значения в 0
             controller.animator.SetFloat("VelocityX", 0f, 0.1f, Time.deltaTime);
             controller.animator.SetFloat("VelocityZ", 0f, 0.1f, Time.deltaTime);
         }
@@ -147,7 +153,6 @@ public class LocomotionState : PlayerState
 public class JumpState : PlayerState
 {
     public JumpState(PlayerController controller) : base(controller) { }
-
     public override void Enter()
     {
         controller.playerVelocity.y = Mathf.Sqrt(controller.jumpHeight * -2f * controller.gravity);
@@ -185,7 +190,8 @@ public class RollState : PlayerState
 
     public override void Update()
     {
-        Vector3 forward = controller.cameraTransform.forward;
+        // Кувырок в направлении камеры (горизонтальное)
+        Vector3 forward = controller.cameraPivot.GetForwardDirection();
         forward.y = 0;
         controller.controller.Move(forward * rollSpeed * Time.deltaTime);
 
@@ -231,7 +237,7 @@ public class AttackState : PlayerState
     }
 }
 
-// ==================== Состояние лечения =================
+// ==================== Состояние лечения ====================
 public class HealState : PlayerState
 {
     private float healTimer;
@@ -260,7 +266,6 @@ public class HealState : PlayerState
     }
 }
 
-
 // ==================== Главный контроллер ====================
 public class PlayerController : MonoBehaviour
 {
@@ -277,6 +282,9 @@ public class PlayerController : MonoBehaviour
     public Animator animator { get; private set; }
     public CharacterController controller { get; private set; }
     public Transform cameraTransform { get; private set; }
+    
+    // CameraPivot (публичный для доступа из состояний)
+    public CameraPivot cameraPivot { get; private set; }
 
     // Для Lock-On системы
     [Header("Combat Settings")]
@@ -284,7 +292,17 @@ public class PlayerController : MonoBehaviour
 
     // Текущая скорость
     public Vector3 playerVelocity;
-    public bool isGrounded => controller.isGrounded;
+    
+    // Своя проверка земли (для Terrain)
+    public bool isGrounded => controller.isGrounded || CheckGround();
+    
+    private bool CheckGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 0.2f))
+            return true;
+        return false;
+    }
 
     // Текущее состояние
     private PlayerState currentState;
@@ -293,10 +311,27 @@ public class PlayerController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
-        cameraTransform = Camera.main.transform;
+        
+        // Получаем CameraPivot
+        cameraPivot = FindFirstObjectByType<CameraPivot>();
+        if (cameraPivot != null)
+        {
+            cameraTransform = cameraPivot.CameraTransform;
+        }
+        else
+        {
+            cameraTransform = Camera.main.transform;
+            Debug.LogWarning("CameraPivot не найден! Используем Camera.main");
+        }
 
         if (controller == null)
             controller = gameObject.AddComponent<CharacterController>();
+        
+        // Настраиваем CharacterController
+        controller.skinWidth = 0.01f;
+        controller.center = new Vector3(0, 0.9f, 0);
+        controller.height = 1.8f;
+        controller.radius = 0.3f;
 
         // Начальное состояние - движение
         currentState = new LocomotionState(this);
@@ -312,9 +347,12 @@ public class PlayerController : MonoBehaviour
         // Обновляем текущее состояние
         currentState?.Update();
 
-        // Применяем гравитацию (вертикальное движение)
-        playerVelocity.y += gravity * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        // Применяем гравитацию только когда в воздухе
+        if (!isGrounded)
+        {
+            playerVelocity.y += gravity * Time.deltaTime;
+            controller.Move(playerVelocity * Time.deltaTime);
+        }
     }
 
     // Метод для смены состояния

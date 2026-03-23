@@ -1,0 +1,8 @@
+Assets\Scripts\PlayerController.cs(213,38): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\PlayerController.cs(50,44): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\PlayerController.cs(51,42): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\PlayerController.cs(69,45): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\PlayerController.cs(70,44): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\PlayerController.cs(117,48): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\PlayerController.cs(118,46): error CS0122: 'PlayerController.cameraPivot' is inaccessible due to its protection level
+Assets\Scripts\CameraPivot.cs(24,36): warning CS0414: The field 'CameraPivot.rotationSmoothTime' is assigned but its value is never used
