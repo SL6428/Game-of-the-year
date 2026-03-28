@@ -8,12 +8,11 @@ public class CameraPivot : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform player;
-    
+
     [Header("Camera Settings")]
     [SerializeField] private float mouseSensitivity = 2f;
     [SerializeField] private float minVerticalAngle = -30f;
     [SerializeField] private float maxVerticalAngle = 60f;
-    [SerializeField] private float defaultDistance = 3f;
 
     private float horizontalRotation = 0f;
     private float verticalRotation = 15f;

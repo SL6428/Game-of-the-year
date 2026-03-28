@@ -1,5 +1,5 @@
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 using System.Collections.Generic;
 
 /// <summary>
@@ -11,8 +11,8 @@ public class LockOnSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform playerTransform;
     [SerializeField] private CameraPivot cameraPivot;
-    [SerializeField] private CinemachineVirtualCamera defaultCamera;
-    [SerializeField] private CinemachineVirtualCamera lockedOnCamera;
+    [SerializeField] private CinemachineCamera defaultCamera;
+    [SerializeField] private CinemachineCamera lockedOnCamera;
 
     [Header("Lock-On Settings")]
     [SerializeField] private float lockOnRadius = 5f;
@@ -46,7 +46,7 @@ public class LockOnSystem : MonoBehaviour
         if (defaultCamera == null || lockedOnCamera == null)
         {
             // Пытаемся найти Cinemachine камеры на сцене
-            CinemachineVirtualCamera[] allCameras = FindObjectsByType<CinemachineVirtualCamera>(FindObjectsSortMode.InstanceID);
+            CinemachineCamera[] allCameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.InstanceID);
             if (allCameras.Length > 0)
             {
                 defaultCamera = allCameras[0];
