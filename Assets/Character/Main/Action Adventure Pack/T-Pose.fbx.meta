@@ -83,7 +83,7 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human:
-    - boneName: mixamorig:Hips
+    - boneName: ArmStrap_Rings_low4:Hips
       humanName: Hips
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -91,7 +91,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftUpLeg
+    - boneName: ArmStrap_Rings_low4:LeftUpLeg
       humanName: LeftUpperLeg
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -99,7 +99,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightUpLeg
+    - boneName: ArmStrap_Rings_low4:RightUpLeg
       humanName: RightUpperLeg
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -107,7 +107,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftLeg
+    - boneName: ArmStrap_Rings_low4:LeftLeg
       humanName: LeftLowerLeg
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -115,7 +115,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightLeg
+    - boneName: ArmStrap_Rings_low4:RightLeg
       humanName: RightLowerLeg
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -123,7 +123,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftFoot
+    - boneName: ArmStrap_Rings_low4:LeftFoot
       humanName: LeftFoot
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -131,7 +131,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightFoot
+    - boneName: ArmStrap_Rings_low4:RightFoot
       humanName: RightFoot
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -139,7 +139,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:Spine
+    - boneName: ArmStrap_Rings_low4:Spine
       humanName: Spine
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -147,7 +147,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:Spine1
+    - boneName: ArmStrap_Rings_low4:Spine1
       humanName: Chest
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -155,7 +155,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:Neck
+    - boneName: ArmStrap_Rings_low4:Neck
       humanName: Neck
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -163,7 +163,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:Head
+    - boneName: ArmStrap_Rings_low4:Head
       humanName: Head
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -171,7 +171,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftShoulder
+    - boneName: ArmStrap_Rings_low4:LeftShoulder
       humanName: LeftShoulder
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -179,7 +179,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightShoulder
+    - boneName: ArmStrap_Rings_low4:RightShoulder
       humanName: RightShoulder
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -187,7 +187,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftArm
+    - boneName: ArmStrap_Rings_low4:LeftArm
       humanName: LeftUpperArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -195,7 +195,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightArm
+    - boneName: ArmStrap_Rings_low4:RightArm
       humanName: RightUpperArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -203,7 +203,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftForeArm
+    - boneName: ArmStrap_Rings_low4:LeftForeArm
       humanName: LeftLowerArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -211,7 +211,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightForeArm
+    - boneName: ArmStrap_Rings_low4:RightForeArm
       humanName: RightLowerArm
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -219,7 +219,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftHand
+    - boneName: ArmStrap_Rings_low4:LeftHand
       humanName: LeftHand
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -227,7 +227,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightHand
+    - boneName: ArmStrap_Rings_low4:RightHand
       humanName: RightHand
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -235,7 +235,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftToeBase
+    - boneName: ArmStrap_Rings_low4:LeftToeBase
       humanName: LeftToes
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -243,7 +243,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightToeBase
+    - boneName: ArmStrap_Rings_low4:RightToeBase
       humanName: RightToes
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -251,7 +251,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftHandIndex1
+    - boneName: ArmStrap_Rings_low4:LeftHandIndex1
       humanName: Left Index Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -259,7 +259,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftHandIndex2
+    - boneName: ArmStrap_Rings_low4:LeftHandIndex2
       humanName: Left Index Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -267,7 +267,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:LeftHandIndex3
+    - boneName: ArmStrap_Rings_low4:LeftHandIndex3
       humanName: Left Index Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -275,7 +275,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightHandIndex1
+    - boneName: ArmStrap_Rings_low4:RightHandIndex1
       humanName: Right Index Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -283,7 +283,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightHandIndex2
+    - boneName: ArmStrap_Rings_low4:RightHandIndex2
       humanName: Right Index Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -291,7 +291,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:RightHandIndex3
+    - boneName: ArmStrap_Rings_low4:RightHandIndex3
       humanName: Right Index Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -299,7 +299,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: mixamorig:Spine2
+    - boneName: ArmStrap_Rings_low4:Spine2
       humanName: UpperChest
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -308,749 +308,179 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: T-Pose(Clone)
+    - name: Knight (Redact)(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: ArmStrap_Rings_low4:Group9510
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: ArmStrap_Rings_low4:Group29911
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: ArmStrap_Rings_low4:Group50309
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: ArmStrap_Straps_low3:Group16702
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: ArmStrap_Straps_low3:Group37115
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: ArmStrap_Straps_low3:Group57527
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group4928
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group6118
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group10964
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group20066
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group24290
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group25267
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group30502
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group41826
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group51872
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Belt_SideRing_low1:Group63480
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group1941
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group13725
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group16499
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group16572
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group41992
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group45608
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group47025
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low1:Group61824
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group1941
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group13725
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group16499
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group16572
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group41992
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group45608
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group47025
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Boot_Toe_low2:Group61824
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Bracer_Over_low1:Group9614
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Bracer_Plates_low1:Group38364
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Bracer_Ring_low1:Group64411
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Bracer_Strap_low1:Group13056
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Bracer_Under_low1:Group62987
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Chest_BackPlate_low1:Group5865
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Chest_Belts_low1:Group58192
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Chest_Bolts_low1:Group10493
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Chest_FrontPlate_low1:Group20911
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Chest_Rings_low1:Group56180
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Chest_TopStraps_low1:Group16616
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Crown:Group19458
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group4738
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group4738.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group4738.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group5739
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group5739.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group5739.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group8960
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group8960.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group8960.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group15103
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group15103.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group15103.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17224
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17224.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17224.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17713
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17713.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17713.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17911
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17911.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group17911.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group20434
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group20434.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group20434.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group21053
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group21053.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group21053.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group24398
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group24398.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group24398.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group29664
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group29664.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group29664.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group30024
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group30024.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group30024.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group31075
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group31075.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group31075.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group32658
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group32658.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group32658.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group33144
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group33144.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group33144.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group53174
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group53174.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group53174.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group64626
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group64626.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Glove_MainPlate_low1:Group64626.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Gloves_Gloves_low1:Group35219
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Gloves_Gloves_low1:Group35219.001
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Gloves_Gloves_low1:Group35219.002
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Head_Mask_low1:Group658
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Hood_Hood_low1:Group48674
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:Hips
-      parentName: T-Pose(Clone)
-      position: {x: 0.0000008046343, y: 0.010336366, z: -0.000046556248}
-      rotation: {x: -0.00008477793, y: 0.000020898742, z: -0.00070366205, w: 0.99999976}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftUpLeg
-      parentName: mixamorig:Hips
-      position: {x: -0.0009962174, y: -0.0005605745, z: 0.00015401276}
-      rotation: {x: -0.003769996, y: 0.011931215, z: 0.9998906, w: 0.0078859}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftLeg
-      parentName: mixamorig:LeftUpLeg
-      position: {x: 6.2632923e-13, y: 0.004483457, z: -1.17196565e-11}
-      rotation: {x: -0.069210134, y: -0.0020456945, z: 0.01627974, w: 0.99746716}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftFoot
-      parentName: mixamorig:LeftLeg
-      position: {x: -4.005938e-12, y: 0.004357587, z: -1.7081438e-12}
-      rotation: {x: 0.5649999, y: 0.028040467, z: -0.043889727, w: 0.8234456}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftToeBase
-      parentName: mixamorig:LeftFoot
-      position: {x: -3.9436583e-12, y: 0.0018295755, z: 1.7661431e-11}
-      rotation: {x: 0.25046518, y: 0.037085913, z: -0.009602066, w: 0.9673674}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftToe_End
-      parentName: mixamorig:LeftToeBase
-      position: {x: -6.3959693e-12, y: 0.00079977117, z: -8.0930385e-13}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightUpLeg
-      parentName: mixamorig:Hips
-      position: {x: 0.0009962174, y: -0.0005605745, z: -0.00008602966}
-      rotation: {x: -0.0009221045, y: -0.0020806855, z: 0.9999532, w: -0.009403679}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightLeg
-      parentName: mixamorig:RightUpLeg
-      position: {x: 1.0979162e-11, y: 0.0044463943, z: 9.965501e-12}
-      rotation: {x: -0.013096253, y: -0.0000071216527, z: -0.016765514, w: 0.9997737}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightFoot
-      parentName: mixamorig:RightLeg
-      position: {x: 3.904104e-12, y: 0.004363481, z: -2.9880503e-12}
-      rotation: {x: 0.5260758, y: -0.02581811, z: 0.049659222, w: 0.848594}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightToeBase
-      parentName: mixamorig:RightFoot
-      position: {x: -8.369558e-13, y: 0.0018013931, z: -4.701898e-11}
-      rotation: {x: 0.2547464, y: -0.042999838, z: 0.0113397725, w: 0.9659848}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightToe_End
-      parentName: mixamorig:RightToeBase
-      position: {x: -6.45979e-12, y: 0.0007765695, z: 1.0094059e-13}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:Spine
-      parentName: mixamorig:Hips
-      position: {x: -0, y: 0.0010101723, z: -0.00012040842}
-      rotation: {x: -0.05919861, y: -0.0000625768, z: 0.00070118555, w: 0.998246}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:Spine1
-      parentName: mixamorig:Spine
-      position: {x: -0, y: 0.0011868777, z: -3.6707304e-12}
-      rotation: {x: 8.2735467e-26, y: -1.2306687e-13, z: 6.722806e-13, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:Spine2
-      parentName: mixamorig:Spine1
-      position: {x: -0, y: 0.0013564312, z: -4.4528643e-12}
-      rotation: {x: -0, y: 1.009742e-28, z: 1.2621775e-29, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftShoulder
-      parentName: mixamorig:Spine2
-      position: {x: -0.0006023052, y: 0.0012411092, z: 0.0000045838087}
-      rotation: {x: 0.5567532, y: -0.4430922, z: 0.53488386, w: 0.4556253}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftArm
-      parentName: mixamorig:LeftShoulder
-      position: {x: 1.468153e-12, y: 0.0013705642, z: 1.9310081e-11}
-      rotation: {x: -0.09541907, y: -0.058337018, z: 0.02027064, w: 0.99351954}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftForeArm
-      parentName: mixamorig:LeftArm
-      position: {x: -7.144396e-12, y: 0.002231265, z: -6.572358e-12}
-      rotation: {x: -0.000000054937377, y: 0.00046966612, z: -0.00000025022138, w: 0.9999999}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftHand
-      parentName: mixamorig:LeftForeArm
-      position: {x: -4.9456103e-12, y: 0.0025609427, z: 1.231123e-12}
-      rotation: {x: -0.00000029308507, y: -0.0073161814, z: 0.0000004332291, w: 0.99997324}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftHandIndex1
-      parentName: mixamorig:LeftHand
-      position: {x: 3.672926e-12, y: 0.00085810665, z: -2.2075774e-12}
-      rotation: {x: 0.0000001608973, y: -0.009932888, z: 0.00000014470342, w: 0.9999507}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftHandIndex2
-      parentName: mixamorig:LeftHandIndex1
-      position: {x: -1.30142e-13, y: 0.0006490685, z: -2.6995084e-12}
-      rotation: {x: -0.23458663, y: 0.000000056262174, z: 0.13799228, w: 0.9622512}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftHandIndex3
-      parentName: mixamorig:LeftHandIndex2
-      position: {x: 0.00012989866, y: 0.00041652127, z: 0.00022116346}
-      rotation: {x: -0.15306665, y: 0.028772814, z: 0.035748478, w: 0.98714983}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:LeftHandIndex4
-      parentName: mixamorig:LeftHandIndex3
-      position: {x: 0.0001498271, y: 0.0003420526, z: 0.00036705637}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:Neck
-      parentName: mixamorig:Spine2
-      position: {x: -0, y: 0.0015259847, z: -1.3190173e-10}
-      rotation: {x: 0.03775565, y: 0.000008277645, z: -0.000016109692, w: 0.999287}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:Head
-      parentName: mixamorig:Neck
-      position: {x: -0, y: 0.00062921166, z: 0.00027747286}
-      rotation: {x: 0, y: 0, z: 5.842504e-30, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:HeadTop_End
-      parentName: mixamorig:Head
-      position: {x: -0, y: 0.0022609197, z: 0.0009970311}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightShoulder
-      parentName: mixamorig:Spine2
-      position: {x: 0.0006023052, y: 0.0012501682, z: -0.0000714163}
-      rotation: {x: -0.5136227, y: -0.46486577, z: 0.5706457, w: -0.44097057}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightArm
-      parentName: mixamorig:RightShoulder
-      position: {x: 4.3530275e-12, y: 0.0013705642, z: 1.8601294e-11}
-      rotation: {x: -0.091221526, y: 0.07293349, z: 0.032333966, w: 0.9926298}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightForeArm
-      parentName: mixamorig:RightArm
-      position: {x: -7.94133e-12, y: 0.0022316787, z: 4.1202042e-11}
-      rotation: {x: -0.00000013474644, y: 0.012527297, z: 0.00000031206338, w: 0.99992156}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightHand
-      parentName: mixamorig:RightForeArm
-      position: {x: 2.723131e-11, y: 0.0026142052, z: 5.5696e-13}
-      rotation: {x: -0.00000016894882, y: 0.0005089128, z: 0.00000014933926, w: 0.9999999}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightHandIndex1
-      parentName: mixamorig:RightHand
-      position: {x: 1.3520122e-11, y: 0.0020193493, z: -6.7729663e-12}
-      rotation: {x: -0.00000018817711, y: 0.013317791, z: 0.00000020277415, w: 0.9999113}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightHandIndex2
-      parentName: mixamorig:RightHandIndex1
-      position: {x: -2.3869747e-12, y: 0.00017605496, z: 5.9592786e-12}
-      rotation: {x: -0.016895756, y: -0.000000018726924, z: 0.11404594, w: 0.99333185}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightHandIndex3
-      parentName: mixamorig:RightHandIndex2
-      position: {x: 0.00005409667, y: 0.00023200402, z: 0.000007730725}
-      rotation: {x: 0.2960548, y: -0.07265252, z: 0.10855351, w: 0.9461973}
-      scale: {x: 1, y: 1, z: 1}
-    - name: mixamorig:RightHandIndex4
-      parentName: mixamorig:RightHandIndex3
-      position: {x: 0.000059570408, y: 0.00011588104, z: -0.000086449465}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Padded_Cover_low1:Group50185
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Padded_NeckStrap_low1:Group38206
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Padded_Pants_low1:Group5200
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Padded_Shirt_low1:Group49776
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Elbow_low1:Group60197
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Elbow_low2:Group60197
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Left_low1:Group39818
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Plate_01_low1:Group62824
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Plate_01_low2:Group62824
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Plate_02_low1:Group64510
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Plate_02_low2:Group64510
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Plate_03_low1:Group16406
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Plate_03_low2:Group16406
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Shoulder_Right_low1:Group15440
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: UnderShoulder_UnderLeather_low1:Group23786
-      parentName: T-Pose(Clone)
-      position: {x: -0, y: 0, z: 0}
+      parentName: Knight (Redact)(Clone)
+      position: {x: -0.013067089, y: -2.220446e-18, z: -0.011318378}
+      rotation: {x: -0.000000037462154, y: -0.13037989, z: -0.000000004652308, w: 0.99146414}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Hips
+      parentName: Knight (Redact)(Clone)
+      position: {x: 0.000076381446, y: 1.0454051, z: -0.0067569213}
+      rotation: {x: -0.00008947323, y: 0.000020212903, z: -0.0006961321, w: 0.99999976}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Spine
+      parentName: ArmStrap_Rings_low4:Hips
+      position: {x: -0, y: 0.09930321, z: -0.011171417}
+      rotation: {x: -0.055894904, y: -0.000059153892, z: 0.0006939087, w: 0.99843645}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Spine1
+      parentName: ArmStrap_Rings_low4:Spine
+      position: {x: -0, y: 0.11658454, z: 4.457877e-10}
+      rotation: {x: -6.938894e-18, y: -1.1862181e-13, z: 6.73079e-13, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Spine2
+      parentName: ArmStrap_Rings_low4:Spine1
+      position: {x: -0, y: 0.13323937, z: 4.9062693e-10}
+      rotation: {x: -6.938894e-18, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftShoulder
+      parentName: ArmStrap_Rings_low4:Spine2
+      position: {x: -0.059975658, y: 0.119103774, z: -0.00014415759}
+      rotation: {x: 0.5602669, y: -0.43630534, z: 0.5452155, w: 0.44550964}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftArm
+      parentName: ArmStrap_Rings_low4:LeftShoulder
+      position: {x: 1.436937e-10, y: 0.13701503, z: -6.343242e-11}
+      rotation: {x: -0.111121215, y: -0.058666863, z: 0.016000414, w: 0.9919447}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftForeArm
+      parentName: ArmStrap_Rings_low4:LeftArm
+      position: {x: -6.47353e-11, y: 0.21394195, z: 8.8418085e-11}
+      rotation: {x: 0.00000004009765, y: -0.0023620266, z: 0.000000009462577, w: 0.9999972}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHand
+      parentName: ArmStrap_Rings_low4:LeftForeArm
+      position: {x: -9.620347e-10, y: 0.27671698, z: 0.0000000029672416}
+      rotation: {x: -0.00000025564552, y: -0.0024267565, z: -0.00000023181104, w: 0.9999971}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex1
+      parentName: ArmStrap_Rings_low4:LeftHand
+      position: {x: 6.501147e-10, y: 0.0713639, z: 3.926587e-11}
+      rotation: {x: -0.00000041381085, y: -0.0068530114, z: -0.00000020056852, w: 0.9999765}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex2
+      parentName: ArmStrap_Rings_low4:LeftHandIndex1
+      position: {x: 4.658254e-11, y: 0.06462124, z: 4.547619e-10}
+      rotation: {x: -0.21418712, y: 0.00000007912029, z: 0.14362493, w: 0.96617585}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex3
+      parentName: ArmStrap_Rings_low4:LeftHandIndex2
+      position: {x: 0.013961193, y: 0.043612618, z: 0.020819664}
+      rotation: {x: -0.12353663, y: 0.020865984, z: 0.03912906, w: 0.9913487}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftHandIndex4
+      parentName: ArmStrap_Rings_low4:LeftHandIndex3
+      position: {x: 0.016931018, y: 0.038013075, z: 0.033183105}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightShoulder
+      parentName: ArmStrap_Rings_low4:Spine2
+      position: {x: 0.059975658, y: 0.11984136, z: -0.0067006326}
+      rotation: {x: -0.5225188, y: -0.45477057, z: 0.5768431, w: -0.4329088}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightArm
+      parentName: ArmStrap_Rings_low4:RightShoulder
+      position: {x: 2.9874692e-10, y: 0.13701504, z: 0.00000000284068}
+      rotation: {x: -0.10832656, y: 0.09616747, z: 0.026416713, w: 0.9891003}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightForeArm
+      parentName: ArmStrap_Rings_low4:RightArm
+      position: {x: -3.9935474e-10, y: 0.21482372, z: -0.0000000011791443}
+      rotation: {x: -0.0000000745877, y: 0.01592137, z: -0.00000042826122, w: 0.9998733}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHand
+      parentName: ArmStrap_Rings_low4:RightForeArm
+      position: {x: 0.0000000019123334, y: 0.28233746, z: 0.0000000034115861}
+      rotation: {x: 0.0000000060049237, y: 0.00019579913, z: -0.00000035480403, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex1
+      parentName: ArmStrap_Rings_low4:RightHand
+      position: {x: 0.0000000021742927, y: 0.1882115, z: 0.0000000019908257}
+      rotation: {x: 0.00000017495928, y: 0.016176037, z: 0.00000038534472, w: 0.99986917}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex2
+      parentName: ArmStrap_Rings_low4:RightHandIndex1
+      position: {x: 3.6569417e-10, y: 0.017605696, z: -4.8581567e-10}
+      rotation: {x: -0.023821985, y: -0.000000008966416, z: 0.112921864, w: 0.99331826}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex3
+      parentName: ArmStrap_Rings_low4:RightHandIndex2
+      position: {x: 0.005346809, y: 0.02320049, z: 0.0011280559}
+      rotation: {x: 0.28941172, y: -0.07284986, z: 0.12644775, w: 0.9460152}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightHandIndex4
+      parentName: ArmStrap_Rings_low4:RightHandIndex3
+      position: {x: 0.0065143174, y: 0.011587924, z: -0.008233455}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Neck
+      parentName: ArmStrap_Rings_low4:Spine2
+      position: {x: -0, y: 0.14989437, z: 0.0000000055272174}
+      rotation: {x: 0.036182653, y: 0.0000075756716, z: -0.000014988978, w: 0.99934524}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:Head
+      parentName: ArmStrap_Rings_low4:Neck
+      position: {x: -0, y: 0.07867493, z: 0.034377847}
+      rotation: {x: 0.00000001491194, y: -1.7e-44, z: -1.1017504e-36, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:HeadTop_End
+      parentName: ArmStrap_Rings_low4:Head
+      position: {x: -0, y: 0.20726882, z: 0.09056835}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftUpLeg
+      parentName: ArmStrap_Rings_low4:Hips
+      position: {x: -0.09574769, y: -0.055206373, z: 0.01805561}
+      rotation: {x: -0.003522559, y: 0.0067779273, z: 0.9999323, w: 0.008783335}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftLeg
+      parentName: ArmStrap_Rings_low4:LeftUpLeg
+      position: {x: 9.322785e-10, y: 0.44516402, z: 6.111266e-10}
+      rotation: {x: -0.05773147, y: -0.0019539078, z: 0.017693298, w: 0.9981735}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftFoot
+      parentName: ArmStrap_Rings_low4:LeftLeg
+      position: {x: 4.668021e-10, y: 0.4508853, z: -4.062082e-10}
+      rotation: {x: 0.5555986, y: 0.026563706, z: -0.04430466, w: 0.82984436}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftToeBase
+      parentName: ArmStrap_Rings_low4:LeftFoot
+      position: {x: -2.8228545e-10, y: 0.18016687, z: -0.0000000024987452}
+      rotation: {x: 0.25503963, y: 0.036312982, z: -0.009585241, w: 0.96620095}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:LeftToe_End
+      parentName: ArmStrap_Rings_low4:LeftToeBase
+      position: {x: 7.5716483e-10, y: 0.07898301, z: 1.2186077e-10}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightUpLeg
+      parentName: ArmStrap_Rings_low4:Hips
+      position: {x: 0.09574769, y: -0.055206373, z: -0.006557026}
+      rotation: {x: -0.001299429, y: -0.0067174793, z: 0.99992406, w: -0.010249806}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightLeg
+      parentName: ArmStrap_Rings_low4:RightUpLeg
+      position: {x: 0.0000000014483725, y: 0.44244143, z: -4.789046e-10}
+      rotation: {x: -0.0035135562, y: -0.00018621451, z: -0.018075772, w: 0.9998305}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightFoot
+      parentName: ArmStrap_Rings_low4:RightLeg
+      position: {x: 8.402641e-10, y: 0.45101392, z: -3.6689603e-11}
+      rotation: {x: 0.5209648, y: -0.023528548, z: 0.0495874, w: 0.8518117}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightToeBase
+      parentName: ArmStrap_Rings_low4:RightFoot
+      position: {x: -1.3447783e-10, y: 0.18004353, z: -0.000000005755059}
+      rotation: {x: 0.25539026, y: -0.042905755, z: 0.011345519, w: 0.96581894}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ArmStrap_Rings_low4:RightToe_End
+      parentName: ArmStrap_Rings_low4:RightToeBase
+      position: {x: -5.190792e-10, y: 0.07761084, z: 2.837332e-11}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
@@ -1061,15 +491,15 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: 
+    rootMotionBoneName: ArmStrap_Rings_low4:Spine2
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: d564d1859633778468aad8ea1e351495, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

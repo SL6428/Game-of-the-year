@@ -1,24 +1,17 @@
 using UnityEngine;
 
 /// <summary>
-/// Простой CameraPivot для управления камерой от третьего лица.
-/// Камера вращается вокруг игрока при зажатой ПКМ.
+/// CameraPivot только для получения направления камеры.
+/// Вращение камеры обрабатывается через Cinemachine FreeLook.
 /// </summary>
 public class CameraPivot : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform player;
 
-    [Header("Camera Settings")]
-    [SerializeField] private float mouseSensitivity = 2f;
-    [SerializeField] private float minVerticalAngle = -30f;
-    [SerializeField] private float maxVerticalAngle = 60f;
-
-    private float horizontalRotation = 0f;
-    private float verticalRotation = 15f;
     private bool isLockedOn = false;
     private Transform lockOnTarget;
-    
+
     // Публичное свойство для получения текущей позиции камеры
     public Transform CameraTransform => transform;
 
@@ -30,11 +23,6 @@ public class CameraPivot : MonoBehaviour
             if (playerObj != null)
                 player = playerObj.transform;
         }
-
-        // Сохраняем начальный угол
-        Vector3 euler = transform.eulerAngles;
-        horizontalRotation = euler.y;
-        verticalRotation = Mathf.Clamp(euler.x > 180 ? euler.x - 360 : euler.x, minVerticalAngle, maxVerticalAngle);
     }
 
     void LateUpdate()
@@ -42,22 +30,21 @@ public class CameraPivot : MonoBehaviour
         if (player == null)
             return;
 
-        // Всегда следуем за игроком
+        // Всегда следуем за игроком (позиция)
         transform.position = player.position;
 
-        // Обработка ввода мыши (только когда не в Lock-On режиме и зажата ПКМ)
-        if (!isLockedOn && Input.GetMouseButton(1))
+        // Поворачиваем pivot по направлению камеры (только горизонталь)
+        if (Camera.main != null)
         {
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-            horizontalRotation += mouseX;
-            verticalRotation -= mouseY;
-            verticalRotation = Mathf.Clamp(verticalRotation, minVerticalAngle, maxVerticalAngle);
+            Vector3 cameraForward = Camera.main.transform.forward;
+            cameraForward.y = 0; // Убираем вертикальную составляющую
+            
+            if (cameraForward.magnitude > 0.01f)
+            {
+                cameraForward.Normalize();
+                transform.rotation = Quaternion.LookRotation(cameraForward);
+            }
         }
-
-        // Применяем вращение
-        transform.rotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
     }
 
     public void SetLockOnTarget(Transform target)
@@ -72,27 +59,28 @@ public class CameraPivot : MonoBehaviour
 
             if (directionToTarget.magnitude > 0.01f)
             {
-                horizontalRotation = Mathf.Atan2(directionToTarget.x, directionToTarget.z) * Mathf.Rad2Deg;
-                verticalRotation = 15f;
+                transform.rotation = Quaternion.LookRotation(directionToTarget);
             }
         }
     }
 
     public void ResetRotation()
     {
-        horizontalRotation = 0f;
-        verticalRotation = 15f;
+        if (player != null)
+        {
+            Vector3 forward = (player.position + Vector3.forward - transform.position).normalized;
+            transform.rotation = Quaternion.LookRotation(forward);
+        }
     }
 
     public bool IsLockedOn() => isLockedOn;
-    
+
     /// <summary>
     /// Получить направление вперёд относительно камеры (только горизонтальное!)
     /// </summary>
     public Vector3 GetForwardDirection()
     {
-        Quaternion rotation = Quaternion.Euler(0, horizontalRotation, 0);
-        return rotation * Vector3.forward;
+        return transform.forward;
     }
 
     /// <summary>
@@ -100,7 +88,6 @@ public class CameraPivot : MonoBehaviour
     /// </summary>
     public Vector3 GetRightDirection()
     {
-        Quaternion rotation = Quaternion.Euler(0, horizontalRotation, 0);
-        return rotation * Vector3.right;
+        return transform.right;
     }
 }

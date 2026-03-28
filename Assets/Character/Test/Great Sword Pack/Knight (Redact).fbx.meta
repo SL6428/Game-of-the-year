@@ -3,11 +3,31 @@ guid: d564d1859633778468aad8ea1e351495
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_CLOTH.006
+    second: {fileID: 6602833444310646905, guid: 605c8a5a408b58e4dab9926bd327d55b, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_CLOTH.007
+    second: {fileID: -665023458822932727, guid: cf190dd567721cf45958c011013dd02c, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_METAL.006
+    second: {fileID: 6175345320658808034, guid: cf190dd567721cf45958c011013dd02c, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_METAL.007
+    second: {fileID: -3705768683751758649, guid: cf190dd567721cf45958c011013dd02c, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
-    materialSearch: 1
+    materialSearch: 0
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
