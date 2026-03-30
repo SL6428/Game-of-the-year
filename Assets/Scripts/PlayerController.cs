@@ -220,6 +220,23 @@ public class AttackState : PlayerState
     {
         controller.animator.SetTrigger("Attack");
         attackTimer = 0f;
+        
+        // Включаем хитбокс оружия (ищем на себе или дочерних)
+        Weapon weapon = controller.GetComponent<Weapon>();
+        if (weapon == null)
+        {
+            weapon = controller.GetComponentInChildren<Weapon>();
+        }
+        
+        if (weapon != null)
+        {
+            weapon.EnableHitbox();
+            Debug.Log("AttackState: Hitbox включён!");
+        }
+        else
+        {
+            Debug.LogWarning("AttackState: Weapon не найден на персонаже или дочерних!");
+        }
     }
 
     public override void Update()
@@ -227,6 +244,13 @@ public class AttackState : PlayerState
         attackTimer += Time.deltaTime;
         if (attackTimer >= attackDuration)
         {
+            // Выключаем хитбокс при выходе из атаки
+            Weapon weapon = controller.GetComponent<Weapon>();
+            if (weapon != null)
+            {
+                weapon.DisableHitbox();
+            }
+            
             controller.ChangeState(new LocomotionState(controller));
         }
     }
@@ -234,6 +258,13 @@ public class AttackState : PlayerState
     public override void Exit()
     {
         controller.animator.ResetTrigger("Attack");
+        
+        // Гарантированно выключаем хитбокс
+        Weapon weapon = controller.GetComponent<Weapon>();
+        if (weapon != null)
+        {
+            weapon.DisableHitbox();
+        }
     }
 }
 
