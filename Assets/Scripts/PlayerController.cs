@@ -278,6 +278,15 @@ public class HealState : PlayerState
 
     public override void Enter()
     {
+        // Проверяем есть ли доступные заряды
+        PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
+        if (regen == null || regen.CurrentCharges <= 0)
+        {
+            Debug.LogWarning("HealState: Нет доступных зарядов для лечения!");
+            controller.ChangeState(new LocomotionState(controller));
+            return;
+        }
+
         controller.animator.SetTrigger("Heal");
         healTimer = 0f;
     }
@@ -287,6 +296,13 @@ public class HealState : PlayerState
         healTimer += Time.deltaTime;
         if (healTimer >= healDuration)
         {
+            // Применяем лечение при завершении анимации
+            PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
+            if (regen != null)
+            {
+                regen.TryHeal();
+            }
+
             controller.ChangeState(new LocomotionState(controller));
         }
     }
@@ -315,11 +331,14 @@ public class PlayerController : MonoBehaviour
     public Transform cameraTransform { get; private set; }
     
     // CameraPivot (публичный для доступа из состояний)
-    public CameraPivot cameraPivot { get; private set; }
+    public CameraPivot cameraPivot { get; set; }
 
     // Для Lock-On системы
     [Header("Combat Settings")]
     public LockOnSystem lockOnSystem;
+
+    // Система регенерации
+    public PlayerRegeneration regeneration { get; private set; }
 
     // Текущая скорость
     public Vector3 playerVelocity;
@@ -342,7 +361,7 @@ public class PlayerController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
-        
+
         // Получаем CameraPivot
         cameraPivot = FindFirstObjectByType<CameraPivot>();
         if (cameraPivot != null)
@@ -357,12 +376,20 @@ public class PlayerController : MonoBehaviour
 
         if (controller == null)
             controller = gameObject.AddComponent<CharacterController>();
-        
+
         // Настраиваем CharacterController
         controller.skinWidth = 0.01f;
         controller.center = new Vector3(0, 0.9f, 0);
         controller.height = 1.8f;
         controller.radius = 0.3f;
+
+        // Получаем систему регенерации
+        regeneration = GetComponent<PlayerRegeneration>();
+        if (regeneration == null)
+        {
+            regeneration = gameObject.AddComponent<PlayerRegeneration>();
+            Debug.Log("PlayerController: Добавлен компонент PlayerRegeneration");
+        }
 
         // Начальное состояние - движение
         currentState = new LocomotionState(this);

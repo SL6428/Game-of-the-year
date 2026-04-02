@@ -36,19 +36,27 @@ public class Health : MonoBehaviour
     /// </summary>
     public void TakeDamage(float damage)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            Debug.Log($"[{gameObject.name}] Уже мёртв, урон не применяется");
+            return;
+        }
 
+        float oldHealth = currentHealth;
         currentHealth = Mathf.Max(0, currentHealth - damage);
-        
+
+        Debug.Log($"[{gameObject.name}] Получил урон {damage}. HP: {oldHealth:F1} → {currentHealth:F1}");
+
         // Вызываем событие получения урона
         OnDamageTaken?.Invoke();
-        
+
         // Вызываем событие изменения HP
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         // Проверяем смерть
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && oldHealth > 0)
         {
+            Debug.Log($"[{gameObject.name}] Умер! HP={currentHealth:F1}");
             Die();
         }
     }

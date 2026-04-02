@@ -1,24 +1,41 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Взаимодействие с трупами врагов.
+/// Подбор оружия с тел.
+/// </summary>
 public class CorpseInteraction : MonoBehaviour
 {
-    public GameObject uiText;
-    public string weaponName = "Rusty Dagger";
+    [Header("UI")]
+    [SerializeField] private GameObject uiText;
+
+    [Header("Loot")]
+    [SerializeField] private string weaponName = "Rusty Dagger";
+
     private bool playerInRange = false;
 
     void Start()
     {
-        uiText.SetActive(false);
+        if (uiText != null)
+        {
+            uiText.SetActive(false);
+        }
     }
 
     void Update()
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("�������� ������: " + weaponName);
-            uiText.SetActive(false);
-            // ����� ����� �������� ������ ������ ������
+            Debug.Log("Подобрано оружие: " + weaponName);
+            
+            if (uiText != null)
+            {
+                uiText.SetActive(false);
+            }
+            
+            // Здесь будет логика подбора оружия
+            // Например: добавить оружие в инвентарь игрока
         }
     }
 
@@ -27,7 +44,11 @@ public class CorpseInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
-            uiText.SetActive(true);
+            
+            if (uiText != null)
+            {
+                uiText.SetActive(true);
+            }
         }
     }
 
@@ -36,7 +57,11 @@ public class CorpseInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            uiText.SetActive(false);
+            
+            if (uiText != null)
+            {
+                uiText.SetActive(false);
+            }
         }
     }
 }

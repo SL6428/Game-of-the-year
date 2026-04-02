@@ -26,6 +26,9 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Chase")]
     [SerializeField] private float chaseSpeed = 5f;
+
+    [Header("Combat")]
+    [SerializeField] private float damage = 10f;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 1.5f;
 
@@ -35,6 +38,8 @@ public class EnemyAI : MonoBehaviour
     [Header("Death")]
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private float disappearDelay = 1f;
+    [SerializeField] private float respawnTime = 5f; // Время до возрождения
+    [SerializeField] private bool respawnEnabled = true; // Включить возрождение
 
     // Состояния
     private enum EnemyState { Patrol, Chase, Attack, Dead }
@@ -44,9 +49,18 @@ public class EnemyAI : MonoBehaviour
     private float patrolWaitTimer = 0f;
     private float attackTimer = 0f;
     private bool isDead = false;
+    
+    // Для респауна
+    private Vector3 spawnPosition; // Позиция появления
+    private Quaternion spawnRotation; // Поворот при появлении
 
     void Start()
     {
+        // Сохраняем позицию появления для респауна
+        spawnPosition = transform.position;
+        spawnRotation = transform.rotation;
+        Debug.Log($"[{gameObject.name}] 📍 Начальная позиция сохранена: {spawnPosition}");
+        
         // Получаем компоненты
         if (health == null)
             health = GetComponent<Health>();
@@ -88,11 +102,16 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        // Проверяем смерть в начале каждого кадра
+        // Проверяем смерть - но не вызываем Die() здесь,
+        // потому что OnDeath уже вызывается из Health.OnDeath
         if (health == null || health.IsDead)
         {
             if (!isDead)
-                Die();
+            {
+                // Это нужно только если OnDeath не был вызван
+                // В нормальном случае OnDeath вызывается из Health
+                Debug.LogWarning($"[{gameObject.name}] Update: health.IsDead=true но isDead=false. Возможно OnDeath не сработал!");
+            }
             return;
         }
 
@@ -253,8 +272,36 @@ public class EnemyAI : MonoBehaviour
     private void Attack()
     {
         Debug.Log($"{gameObject.name} атакует игрока!");
-        // Здесь будет логика нанесения урона игроку
-        // Пока пусто - реализуем когда добавим Health игроку
+        
+        // Ищем игрока и наносим урон
+        if (player != null)
+        {
+            Health playerHealth = player.GetComponent<Health>();
+            
+            // Если не нашли на этом объекте, ищем на родителях или дочерних
+            if (playerHealth == null)
+            {
+                playerHealth = player.GetComponentInChildren<Health>();
+            }
+            
+            if (playerHealth != null && !playerHealth.IsDead)
+            {
+                Debug.Log($"EnemyAI: Наносим {damage} урона игроку. HP до: {playerHealth.CurrentHealth}");
+                playerHealth.TakeDamage(damage);
+                Debug.Log($"EnemyAI: HP игрока после: {playerHealth.CurrentHealth}");
+            }
+            else
+            {
+                if (playerHealth == null)
+                    Debug.LogWarning($"EnemyAI: Health не найден у игрока!");
+                else if (playerHealth.IsDead)
+                    Debug.Log($"EnemyAI: Игрок уже мёртв!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"EnemyAI: Игрок не найден для атаки!");
+        }
     }
 
     /// <summary>
@@ -262,38 +309,112 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void OnDeath()
     {
+        Debug.Log($"[{gameObject.name}] Получено событие смерти! Вызываем Die()");
         Die();
     }
 
     private void Die()
     {
+        if (isDead)
+        {
+            Debug.LogWarning($"[{gameObject.name}] Die() вызван но уже мёртв!");
+            return;
+        }
+
         isDead = true;
         agent.enabled = false;
-        
-        Debug.Log("Враг побежден!");
-        
+
+        Debug.Log($"[{gameObject.name}] 🪦 ВРАГ ПОБЕЖДЁН! Возрождение через {respawnTime} сек");
+
         // Проигрываем эффект смерти
         if (deathEffect != null)
         {
+            Debug.Log($"[{gameObject.name}] Воспроизводим эффект смерти: {deathEffect.name}");
             Instantiate(deathEffect, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Debug.Log($"[{gameObject.name}] Нет эффекта смерти (deathEffect не назначен)");
         }
 
         // Отключаем коллайдеры
         Collider[] colliders = GetComponents<Collider>();
+        Debug.Log($"[{gameObject.name}] Отключаем {colliders.Length} коллайдеров");
         foreach (var col in colliders)
         {
             col.enabled = false;
         }
 
-        // Отключаем рендер (модель)
+        // Отключаем рендер (модель) - скрываем врага
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        Debug.Log($"[{gameObject.name}] Отключаем {renderers.Length} рендеров (скрываем)");
         foreach (var rend in renderers)
         {
             rend.enabled = false;
         }
 
-        // Уничтожаем объект через задержку
-        Destroy(gameObject, disappearDelay);
+        // Если включен респаун - запускаем таймер
+        if (respawnEnabled)
+        {
+            Debug.Log($"[{gameObject.name}] ⏰ Запуск таймера респауна: {respawnTime} сек");
+            Invoke(nameof(Respawn), respawnTime);
+        }
+        else
+        {
+            // Если респаун выключен - уничтожаем объект
+            Debug.Log($"[{gameObject.name}] Респаун выключен - уничтожаем объект");
+            Destroy(gameObject, disappearDelay);
+        }
+    }
+    
+    /// <summary>
+    /// Возрождение врага.
+    /// </summary>
+    private void Respawn()
+    {
+        Debug.Log($"[{gameObject.name}] ⏰ Время респауна вышло! Возрождаем...");
+        
+        // Сбрасываем здоровье
+        health.ResetHealth();
+        Debug.Log($"[{gameObject.name}] HP восстановлено: {health.CurrentHealth}/{health.MaxHealth}");
+        
+        // Включаем коллайдеры
+        Collider[] colliders = GetComponents<Collider>();
+        foreach (var col in colliders)
+        {
+            col.enabled = true;
+        }
+        Debug.Log($"[{gameObject.name}] Включено {colliders.Length} коллайдеров");
+        
+        // Включаем рендер (показываем врага)
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var rend in renderers)
+        {
+            rend.enabled = true;
+        }
+        Debug.Log($"[{gameObject.name}] Включено {renderers.Length} рендеров");
+        
+        // Возвращаем на позицию появления
+        transform.position = spawnPosition;
+        transform.rotation = spawnRotation;
+        Debug.Log($"[{gameObject.name}] 📍 Возврат на позицию: {spawnPosition}");
+        
+        // Включаем NavMeshAgent
+        agent.enabled = true;
+        agent.Warp(spawnPosition);
+        
+        // Сбрасываем состояние
+        isDead = false;
+        currentState = EnemyState.Patrol;
+        
+        // Начинаем патрулирование заново
+        currentPatrolIndex = 0;
+        if (patrolPoints.Length > 0)
+        {
+            GoToNextPatrolPoint();
+        }
+        
+        Debug.Log($"[{gameObject.name}] ✅ Враг возродился и готов к бою!");
     }
 
     // Отладка

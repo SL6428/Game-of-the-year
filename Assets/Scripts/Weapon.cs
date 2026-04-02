@@ -17,6 +17,19 @@ public class Weapon : MonoBehaviour
 
     private bool isAttacking = false;
     private bool canDamage = false;
+    private bool hasHitThisAttack = false; // Защита от множественных попаданий за атаку
+
+    void OnEnable()
+    {
+        // Сбрасываем все флаги при включении оружия
+        canDamage = false;
+        hasHitThisAttack = false;
+        
+        if (weaponCollider != null)
+        {
+            weaponCollider.enabled = false;
+        }
+    }
 
     void Awake()
     {
@@ -96,8 +109,16 @@ public class Weapon : MonoBehaviour
     /// </summary>
     public void EnableHitbox()
     {
+        isAttacking = true;       // ✅ Устанавливаем флаг атаки
         canDamage = true;
-        Debug.Log("Weapon: Hitbox включён!");
+        hasHitThisAttack = false; // Сбрасываем флаг попадания для новой атаки
+
+        if (weaponCollider != null)
+        {
+            weaponCollider.enabled = true;
+        }
+
+        Debug.Log($"Weapon: Hitbox включён! isAttacking={isAttacking}, canDamage={canDamage}");
     }
 
     /// <summary>
@@ -106,6 +127,12 @@ public class Weapon : MonoBehaviour
     public void DisableHitbox()
     {
         canDamage = false;
+        
+        if (weaponCollider != null)
+        {
+            weaponCollider.enabled = false;
+        }
+        
         Debug.Log("Weapon: Hitbox выключен!");
     }
 
@@ -129,54 +156,66 @@ public class Weapon : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[TRIGGER] Вход в триггер: {other.gameObject.name}, тег: {other.tag}");
-        
+        Debug.Log($"[TRIGGER] === ВХОД В ТРИГГЕР ===");
+        Debug.Log($"[TRIGGER] Объект: {other.gameObject.name}, Тег: {other.tag}");
+        Debug.Log($"[TRIGGER] canDamage={canDamage}, isAttacking={isAttacking}, hasHitThisAttack={hasHitThisAttack}");
+        Debug.Log($"[TRIGGER] weaponCollider.enabled={weaponCollider?.enabled}");
+
         if (!canDamage)
         {
-            Debug.Log("[TRIGGER] Отмена: canDamage = false");
-            return;
-        }
-        
-        if (!isAttacking)
-        {
-            Debug.Log("[TRIGGER] Отмена: isAttacking = false");
+            Debug.Log("[TRIGGER] ❌ Отмена: canDamage = false");
             return;
         }
 
-        Debug.Log($"Weapon: Попали в {other.gameObject.name}, тег: {other.tag}");
+        if (!isAttacking)
+        {
+            Debug.Log("[TRIGGER] ❌ Отмена: isAttacking = false");
+            return;
+        }
+
+        // Защита от множественных попаданий за одну атаку
+        if (hasHitThisAttack)
+        {
+            Debug.Log("[TRIGGER] ❌ Отмена: уже было попадание в этой атаке");
+            return;
+        }
+
+        Debug.Log($"[TRIGGER] ✅ Попали в {other.gameObject.name}, тег: {other.tag}");
 
         // Проверяем что это враг
         if (other.CompareTag("Enemy"))
         {
             Health enemyHealth = other.GetComponent<Health>();
-            
+
             // Если не нашли на этом объекте, ищем на родителе
             if (enemyHealth == null)
             {
                 enemyHealth = other.GetComponentInParent<Health>();
                 Debug.Log($"[HEALTH] Найден на родителе: {enemyHealth?.gameObject.name}");
             }
-            
+
             if (enemyHealth != null && !enemyHealth.IsDead)
             {
-                Debug.Log($"Weapon: Наносим {damage} урона врагу {other.gameObject.name}. HP до: {enemyHealth.CurrentHealth}");
+                Debug.Log($"[DAMAGE] ⚔️ Наносим {damage} урона врагу {other.gameObject.name}");
+                Debug.Log($"[DAMAGE] HP до: {enemyHealth.CurrentHealth}");
                 enemyHealth.TakeDamage(damage);
-                Debug.Log($"Weapon: HP после: {enemyHealth.CurrentHealth}, IsDead: {enemyHealth.IsDead}");
-                
-                // Отключаем хитбокс после попадания (чтобы не бил несколько раз за атаку)
-                canDamage = false;
+                Debug.Log($"[DAMAGE] HP после: {enemyHealth.CurrentHealth}, IsDead: {enemyHealth.IsDead}");
+
+                // Помечаем что было попадание и отключаем хитбокс
+                hasHitThisAttack = true;
+                DisableHitbox();
             }
             else
             {
                 if (enemyHealth == null)
-                    Debug.LogWarning($"Weapon: Health не найден на {other.gameObject.name}");
+                    Debug.LogWarning($"[HEALTH] ❌ Health не найден на {other.gameObject.name}");
                 else if (enemyHealth.IsDead)
-                    Debug.Log($"Weapon: Враг уже мёртв!");
+                    Debug.Log($"[HEALTH] ℹ️ Враг уже мёртв!");
             }
         }
         else
         {
-            Debug.Log($"[TRIGGER] Объект не с тегом Enemy: {other.tag}");
+            Debug.Log($"[TRIGGER] ❌ Объект не с тегом Enemy: {other.tag}");
         }
     }
 

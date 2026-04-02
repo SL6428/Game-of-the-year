@@ -2820,6 +2820,22 @@ MonoBehaviour:
     m_Bits: 64
   playerHealth: {fileID: 565197957}
   weaponCollider: {fileID: 722260204}
+--- !u!114 &565197959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565197946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c24283d3089bb46865950e11624dd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRegeneration
+  maxCharges: 5
+  rechargeTime: 15
+  healPercent: 30
+  playerHealth: {fileID: 565197957}
 --- !u!1 &597836067
 GameObject:
   m_ObjectHideFlags: 0
@@ -7446,6 +7462,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d564d1859633778468aad8ea1e351495, type: 3}
       insertIndex: -1
       addedObject: {fileID: 565197958}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d564d1859633778468aad8ea1e351495, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 565197959}
   m_SourcePrefab: {fileID: 100100000, guid: d564d1859633778468aad8ea1e351495, type: 3}
 --- !u!1 &1676113631
 GameObject:
@@ -8552,11 +8571,14 @@ MonoBehaviour:
   patrolWaitTime: 2
   patrolSpeed: 2
   chaseSpeed: 5
+  damage: 10
   attackRange: 2
   attackCooldown: 1.5
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
+  respawnTime: 5
+  respawnEnabled: 1
 --- !u!195 &2118254634
 NavMeshAgent:
   m_ObjectHideFlags: 0

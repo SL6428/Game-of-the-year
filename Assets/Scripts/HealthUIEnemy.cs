@@ -126,6 +126,23 @@ public class HealthUIEnemy : MonoBehaviour
     /// </summary>
     private void CreateUI()
     {
+        // Проверяем не создан ли уже UI
+        if (canvasGroup != null)
+        {
+            Debug.LogWarning("HealthUIEnemy: UI уже создан!");
+            return;
+        }
+
+        // Проверяем нет ли уже дочернего Canvas
+        Canvas existingCanvas = GetComponentInChildren<Canvas>();
+        if (existingCanvas != null)
+        {
+            Debug.LogWarning("HealthUIEnemy: Canvas уже существует на дочернем объекте!");
+            canvasGroup = existingCanvas.GetComponent<CanvasGroup>();
+            hpFillImage = existingCanvas.GetComponentInChildren<Image>();
+            return;
+        }
+
         // Создаём Canvas (мировой)
         GameObject canvasObj = new GameObject("EnemyHP_Canvas");
         canvasObj.transform.SetParent(transform);
@@ -148,7 +165,7 @@ public class HealthUIEnemy : MonoBehaviour
         bgObj.transform.SetParent(canvasObj.transform);
         Image bgImage = bgObj.AddComponent<Image>();
         bgImage.color = new Color(0, 0, 0, 0.5f);
-        
+
         RectTransform bgRect = bgObj.GetComponent<RectTransform>();
         bgRect.anchorMin = Vector2.zero;
         bgRect.anchorMax = Vector2.one;
