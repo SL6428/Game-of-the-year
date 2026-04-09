@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Health health;
     [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private EnemyAnimator enemyAnimator;
 
     [Header("Detection")]
     [SerializeField] private float detectionRange = 10f;
@@ -49,6 +50,7 @@ public class EnemyAI : MonoBehaviour
     private float patrolWaitTimer = 0f;
     private float attackTimer = 0f;
     private bool isDead = false;
+    private bool isAttacking = false; // Защита от повторного запуска анимации атаки
     
     // Для респауна
     private Vector3 spawnPosition; // Позиция появления
@@ -143,8 +145,16 @@ public class EnemyAI : MonoBehaviour
 
     private void UpdatePatrol(bool canSeePlayer)
     {
+        // Обновляем анимацию движения — используем velocity с порогом для точности
+        if (enemyAnimator != null)
+        {
+            bool isMoving = !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
+            enemyAnimator.SetSpeed(isMoving ? 1f : 0f);
+        }
+
         if (canSeePlayer)
         {
+            agent.isStopped = false;
             currentState = EnemyState.Chase;
             return;
         }
@@ -176,7 +186,25 @@ public class EnemyAI : MonoBehaviour
         agent.speed = chaseSpeed;
 
         // Двигаемся к игроку
-        agent.SetDestination(player.position);
+        if (agent.isOnNavMesh)
+        {
+            try
+            {
+                agent.SetDestination(player.position);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"{gameObject.name}: Ошибка преследования: {e.Message}");
+                currentState = EnemyState.Patrol;
+                return;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"{gameObject.name}: Агент не на NavMesh, не могу преследовать игрока.");
+            currentState = EnemyState.Patrol;
+            return;
+        }
 
         // Проверяем дистанцию атаки
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -185,12 +213,22 @@ public class EnemyAI : MonoBehaviour
         {
             currentState = EnemyState.Attack;
         }
+
+        // Обновляем анимацию
+        if (enemyAnimator != null)
+        {
+            bool isMoving = !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
+            enemyAnimator.SetSpeed(isMoving ? 1f : 0f);
+        }
     }
 
     private void UpdateAttack(bool canSeePlayer)
     {
         if (!canSeePlayer)
         {
+            // Потеряли игрока — возвращаемся к патрулированию
+            agent.isStopped = false;
+            isAttacking = false; // Сбрасываем флаг атаки
             currentState = EnemyState.Patrol;
             return;
         }
@@ -199,6 +237,9 @@ public class EnemyAI : MonoBehaviour
 
         if (distanceToPlayer > attackRange)
         {
+            // Игрок вышел из радиуса атаки — преследуем
+            agent.isStopped = false;
+            isAttacking = false; // Сбрасываем флаг атаки
             currentState = EnemyState.Chase;
             return;
         }
@@ -217,6 +258,29 @@ public class EnemyAI : MonoBehaviour
         {
             Attack();
             attackTimer = attackCooldown;
+        }
+        else
+        {
+            // После атаки возобновляем движение
+            if (agent.isStopped && attackTimer < attackCooldown - 0.3f)
+            {
+                agent.isStopped = false;
+            }
+
+            // Сбрасываем флаг атаки после окончания анимации (~0.8 сек)
+            if (isAttacking && attackTimer < attackCooldown - 0.7f)
+            {
+                isAttacking = false;
+            }
+        }
+
+        // Обновляем анимацию — во время атаки скорость = 0
+        if (enemyAnimator != null)
+        {
+            if (agent.isStopped)
+                enemyAnimator.SetSpeed(0f);
+            else
+                enemyAnimator.SetSpeed(0.1f); // Лёгкое движение на месте
         }
     }
 
@@ -262,8 +326,21 @@ public class EnemyAI : MonoBehaviour
     {
         if (patrolPoints.Length == 0) return;
 
-        agent.SetDestination(patrolPoints[currentPatrolIndex].position);
-        currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogWarning($"{gameObject.name}: Не могу перейти к точке патрулирования — агент не на NavMesh! Запеки NavMesh (Window → AI → Navigation → Bake).");
+            return;
+        }
+
+        try
+        {
+            agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"{gameObject.name}: Ошибка SetDestination: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -271,8 +348,24 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void Attack()
     {
+        // Защита от повторного запуска анимации
+        if (isAttacking) return;
+        isAttacking = true;
+
         Debug.Log($"{gameObject.name} атакует игрока!");
-        
+
+        // Проигрываем анимацию атаки
+        if (enemyAnimator != null)
+        {
+            enemyAnimator.PlayAttack();
+        }
+
+        // Останавливаем движение на время атаки
+        if (agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+        }
+
         // Ищем игрока и наносим урон
         if (player != null)
         {
