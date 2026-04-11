@@ -10,7 +10,7 @@ public class MainMenuManager : MonoBehaviour
     public void StartNewGame()
     {
         PlayerPrefs.DeleteAll(); // Очистка сохранений
-        SceneManager.LoadScene("Gail map (first map)"); // Замените на имя вашей игровой сцены
+        SceneManager.LoadScene("mp_First lvl"); // Замените на имя вашей игровой сцены
     }
 
     public void OpenSettings()

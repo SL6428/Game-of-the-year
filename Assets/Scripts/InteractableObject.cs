@@ -1,13 +1,12 @@
 using UnityEngine;
 
 /// <summary>
-/// Базовый класс для всех интерактивных объектов (подсказки, знаки, предметы).
-/// Наследуйте от этого класса для создания интерактивных объектов.
+/// Базовый класс для всех интерактивных объектов.
+/// Отслеживает радиус игрока и нажатия кнопок.
 /// </summary>
 public abstract class InteractableObject : MonoBehaviour
 {
-    [Header("Interaction Settings")]
-    [SerializeField] protected string interactionPrompt = "[Y] Прочитать";
+    [Header("Settings")]
     [SerializeField] protected float interactionRadius = 2f;
     [SerializeField] protected Transform player;
 
@@ -16,7 +15,6 @@ public abstract class InteractableObject : MonoBehaviour
 
     protected virtual void Start()
     {
-        // Ищем игрока
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -29,79 +27,78 @@ public abstract class InteractableObject : MonoBehaviour
     {
         if (player == null) return;
 
-        // Проверяем закрытие popup по B (работает всегда)
+        // Проверяем дистанцию до игрока (ВСЕГДА)
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        bool wasInRange = isPlayerInRange;
+        isPlayerInRange = distanceToPlayer <= interactionRadius;
+
+        // Игрок вошёл в радиус
+        if (isPlayerInRange && !wasInRange)
+        {
+            OnPlayerEnterRange();
+        }
+        
+        // Игрок вышел из радиуса - закрываем popup если открыт
+        if (!isPlayerInRange && wasInRange)
+        {
+            if (isShowingPopup)
+            {
+                CloseCurrentPopup();
+            }
+            OnPlayerExitRange();
+        }
+
+        // Нажатие B - закрываем popup (работает всегда)
         if (isShowingPopup && Input.GetKeyDown(KeyCode.B))
         {
-            OnClosePopup();
-            return;
+            CloseCurrentPopup();
         }
 
-        // Проверяем дистанцию до игрока
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        
-        // Обновляем состояние только если не показываем popup
-        if (!isShowingPopup)
+        // Нажатие Y - открываем popup (только если в радиусе и popup закрыт)
+        if (isPlayerInRange && !isShowingPopup && Input.GetKeyDown(KeyCode.Y))
         {
-            bool wasInRange = isPlayerInRange;
-            isPlayerInRange = distanceToPlayer <= interactionRadius;
-
-            // Игрок вошёл в радиус
-            if (isPlayerInRange && !wasInRange)
-            {
-                OnPlayerEnterRange();
-            }
-            // Игрок вышел из радиуса
-            if (!isPlayerInRange && wasInRange)
-            {
-                OnPlayerExitRange();
-            }
-
-            // Проверяем нажатие кнопки взаимодействия (ТОЛЬКО в радиусе!)
-            if (isPlayerInRange && Input.GetKeyDown(KeyCode.Y))
-            {
-                Interact();
-            }
+            OpenPopup();
         }
     }
 
     /// <summary>
-    /// Вызывается при нажатии B для закрытия popup
+    /// Открыть popup подсказки
     /// </summary>
-    protected virtual void OnClosePopup()
+    protected virtual void OpenPopup()
     {
-        // Переопределяется в Signpost
+        isShowingPopup = true;
+        ShowPopupUI();
     }
 
     /// <summary>
-    /// Вызывается когда игрок входит в радиус взаимодействия
+    /// Закрыть текущий popup
     /// </summary>
-    protected virtual void OnPlayerEnterRange()
+    protected virtual void CloseCurrentPopup()
     {
-        if (InteractionManager.Instance != null)
-        {
-            InteractionManager.Instance.ShowInteractionPrompt(interactionPrompt);
-        }
+        isShowingPopup = false;
+        HidePopupUI();
     }
 
     /// <summary>
-    /// Вызывается когда игрок выходит из радиуса взаимодействия
+    /// Переопредели чтобы показать свой UI
     /// </summary>
-    protected virtual void OnPlayerExitRange()
-    {
-        if (InteractionManager.Instance != null)
-        {
-            InteractionManager.Instance.HideInteractionPrompt();
-        }
-    }
+    protected abstract void ShowPopupUI();
 
     /// <summary>
-    /// Вызывается при нажатии кнопки взаимодействия
+    /// Переопредели чтобы скрыть свой UI
     /// </summary>
-    public abstract void Interact();
+    protected abstract void HidePopupUI();
 
     /// <summary>
-    /// Отрисовка радиуса взаимодействия в редакторе
+    /// Игрок вошёл в радиус
     /// </summary>
+    protected virtual void OnPlayerEnterRange() { }
+
+    /// <summary>
+    /// Игрок вышел из радиуса
+    /// </summary>
+    protected virtual void OnPlayerExitRange() { }
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;

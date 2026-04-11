@@ -1,32 +1,43 @@
 using UnityEngine;
 
 /// <summary>
-/// Подсказка/знак в стиле Dark Souls 3.
-/// При приближении игрока показывает "[Y] Прочитать"
-/// При нажатии — красивое окно с текстом.
+/// Подсказка/знак. Перетащи свои UI панели в инспектор.
 /// </summary>
 public class Signpost : InteractableObject
 {
+    [Header("UI References")]
+    [Tooltip("Панель подсказки '[Y] Прочитать' (появляется внизу экрана)")]
+    [SerializeField] private GameObject promptPanel;
+    
+    [Tooltip("Панель окна с текстом подсказки")]
+    [SerializeField] private GameObject popupPanel;
+
     [Header("Signpost Settings")]
-    [TextArea(3, 10)]
-    [SerializeField] private string signTitle = "Заброшенная записка";
-    [TextArea(5, 20)]
-    [SerializeField] private string signText = "Текст подсказки...";
     [SerializeField] private bool destroyAfterReading = false;
 
-    public override void Interact()
+    void Awake()
     {
-        isShowingPopup = true;
+        // Скрываем UI по умолчанию
+        if (promptPanel != null) promptPanel.SetActive(false);
+        if (popupPanel != null) popupPanel.SetActive(false);
+    }
 
-        // Показываем окно с текстом
-        if (InteractionManager.Instance != null)
+    protected override void ShowPopupUI()
+    {
+        // Скрываем подсказку [Y], показываем текст
+        if (promptPanel != null) promptPanel.SetActive(false);
+        if (popupPanel != null) popupPanel.SetActive(true);
+    }
+
+    protected override void HidePopupUI()
+    {
+        // Скрываем текст
+        if (popupPanel != null) popupPanel.SetActive(false);
+        
+        // Если всё ещё в радиусе - показываем подсказку [Y]
+        if (isPlayerInRange && promptPanel != null)
         {
-            InteractionManager.Instance.ShowTextPopup(signTitle, signText);
-            InteractionManager.Instance.HideInteractionPrompt();
-        }
-        else
-        {
-            Debug.LogWarning($"[{gameObject.name}] InteractionManager не найден!");
+            promptPanel.SetActive(true);
         }
 
         if (destroyAfterReading)
@@ -35,34 +46,15 @@ public class Signpost : InteractableObject
         }
     }
 
+    protected override void OnPlayerEnterRange()
+    {
+        // Показываем подсказку [Y]
+        if (promptPanel != null) promptPanel.SetActive(true);
+    }
+
     protected override void OnPlayerExitRange()
     {
-        base.OnPlayerExitRange();
-
-        // Если игрок ушёл — закрываем окно
-        if (isShowingPopup)
-        {
-            ClosePopup();
-        }
-    }
-
-    /// <summary>
-    /// Закрыть окно текста
-    /// </summary>
-    public void ClosePopup()
-    {
-        isShowingPopup = false;
-        if (InteractionManager.Instance != null)
-        {
-            InteractionManager.Instance.HideTextPopup();
-        }
-    }
-
-    /// <summary>
-    /// Вызывается при нажатии B для закрытия popup
-    /// </summary>
-    protected override void OnClosePopup()
-    {
-        ClosePopup();
+        // Скрываем подсказку [Y]
+        if (promptPanel != null) promptPanel.SetActive(false);
     }
 }
