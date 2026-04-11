@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 /// <summary>
 /// Простой AI для врага: патрулирование + преследование игрока.
@@ -39,8 +40,12 @@ public class EnemyAI : MonoBehaviour
     [Header("Death")]
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private float disappearDelay = 1f;
-    [SerializeField] private float respawnTime = 5f; // Время до возрождения
+    [SerializeField] private float respawnTime = 10f; // Время до возрождения
     [SerializeField] private bool respawnEnabled = true; // Включить возрождение
+    [SerializeField] private float deathAnimDuration = 2.5f; // Длительность анимации смерти
+    [SerializeField] private float sinkSpeed = 2f; // Скорость погружения под пол (секунды)
+    [SerializeField] private float sinkDistance = 3f; // Насколько глубоко уйти под пол
+    [SerializeField] private float fadeInSpeed = 2f; // Скорость появления при респауне (секунды)
 
     // Состояния
     private enum EnemyState { Patrol, Chase, Attack, Dead }
@@ -61,14 +66,21 @@ public class EnemyAI : MonoBehaviour
         // Сохраняем позицию появления для респауна
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
-        Debug.Log($"[{gameObject.name}] 📍 Начальная позиция сохранена: {spawnPosition}");
-        
+
         // Получаем компоненты
         if (health == null)
             health = GetComponent<Health>();
 
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
+
+        // Проверяем что агент на NavMesh
+        if (!agent.isOnNavMesh)
+        {
+            Debug.LogWarning($"{gameObject.name}: ⚠️ NavMeshAgent не на NavMesh! Враг будет отключён. Запеки NavMesh (Window → AI → Navigation → Bake).");
+            enabled = false; // Отключаем скрипт чтобы не было ошибок
+            return;
+        }
 
         // Ищем игрока
         if (player == null)
@@ -81,12 +93,6 @@ public class EnemyAI : MonoBehaviour
         // Настройки агента
         agent.stoppingDistance = attackRange;
         agent.angularSpeed = 120f;
-
-        // Проверяем что агент на NavMesh
-        if (!agent.isOnNavMesh)
-        {
-            Debug.LogWarning($"{gameObject.name}: NavMeshAgent не на NavMesh! Проверьте что NavMesh запечён.");
-        }
 
         // Подписываемся на смерть
         health.OnDeath += OnDeath;
@@ -118,6 +124,9 @@ public class EnemyAI : MonoBehaviour
         }
 
         if (isDead) return;
+
+        // Если в состоянии смерти - не обновляем AI
+        if (currentState == EnemyState.Dead) return;
 
         // Проверяем видимость игрока
         bool canSeePlayer = CanSeePlayer();
@@ -359,6 +368,10 @@ public class EnemyAI : MonoBehaviour
         {
             enemyAnimator.PlayAttack();
         }
+        else
+        {
+            Debug.LogWarning($"[{gameObject.name}] ❌ EnemyAnimator НЕ назначен! Анимация атаки не проиграется!");
+        }
 
         // Останавливаем движение на время атаки
         if (agent.isOnNavMesh)
@@ -370,39 +383,99 @@ public class EnemyAI : MonoBehaviour
         if (player != null)
         {
             Health playerHealth = player.GetComponent<Health>();
-            
+
             // Если не нашли на этом объекте, ищем на родителях или дочерних
             if (playerHealth == null)
             {
                 playerHealth = player.GetComponentInChildren<Health>();
             }
-            
+
             if (playerHealth != null && !playerHealth.IsDead)
             {
-                Debug.Log($"EnemyAI: Наносим {damage} урона игроку. HP до: {playerHealth.CurrentHealth}");
                 playerHealth.TakeDamage(damage);
-                Debug.Log($"EnemyAI: HP игрока после: {playerHealth.CurrentHealth}");
             }
             else
             {
                 if (playerHealth == null)
-                    Debug.LogWarning($"EnemyAI: Health не найден у игрока!");
-                else if (playerHealth.IsDead)
-                    Debug.Log($"EnemyAI: Игрок уже мёртв!");
+                    Debug.LogWarning($"[{gameObject.name}] ❌ Health не найден у игрока! Проверь тег 'Player' и компонент Health");
             }
         }
         else
         {
-            Debug.LogWarning($"EnemyAI: Игрок не найден для атаки!");
+            Debug.LogWarning($"[{gameObject.name}] ❌ Игрок не найден для атаки! Проверь поле 'player' в инспекторе");
         }
     }
 
+    /// <summary>
+    /// Полная последовательность смерти: ожидание анимации -> погружение под пол -> респаун.
+    /// </summary>
+    private System.Collections.IEnumerator DeathSequence(float deathAnimDuration)
+    {
+        // Ждём окончания анимации смерти
+        yield return new WaitForSeconds(deathAnimDuration);
+        
+        // Погружаемся под пол
+        yield return StartCoroutine(SinkUnderGround());
+        
+        // После погружения отключаем рендеры (враг уже под полом)
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var rend in renderers)
+        {
+            rend.enabled = false;
+        }
+        
+        // Возвращаем на начальную позицию (под полом, невидимый)
+        transform.position = spawnPosition;
+        transform.rotation = spawnRotation;
+        
+        // Если включен респаун - запускаем таймер
+        if (respawnEnabled)
+        {
+            yield return new WaitForSeconds(respawnTime);
+            
+            // Возрождаем
+            Respawn();
+        }
+        else
+        {
+            // Если респаун выключен - уничтожаем объект
+            Destroy(gameObject, disappearDelay);
+        }
+    }
+    
+    /// <summary>
+    /// Плавное погружение врага под пол.
+    /// </summary>
+    private System.Collections.IEnumerator SinkUnderGround()
+    {
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + Vector3.down * sinkDistance;
+        float elapsed = 0f;
+        
+        // Включаем рендеры чтобы было видно погружение
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var rend in renderers)
+        {
+            rend.enabled = true;
+        }
+        
+        while (elapsed < sinkSpeed)
+        {
+            float t = elapsed / sinkSpeed;
+            transform.position = Vector3.Lerp(startPosition, endPosition, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        // Убеждаемся что достигли конечной позиции
+        transform.position = endPosition;
+    }
+    
     /// <summary>
     /// Смерть врага.
     /// </summary>
     private void OnDeath()
     {
-        Debug.Log($"[{gameObject.name}] Получено событие смерти! Вызываем Die()");
         Die();
     }
 
@@ -415,49 +488,36 @@ public class EnemyAI : MonoBehaviour
         }
 
         isDead = true;
-        agent.enabled = false;
+        currentState = EnemyState.Dead;
 
-        Debug.Log($"[{gameObject.name}] 🪦 ВРАГ ПОБЕЖДЁН! Возрождение через {respawnTime} сек");
+        // Проигрываем анимацию смерти
+        if (enemyAnimator != null)
+        {
+            enemyAnimator.PlayDeath();
+        }
 
-        // Проигрываем эффект смерти
+        // Останавливаем движение
+        if (agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+
+        // Проигрываем эффект смерти (если есть)
         if (deathEffect != null)
         {
-            Debug.Log($"[{gameObject.name}] Воспроизводим эффект смерти: {deathEffect.name}");
             Instantiate(deathEffect, transform.position, Quaternion.identity);
-        }
-        else
-        {
-            Debug.Log($"[{gameObject.name}] Нет эффекта смерти (deathEffect не назначен)");
         }
 
         // Отключаем коллайдеры
         Collider[] colliders = GetComponents<Collider>();
-        Debug.Log($"[{gameObject.name}] Отключаем {colliders.Length} коллайдеров");
         foreach (var col in colliders)
         {
             col.enabled = false;
         }
 
-        // Отключаем рендер (модель) - скрываем врага
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        Debug.Log($"[{gameObject.name}] Отключаем {renderers.Length} рендеров (скрываем)");
-        foreach (var rend in renderers)
-        {
-            rend.enabled = false;
-        }
-
-        // Если включен респаун - запускаем таймер
-        if (respawnEnabled)
-        {
-            Debug.Log($"[{gameObject.name}] ⏰ Запуск таймера респауна: {respawnTime} сек");
-            Invoke(nameof(Respawn), respawnTime);
-        }
-        else
-        {
-            // Если респаун выключен - уничтожаем объект
-            Debug.Log($"[{gameObject.name}] Респаун выключен - уничтожаем объект");
-            Destroy(gameObject, disappearDelay);
-        }
+        // Запускаем coroutine: ждать анимацию -> погрузиться -> возродиться
+        StartCoroutine(DeathSequence(deathAnimDuration));
     }
     
     /// <summary>
@@ -465,49 +525,68 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     private void Respawn()
     {
-        Debug.Log($"[{gameObject.name}] ⏰ Время респауна вышло! Возрождаем...");
-        
         // Сбрасываем здоровье
         health.ResetHealth();
-        Debug.Log($"[{gameObject.name}] HP восстановлено: {health.CurrentHealth}/{health.MaxHealth}");
-        
+
         // Включаем коллайдеры
         Collider[] colliders = GetComponents<Collider>();
         foreach (var col in colliders)
         {
             col.enabled = true;
         }
-        Debug.Log($"[{gameObject.name}] Включено {colliders.Length} коллайдеров");
-        
-        // Включаем рендер (показываем врага)
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        foreach (var rend in renderers)
-        {
-            rend.enabled = true;
-        }
-        Debug.Log($"[{gameObject.name}] Включено {renderers.Length} рендеров");
-        
+
         // Возвращаем на позицию появления
         transform.position = spawnPosition;
         transform.rotation = spawnRotation;
-        Debug.Log($"[{gameObject.name}] 📍 Возврат на позицию: {spawnPosition}");
-        
+
         // Включаем NavMeshAgent
         agent.enabled = true;
         agent.Warp(spawnPosition);
-        
+
         // Сбрасываем состояние
         isDead = false;
         currentState = EnemyState.Patrol;
-        
+
+        // Запускаем плавное появление из-под пола
+        StartCoroutine(RespawnFadeIn());
+
         // Начинаем патрулирование заново
         currentPatrolIndex = 0;
         if (patrolPoints.Length > 0)
         {
             GoToNextPatrolPoint();
         }
+    }
+    
+    /// <summary>
+    /// Плавное появление врага из-под пола.
+    /// </summary>
+    private System.Collections.IEnumerator RespawnFadeIn()
+    {
+        // Начинаем немного ниже пола
+        Vector3 startPos = transform.position + Vector3.down * sinkDistance * 0.5f;
+        Vector3 endPos = transform.position;
+        transform.position = startPos;
         
-        Debug.Log($"[{gameObject.name}] ✅ Враг возродился и готов к бою!");
+        // Включаем рендеры
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var rend in renderers)
+        {
+            rend.enabled = true;
+        }
+        
+        float elapsed = 0f;
+        
+        while (elapsed < fadeInSpeed)
+        {
+            float t = elapsed / fadeInSpeed;
+            transform.position = Vector3.Lerp(startPos, endPos, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        // Убеждаемся что достигли конечной позиции
+        transform.position = endPos;
     }
 
     // Отладка
@@ -518,6 +597,10 @@ public class EnemyAI : MonoBehaviour
         // Радиус обнаружения
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        // Радиус атаки (красный)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
 
         // Точки патрулирования
         if (patrolPoints != null && patrolPoints.Length > 0)
@@ -531,7 +614,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Направление взгляда
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position + Vector3.up * 0.5f, transform.forward * detectionRange);
     }
 }

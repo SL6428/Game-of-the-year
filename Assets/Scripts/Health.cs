@@ -27,7 +27,6 @@ public class Health : MonoBehaviour
         if (currentHealth < 0 || currentHealth > maxHealth)
         {
             currentHealth = maxHealth;
-            Debug.Log($"{gameObject.name}: Health установлен в {currentHealth}/{maxHealth}");
         }
     }
 
@@ -36,16 +35,14 @@ public class Health : MonoBehaviour
     /// </summary>
     public void TakeDamage(float damage)
     {
-        if (isDead)
-        {
-            Debug.Log($"[{gameObject.name}] Уже мёртв, урон не применяется");
-            return;
-        }
+        if (isDead) return;
 
         float oldHealth = currentHealth;
         currentHealth = Mathf.Max(0, currentHealth - damage);
 
-        Debug.Log($"[{gameObject.name}] Получил урон {damage}. HP: {oldHealth:F1} → {currentHealth:F1}");
+        // Выводим информацию о полученном уроне
+        float healthPercent = (currentHealth / maxHealth) * 100f;
+        Debug.Log($"⚔️ [{gameObject.name}] Получил {damage:F0} урона | HP: {oldHealth:F0} → {currentHealth:F0} ({healthPercent:F0}%)");
 
         // Вызываем событие получения урона
         OnDamageTaken?.Invoke();
@@ -56,7 +53,7 @@ public class Health : MonoBehaviour
         // Проверяем смерть
         if (currentHealth <= 0 && oldHealth > 0)
         {
-            Debug.Log($"[{gameObject.name}] Умер! HP={currentHealth:F1}");
+            Debug.Log($"💀 [{gameObject.name}] Умер! HP: {oldHealth:F0} → 0 (0%)");
             Die();
         }
     }
@@ -68,7 +65,12 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
 
+        float oldHealth = currentHealth;
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        
+        float healthPercent = (currentHealth / maxHealth) * 100f;
+        Debug.Log($"💚 [{gameObject.name}] Лечение +{amount:F0} HP | HP: {oldHealth:F0} → {currentHealth:F0} ({healthPercent:F0}%)");
+        
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
@@ -89,7 +91,6 @@ public class Health : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        Debug.Log($"{gameObject.name} умер!");
         OnDeath?.Invoke();
     }
 
