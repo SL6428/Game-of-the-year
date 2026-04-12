@@ -4,10 +4,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [Header("Player")]
+    [Tooltip("РЎСЃС‹Р»РєР° РЅР° РёРіСЂРѕРєР° (РїРµСЂРµС‚Р°С‰Рё РёР· СЃС†РµРЅС‹)")]
+    [SerializeField] private Transform player;
+
     [Header("UI References")]
     public GameObject pauseMenu;
 
     private bool isPaused = false;
+
+    // РџСѓР±Р»РёС‡РЅРѕРµ СЃРІРѕР№СЃС‚РІРѕ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РёРіСЂРѕРєСѓ
+    public Transform Player => player;
 
     void Awake()
     {
@@ -24,7 +31,22 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // Начальное состояние - игра активна
+        // РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРёР№ РїРѕРёСЃРє РёРіСЂРѕРєР° РµСЃР»Рё РЅРµ РЅР°Р·РЅР°С‡РµРЅ
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+                Debug.Log("[GameManager] РќР°Р№РґРµРЅ РёРіСЂРѕРє РїРѕ С‚РµРіСѓ 'Player'");
+            }
+            else
+            {
+                Debug.LogWarning("[GameManager] РќРµ РЅР°Р№РґРµРЅ РёРіСЂРѕРє! РќР°Р·РЅР°С‡СЊС‚Рµ РµРіРѕ РІ GameManager РёР»Рё РґРѕР±Р°РІСЊС‚Рµ С‚РµРі 'Player'");
+            }
+        }
+
+        // РЎР±СЂР°СЃС‹РІР°РµРј РїР°СѓР·Сѓ - РёРіСЂР° Р·Р°РїСѓС‰РµРЅР°
         SetPause(false);
     }
 
@@ -46,18 +68,17 @@ public class GameManager : MonoBehaviour
     {
         isPaused = paused;
 
-        // Пауза в физике и времени
+        // Р’СЂРµРјСЏ Рё С„РёР·РёРєР°
         Time.timeScale = paused ? 0f : 1f;
 
-        // Управление курсором
+        // РЈРїСЂР°РІР»РµРЅРёРµ РєСѓСЂСЃРѕСЂРѕРј
         Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = paused;
 
-        // Включаем/выключаем меню паузы
+        // РџРѕРєР°Р·С‹РІР°РµРј/СЃРєСЂС‹РІР°РµРј РјРµРЅСЋ РїР°СѓР·С‹
         if (pauseMenu != null)
             pauseMenu.SetActive(paused);
 
-        // Можно добавить другие эффекты при паузе (звук и т.д.)
         Debug.Log(paused ? "Game Paused" : "Game Resumed");
     }
 

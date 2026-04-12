@@ -16,6 +16,7 @@ public class SimpleInventory : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject); // Сохраняется между сценами
         }
         else
         {

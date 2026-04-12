@@ -2656,7 +2656,7 @@ Transform:
   m_GameObject: {fileID: 90141186}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.30070576, z: 0, w: 0.953717}
-  m_LocalPosition: {x: 98.46, y: 21.01, z: 73.22}
+  m_LocalPosition: {x: 99.892, y: 21.01, z: 74.222}
   m_LocalScale: {x: 1, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23198,7 +23198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIMessageManager
   messagePanel: {fileID: 786949639}
   messageText: {fileID: 0}
-  displayDuration: 1
+  displayDuration: 2
 --- !u!1001 &793634420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28447,7 +28447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76614eb5b329ec4469b2c764ad1dac9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  interactionRadius: 2.5
+  interactionRadius: 3
   player: {fileID: 1115919391}
   requiresKey: 0
   requiredKeyName: UpperHallKey
@@ -28457,7 +28457,7 @@ MonoBehaviour:
   openAngle: 90
   openDuration: 1.5
   promptPanel: {fileID: 1325190414}
-  messageManager: {fileID: 786949641}
+  messageManager: {fileID: 0}
   openSound: {fileID: 0}
 --- !u!1001 &990159347
 PrefabInstance:
@@ -31885,7 +31885,7 @@ MonoBehaviour:
   health: {fileID: 1108116020}
   agent: {fileID: 1108116021}
   enemyAnimator: {fileID: 1108116017}
-  detectionRange: 30
+  detectionRange: 25
   fieldOfView: 180
   playerLayer:
     serializedVersion: 2
@@ -32101,7 +32101,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d564d1859633778468aad8ea1e351495, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 14.299
+      value: 15.18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d564d1859633778468aad8ea1e351495, type: 3}
       propertyPath: m_LocalRotation.w
@@ -37983,10 +37983,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KeyPickup
   keyName: UpperHallKey
   pickupRadius: 2
-  player: {fileID: 1115919391}
   destroyAfterPickup: 1
   promptPanel: {fileID: 766072789}
-  messageManager: {fileID: 0}
+  pickupMessagePanel: {fileID: 0}
+  pickupMessageText: {fileID: 0}
+  messageDuration: 2
 --- !u!1001 &1344167283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39028,7 +39029,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1381243651
 RectTransform:
   m_ObjectHideFlags: 0
@@ -39493,8 +39494,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 123}
-  m_SizeDelta: {x: 200, y: 25}
+  m_AnchoredPosition: {x: 0, y: 90.3}
+  m_SizeDelta: {x: 200, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1399117742
 MonoBehaviour:
@@ -54300,6 +54301,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: ce73a35450ff20d4ab05c1f0c3cec2dc, type: 3}
   m_PrefabInstance: {fileID: 1864913983}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1864930741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1864930744}
+  - component: {fileID: 1864930743}
+  - component: {fileID: 1864930742}
+  m_Layer: 0
+  m_Name: BossInvisbalWall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1864930742
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864930741}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 33.9, y: 19.9, z: 30}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1864930743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864930741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3035dd249434d4ab153d585a33655a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossArena
+  boss: {fileID: 1108116016}
+  bossHealth: {fileID: 0}
+  debugMode: 1
+  wallNorth: {fileID: 0}
+  wallSouth: {fileID: 0}
+  wallEast: {fileID: 0}
+  wallWest: {fileID: 0}
+--- !u!4 &1864930744
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864930741}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.30320156, z: 0, w: 0.95292646}
+  m_LocalPosition: {x: 82.67, y: 23.23, z: 63.62}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -35.3, z: 0}
 --- !u!1001 &1867368949
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61547,3 +61621,4 @@ SceneRoots:
   - {fileID: 1613264599}
   - {fileID: 1917314836}
   - {fileID: 90141191}
+  - {fileID: 1864930744}

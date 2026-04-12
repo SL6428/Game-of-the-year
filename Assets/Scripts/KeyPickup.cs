@@ -5,79 +5,126 @@ using UnityEngine;
 /// </summary>
 public class KeyPickup : MonoBehaviour
 {
-    [Header("Key Settings")]
-    [SerializeField] private string keyName = "UpperHallKey"; // Название ключа
+    [Header("Настройки ключа")]
+    [Tooltip("Уникальное имя ключа (должно совпадать с Door.requiredKeyName)")]
+    [SerializeField] private string keyName = "UpperHallKey";
+    [Tooltip("Расстояние, с которого можно подобрать")]
     [SerializeField] private float pickupRadius = 2f;
-    [SerializeField] private Transform player;
+    [Tooltip("Уничтожать объект после подбора")]
     [SerializeField] private bool destroyAfterPickup = true;
 
-    [Header("UI (опционально)")]
-    [Tooltip("Твоя панель подсказки '[E] Подобрать'")]
+    [Header("UI - Подсказки и сообщения")]
+    [Tooltip("Панель с подсказкой '[E] Подобрать' (показывается при приближении)")]
     [SerializeField] private GameObject promptPanel;
-    [Tooltip("Менеджер сообщений (перетащи объект с UIMessageManager)")]
-    [SerializeField] private UIMessageManager messageManager;
+    [Tooltip("Панель с сообщением 'Ключ подобран' (отдельная от подсказки!)")]
+    [SerializeField] private GameObject pickupMessagePanel;
+    [Tooltip("Текст внутри pickupMessagePanel")]
+    [SerializeField] private UnityEngine.UI.Text pickupMessageText;
+    [Tooltip("Сколько секунд показывать сообщение")]
+    [SerializeField] private float messageDuration = 2f;
 
+    // Состояния
     private bool isPickedUp = false;
     private bool isPlayerInRange = false;
 
+    // Для скрытия сообщения
+    private float messageHideTimer = 0f;
+    private bool isMessageShowing = false;
+
+    // Кэш игрока
+    private Transform playerTransform;
+
     void Start()
     {
-        if (player == null)
-        {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-                player = playerObj.transform;
-        }
+        // Скрываем UI
+        if (promptPanel != null)
+            promptPanel.SetActive(false);
+        
+        if (pickupMessagePanel != null)
+            pickupMessagePanel.SetActive(false);
 
-        // Создаём инвентарь если нет
+        // Создаём инвентарь если его ещё нет
         if (SimpleInventory.Instance == null)
         {
             GameObject invObj = new GameObject("SimpleInventory");
             invObj.AddComponent<SimpleInventory>();
+            Debug.Log("[KeyPickup] Создан SimpleInventory");
         }
 
-        // Создаём менеджер сообщений если нет и не назначен
-        if (messageManager == null && UIMessageManager.Instance == null)
-        {
-            GameObject msgObj = new GameObject("UIMessageManager");
-            messageManager = msgObj.AddComponent<UIMessageManager>();
-        }
-        else if (messageManager == null)
-        {
-            messageManager = UIMessageManager.Instance;
-        }
-
-        // Скрываем подсказку по умолчанию
-        if (promptPanel != null)
-        {
-            promptPanel.SetActive(false);
-        }
+        // Получаем ссылку на игрока
+        UpdatePlayerReference();
     }
 
     void Update()
     {
-        if (player == null || isPickedUp) return;
+        // Если ключ уже подобран - ничего не делаем
+        if (isPickedUp) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        // Обновляем ссылку на игрока если нужно
+        UpdatePlayerReference();
+
+        // Обновляем таймер сообщения (используем unscaledDeltaTime)
+        if (isMessageShowing)
+        {
+            messageHideTimer -= Time.unscaledDeltaTime;
+            if (messageHideTimer <= 0f)
+            {
+                isMessageShowing = false;
+                if (pickupMessagePanel != null)
+                    pickupMessagePanel.SetActive(false);
+            }
+            return;
+        }
+
+        // Проверяем расстояние до игрока
+        if (playerTransform == null) return;
+        
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
         bool wasInRange = isPlayerInRange;
         isPlayerInRange = distance <= pickupRadius;
 
         // Игрок вошёл в радиус - показываем подсказку
         if (isPlayerInRange && !wasInRange)
         {
-            if (promptPanel != null) promptPanel.SetActive(true);
+            if (promptPanel != null) 
+                promptPanel.SetActive(true);
         }
 
         // Игрок вышел из радиуса - скрываем подсказку
         if (!isPlayerInRange && wasInRange)
         {
-            if (promptPanel != null) promptPanel.SetActive(false);
+            if (promptPanel != null) 
+                promptPanel.SetActive(false);
         }
 
         // Подбор по E
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.E))
         {
             PickupKey();
+        }
+    }
+
+    /// <summary>
+    /// Обновляет ссылку на игрока
+    /// </summary>
+    void UpdatePlayerReference()
+    {
+        if (playerTransform == null)
+        {
+            // Сначала пробуем через GameManager
+            if (GameManager.Instance != null && GameManager.Instance.Player != null)
+            {
+                playerTransform = GameManager.Instance.Player;
+            }
+            // Если нет - ищем по тегу
+            else
+            {
+                GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+                if (playerObj != null)
+                {
+                    playerTransform = playerObj.transform;
+                }
+            }
         }
     }
 
@@ -88,21 +135,14 @@ public class KeyPickup : MonoBehaviour
 
         // Скрываем подсказку "[E] Подобрать"
         if (promptPanel != null)
-        {
             promptPanel.SetActive(false);
-        }
 
         // Добавляем в инвентарь
         if (SimpleInventory.Instance != null)
-        {
             SimpleInventory.Instance.AddKey(keyName);
-        }
 
-        // Показываем сообщение через менеджер
-        if (messageManager != null)
-        {
-            messageManager.ShowMessage($"🔑 Подобран ключ: {keyName}");
-        }
+        // Показываем сообщение "Ключ подобран"
+        ShowPickupMessage();
 
         // Уничтожаем объект
         if (destroyAfterPickup)
@@ -111,16 +151,37 @@ public class KeyPickup : MonoBehaviour
         }
         else
         {
-            // Или просто делаем невидимым
+            // Или просто делаем невидимым/неактивным
             foreach (Renderer rend in GetComponentsInChildren<Renderer>())
-            {
                 rend.enabled = false;
-            }
+            
             foreach (Collider col in GetComponents<Collider>())
-            {
                 col.enabled = false;
-            }
         }
+
+        Debug.Log($"[KeyPickup] Ключ '{keyName}' подобран");
+    }
+
+    void ShowPickupMessage()
+    {
+        if (pickupMessagePanel == null)
+        {
+            Debug.LogWarning($"[KeyPickup] Не назначен pickupMessagePanel для ключа '{keyName}'");
+            return;
+        }
+
+        // Устанавливаем текст
+        if (pickupMessageText != null)
+        {
+            pickupMessageText.text = $"🔑 Подобран ключ: {keyName}";
+        }
+
+        // Показываем панель
+        pickupMessagePanel.SetActive(true);
+        isMessageShowing = true;
+        messageHideTimer = messageDuration;
+
+        Debug.Log($"[KeyPickup] Показано сообщение 'Ключ подобран'");
     }
 
     void OnDrawGizmosSelected()
