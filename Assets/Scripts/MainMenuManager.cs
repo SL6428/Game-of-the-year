@@ -7,37 +7,33 @@ public class MainMenuManager : MonoBehaviour
     public GameObject SettingsPanel;
     public GameObject CreditsPanel;
 
+    public CreditsScroller CreditsScrollerRef;
+
     public void StartNewGame()
     {
-        PlayerPrefs.DeleteAll(); // Очистка сохранений
-        SceneManager.LoadScene("mp_First lvl"); // Замените на имя вашей игровой сцены
+        PlayerPrefs.DeleteAll();
+        SceneManager.LoadScene("mp_First lvl");
     }
 
     public void OpenSettings()
     {
-        // Пока просто заглушка
-        Debug.Log("Открыть настройки");
         MainMenuPanel.SetActive(false);
         SettingsPanel.SetActive(true);
     }
 
-    public CreditsScroller СreditsScroller;
     public void ShowCredits()
     {
-        Debug.Log("Показать титры");
         MainMenuPanel.SetActive(false);
         CreditsPanel.SetActive(true);
 
-        // Запускаем прокрутку титров
-        if (СreditsScroller != null)
-            СreditsScroller.StartScrolling();
+        if (CreditsScrollerRef != null)
+            CreditsScrollerRef.StartScrolling();
     }
 
     public void ReturnToMainMenu()
     {
-        // Останавливаем прокрутку при возврате
-        if (СreditsScroller != null)
-            СreditsScroller.StopScrolling();
+        if (CreditsScrollerRef != null)
+            CreditsScrollerRef.StopScrolling();
 
         SettingsPanel.SetActive(false);
         CreditsPanel.SetActive(false);
@@ -47,7 +43,7 @@ public class MainMenuManager : MonoBehaviour
     public void QuitGame()
     {
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false; // Для редактора
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif

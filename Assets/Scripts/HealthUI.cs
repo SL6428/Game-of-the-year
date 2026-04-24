@@ -32,7 +32,7 @@ public class HealthUI : MonoBehaviour
         // Если ссылка не назначена, пробуем найти
         if (playerHealth == null)
         {
-            playerHealth = FindObjectOfType<Health>();
+            playerHealth = FindFirstObjectByType<Health>();
         }
         
         if (playerHealth == null)

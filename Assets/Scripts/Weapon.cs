@@ -83,7 +83,7 @@ public class Weapon : MonoBehaviour
         // Если здоровье игрока не назначено, ищем
         if (playerHealth == null)
         {
-            playerHealth = FindObjectOfType<Health>();
+            playerHealth = FindFirstObjectByType<Health>();
         }
     }
 
