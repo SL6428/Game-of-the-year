@@ -8,15 +8,17 @@ using System;
 public class Health : MonoBehaviour
 {
     [Header("Health Settings")]
+    [SerializeField] private float baseMaxHealth = 100f;
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float currentHealth = -1f;
     [SerializeField] private bool isDead = false;
 
-    // События (не отображаются в инспекторе)
     public event Action<float, float> OnHealthChanged;
     public event Action OnDeath;
     public event Action OnDamageTaken;
+    public event Func<float, float> OnModifyIncomingDamage;
 
+    public float BaseMaxHealth => baseMaxHealth;
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     public bool IsDead => isDead;
@@ -37,12 +39,15 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
 
+        float modifiedDamage = OnModifyIncomingDamage?.Invoke(damage) ?? damage;
+        modifiedDamage = Mathf.Max(1f, modifiedDamage);
+
         float oldHealth = currentHealth;
-        currentHealth = Mathf.Max(0, currentHealth - damage);
+        currentHealth = Mathf.Max(0, currentHealth - modifiedDamage);
 
         // Выводим информацию о полученном уроне
         float healthPercent = (currentHealth / maxHealth) * 100f;
-        Debug.Log($"⚔️ [{gameObject.name}] Получил {damage:F0} урона | HP: {oldHealth:F0} → {currentHealth:F0} ({healthPercent:F0}%)");
+        Debug.Log($"[{gameObject.name}] DMG: {damage:F0}(raw) {modifiedDamage:F0}(final) | HP: {oldHealth:F0} -> {currentHealth:F0}");
 
         // Вызываем событие получения урона
         OnDamageTaken?.Invoke();
@@ -101,6 +106,18 @@ public class Health : MonoBehaviour
     {
         isDead = false;
         currentHealth = maxHealth;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    public void SetMaxHealth(float newMax)
+    {
+        float oldMax = maxHealth;
+        maxHealth = Mathf.Max(1f, newMax);
+        float diff = maxHealth - oldMax;
+        if (diff > 0)
+            currentHealth = Mathf.Min(maxHealth, currentHealth + diff);
+        else
+            currentHealth = Mathf.Min(currentHealth, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 

@@ -196,10 +196,12 @@ public class Weapon : MonoBehaviour
 
             if (enemyHealth != null && !enemyHealth.IsDead)
             {
-                Debug.Log($"[DAMAGE] ⚔️ Наносим {damage} урона врагу {other.gameObject.name}");
-                Debug.Log($"[DAMAGE] HP до: {enemyHealth.CurrentHealth}");
-                enemyHealth.TakeDamage(damage);
-                Debug.Log($"[DAMAGE] HP после: {enemyHealth.CurrentHealth}, IsDead: {enemyHealth.IsDead}");
+                float totalDamage = damage;
+                if (PlayerStats.Instance != null)
+                    totalDamage += PlayerStats.Instance.DamageBonus;
+
+                Debug.Log($"[DAMAGE] Hit {other.gameObject.name} for {totalDamage} (base {damage} + str {totalDamage - damage})");
+                enemyHealth.TakeDamage(totalDamage);
 
                 // Помечаем что было попадание и отключаем хитбокс
                 hasHitThisAttack = true;

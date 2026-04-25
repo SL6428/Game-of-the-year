@@ -20,10 +20,14 @@ public class LocomotionState : PlayerState
     private float horizontalInput;
     private float verticalInput;
     private bool isRunning;
+    private float runLockoutTimer;
 
     public LocomotionState(PlayerController controller) : base(controller) { }
 
-    public override void Enter() { }
+    public override void Enter()
+    {
+        runLockoutTimer = 0f;
+    }
 
     public override void Update()
     {
@@ -36,27 +40,55 @@ public class LocomotionState : PlayerState
 
     private void GetInput()
     {
-        // ИСПРАВЛЕНО: Убраны пробелы в названиях осей ввода
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        isRunning = Input.GetKey(KeyCode.LeftShift);
+
+        isRunning = false;
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            if (runLockoutTimer > 0f)
+            {
+                runLockoutTimer -= Time.deltaTime;
+            }
+            else if (controller.stamina != null)
+            {
+                if (!controller.stamina.IsExhausted && controller.stamina.CurrentStamina > 1f)
+                    isRunning = true;
+            }
+            else
+            {
+                isRunning = true;
+            }
+        }
+        else
+        {
+            runLockoutTimer = 0f;
+        }
     }
 
     private void HandleMovement()
     {
         float currentSpeed = isRunning ? controller.runSpeed : controller.walkSpeed;
-
-        // Получаем направление от CameraPivot (только горизонтальное)
         Vector3 cameraForward = controller.cameraPivot.GetForwardDirection();
         Vector3 cameraRight = controller.cameraPivot.GetRightDirection();
 
         Vector3 move = (cameraForward * verticalInput + cameraRight * horizontalInput);
-        
-        // Двигаем только если есть ввод
+
         if (move.magnitude > 0.1f)
         {
             move.Normalize();
             controller.controller.Move(move * currentSpeed * Time.deltaTime);
+        }
+
+        if (isRunning && controller.stamina != null)
+        {
+            controller.stamina.DrainContinuous(controller.stamina.RunDrainRate);
+            if (controller.stamina.IsExhausted)
+            {
+                isRunning = false;
+                runLockoutTimer = 1f;
+            }
         }
     }
 
@@ -128,17 +160,20 @@ public class LocomotionState : PlayerState
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            controller.ChangeState(new JumpState(controller));
+            if (HasStamina(controller.stamina?.JumpCost ?? 0f))
+                controller.ChangeState(new JumpState(controller));
             return;
         }
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
-            controller.ChangeState(new RollState(controller));
+            if (HasStamina(controller.stamina?.RollCost ?? 0f))
+                controller.ChangeState(new RollState(controller));
             return;
         }
         if (Input.GetMouseButtonDown(0))
         {
-            controller.ChangeState(new AttackState(controller));
+            if (HasStamina(controller.stamina?.AttackCost ?? 0f))
+                controller.ChangeState(new AttackState(controller));
             return;
         }
         if (Input.GetKeyDown(KeyCode.H))
@@ -146,6 +181,12 @@ public class LocomotionState : PlayerState
             controller.ChangeState(new HealState(controller));
             return;
         }
+    }
+
+    private bool HasStamina(float cost)
+    {
+        if (controller.stamina == null) return true;
+        return controller.stamina.CurrentStamina >= cost;
     }
 }
 
@@ -155,6 +196,8 @@ public class JumpState : PlayerState
     public JumpState(PlayerController controller) : base(controller) { }
     public override void Enter()
     {
+        if (controller.stamina != null)
+            controller.stamina.TryUseStamina(controller.stamina.JumpCost);
         controller.playerVelocity.y = Mathf.Sqrt(controller.jumpHeight * -2f * controller.gravity);
         controller.animator.SetTrigger("Jump");
     }
@@ -184,6 +227,8 @@ public class RollState : PlayerState
 
     public override void Enter()
     {
+        if (controller.stamina != null)
+            controller.stamina.TryUseStamina(controller.stamina.RollCost);
         controller.animator.SetTrigger("Roll");
         rollTimer = 0f;
     }
@@ -218,6 +263,8 @@ public class AttackState : PlayerState
 
     public override void Enter()
     {
+        if (controller.stamina != null)
+            controller.stamina.TryUseStamina(controller.stamina.AttackCost);
         controller.animator.SetTrigger("Attack");
         attackTimer = 0f;
         
@@ -340,6 +387,9 @@ public class PlayerController : MonoBehaviour
     // Система регенерации
     public PlayerRegeneration regeneration { get; private set; }
 
+    // Стамина
+    public Stamina stamina { get; private set; }
+
     // Текущая скорость
     public Vector3 playerVelocity;
     
@@ -388,7 +438,15 @@ public class PlayerController : MonoBehaviour
         if (regeneration == null)
         {
             regeneration = gameObject.AddComponent<PlayerRegeneration>();
-            Debug.Log("PlayerController: Добавлен компонент PlayerRegeneration");
+            Debug.Log("PlayerController: Added PlayerRegeneration");
+        }
+
+        // Получаем стамину
+        stamina = GetComponent<Stamina>();
+        if (stamina == null)
+        {
+            stamina = gameObject.AddComponent<Stamina>();
+            Debug.Log("PlayerController: Added Stamina");
         }
 
         // Начальное состояние - движение

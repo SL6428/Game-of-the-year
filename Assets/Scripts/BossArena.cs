@@ -1,259 +1,213 @@
 using UnityEngine;
 
-/// <summary>
-/// Арена босса - ПРОСТАЯ ВЕРСИЯ.
-/// Стены выключены по умолчанию.
-/// Включаются когда игрок входит в триггер-зону.
-/// Выключаются когда босс умирает.
-/// </summary>
 public class BossArena : MonoBehaviour
 {
-    [Header("Босс")]
-    [Tooltip("Перетащи босса сюда")]
+    [Header("Boss")]
     [SerializeField] private GameObject boss;
-    
-    [Tooltip("Компонент Health у босса (найдёт сам если пусто)")]
     [SerializeField] private Health bossHealth;
 
-    [Header("Отладка")]
-    [Tooltip("Показывать отладку в консоли")]
-    [SerializeField] private bool debugMode = true;
+    [Header("Entrance Trigger")]
+    [Tooltip("The trigger collider on this object. Must have isTrigger=true.")]
+    [SerializeField] private Collider entranceTrigger;
 
-    // 4 стены
+    [Header("Walls (always active GameObjects, colliders start disabled)")]
     [SerializeField] private GameObject wallNorth;
     [SerializeField] private GameObject wallSouth;
     [SerializeField] private GameObject wallEast;
     [SerializeField] private GameObject wallWest;
 
-    private bool isArenaActive = false;
-    private bool bossWasDefeated = false;
+    [Header("Debug")]
+    [SerializeField] private bool debugMode = true;
+
+    [Header("Gizmo Color")]
+    [SerializeField] private Color gizmoTriggerColor = new Color(1f, 0f, 0f, 0.3f);
+    [SerializeField] private Color gizmoWallColor = new Color(0f, 1f, 0f, 0.5f);
+
+    private bool isArenaActive;
+    private bool bossWasDefeated;
+    private Collider[] wallColliders;
 
     void Start()
     {
-        Log("=== BossArena Start ===");
-        Log($"Позиция арены: {transform.position}");
-        
-        // Проверяем что стены выключены
-        CheckWallsState();
-        
-        // Находим Health
         FindBossHealth();
-        
-        Log("=== BossArena готов ===");
+        DisableWallColliders();
+        CacheWallColliders();
     }
 
     void Update()
     {
-        // Проверяем смерть босса
-        if (isArenaActive && !bossWasDefeated)
+        if (isArenaActive && !bossWasDefeated && IsBossDead())
         {
-            if (IsBossDead())
-            {
-                bossWasDefeated = true;
-                DeactivateArena();
-                Log("🏆 Босс побеждён! Арена открыта.");
-            }
+            bossWasDefeated = true;
+            DeactivateArena();
         }
     }
 
-    /// <summary>
-    /// Проверяет состояние стен
-    /// </summary>
-    void CheckWallsState()
-    {
-        Log("Проверка стен:");
-        
-        GameObject[] allWalls = { wallNorth, wallSouth, wallEast, wallWest };
-        
-        for (int i = 0; i < allWalls.Length; i++)
-        {
-            if (allWalls[i] != null)
-            {
-                bool isActive = allWalls[i].activeSelf;
-                Log($"  Стена {i}: {(isActive ? "АКТИВНА ❌" : "выключена ✅")}");
-                
-                if (isActive)
-                {
-                    Log($"  ⚠️ ВНИМАНИЕ: Стена {i} активна! Это проблема!");
-                }
-            }
-            else
-            {
-                Log($"  Стена {i}: НЕ НАЗНАЧЕНА ⚠️");
-            }
-        }
-    }
-
-    /// <summary>
-    /// Ищет Health у босса
-    /// </summary>
-    void FindBossHealth()
+    private void FindBossHealth()
     {
         if (boss == null)
         {
-            Log("⚠️ Босс не назначен! Найди босса и перетащи в поле Boss.");
+            Log("Boss not assigned!");
             return;
         }
-        
+
         if (bossHealth == null)
-        {
             bossHealth = boss.GetComponent<Health>();
-            
-            if (bossHealth != null)
+
+        if (bossHealth == null)
+            Log($"Health not found on boss '{boss.name}'!");
+    }
+
+    private void CacheWallColliders()
+    {
+        GameObject[] walls = { wallNorth, wallSouth, wallEast, wallWest };
+        System.Collections.Generic.List<Collider> colliders =
+            new System.Collections.Generic.List<Collider>();
+
+        foreach (var wall in walls)
+        {
+            if (wall != null)
             {
-                Log($"✅ Найден Health у босса '{boss.name}'");
-            }
-            else
-            {
-                Log($"❌ Не найден Health у босса '{boss.name}'!");
-                Log($"   Добавь компонент Health к боссу.");
+                Collider col = wall.GetComponent<Collider>();
+                if (col != null)
+                    colliders.Add(col);
             }
         }
-        else
+
+        wallColliders = colliders.ToArray();
+    }
+
+    private void DisableWallColliders()
+    {
+        GameObject[] walls = { wallNorth, wallSouth, wallEast, wallWest };
+
+        foreach (var wall in walls)
         {
-            Log($"✅ Health назначен вручную");
+            if (wall == null) continue;
+
+            Collider col = wall.GetComponent<Collider>();
+            if (col != null)
+            {
+                col.enabled = false;
+                col.isTrigger = false;
+                Log($"Wall '{wall.name}' collider DISABLED");
+            }
+
+            Renderer rend = wall.GetComponent<Renderer>();
+            if (rend != null)
+                rend.enabled = false;
         }
     }
 
-    /// <summary>
-    /// Активирует арену - включает ВСЕ стены
-    /// </summary>
+    private void EnableWallColliders()
+    {
+        GameObject[] walls = { wallNorth, wallSouth, wallEast, wallWest };
+
+        foreach (var wall in walls)
+        {
+            if (wall == null) continue;
+
+            Collider col = wall.GetComponent<Collider>();
+            if (col != null)
+            {
+                col.enabled = true;
+                col.isTrigger = false;
+                Log($"Wall '{wall.name}' collider ENABLED");
+            }
+        }
+    }
+
     public void ActivateArena()
     {
-        if (isArenaActive)
-        {
-            Log("Арена уже активна");
-            return;
-        }
+        if (isArenaActive) return;
 
-        Log("🔒 ВКЛЮЧАЮ АРЕНУ...");
-        
-        GameObject[] allWalls = { wallNorth, wallSouth, wallEast, wallWest };
-        int enabledCount = 0;
-        
-        foreach (var wall in allWalls)
-        {
-            if (wall != null)
-            {
-                wall.SetActive(true);
-                enabledCount++;
-                Log($"  ✅ Включена: {wall.name}");
-            }
-        }
-        
+        EnableWallColliders();
+
+        if (entranceTrigger != null)
+            entranceTrigger.enabled = false;
+
         isArenaActive = true;
-        Log($"🔒 Арена активирована! Включено стен: {enabledCount}");
+        Log("Arena ACTIVATED - walls are up!");
     }
 
-    /// <summary>
-    /// Деактивирует арену - выключает ВСЕ стены
-    /// </summary>
     public void DeactivateArena()
     {
-        if (!isArenaActive)
-        {
-            Log("Арена уже неактивна");
-            return;
-        }
+        if (!isArenaActive) return;
 
-        Log("🔓 ВЫКЛЮЧАЮ АРЕНУ...");
-        
-        GameObject[] allWalls = { wallNorth, wallSouth, wallEast, wallWest };
-        int disabledCount = 0;
-        
-        foreach (var wall in allWalls)
-        {
-            if (wall != null)
-            {
-                wall.SetActive(false);
-                disabledCount++;
-                Log($"  ✅ Выключена: {wall.name}");
-            }
-        }
-        
+        DisableWallColliders();
+
+        if (entranceTrigger != null)
+            entranceTrigger.enabled = false;
+
         isArenaActive = false;
-        Log($"🔓 Арена деактивирована! Выключено стен: {disabledCount}");
+        Log("Arena DEACTIVATED - walls are down!");
     }
 
-    /// <summary>
-    /// Триггер - игрок вошёл
-    /// </summary>
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            Log($" Игрок вошёл в триггер!");
-            Log($"  Игрок: {other.name}");
-            Log($"  Позиция: {other.transform.position}");
-            ActivateArena();
-        }
+        if (!other.CompareTag("Player")) return;
+        if (bossWasDefeated) return;
+
+        Log($"Player '{other.name}' entered arena trigger!");
+        ActivateArena();
     }
 
-    /// <summary>
-    /// Триггер - игрок вышел (опционально)
-    /// </summary>
-    void OnTriggerExit(Collider other)
+    private bool IsBossDead()
     {
-        if (other.CompareTag("Player"))
-        {
-            Log($"🚶 Игрок вышел из триггера");
-            // Можно добавить логику если нужно
-        }
-    }
-
-    /// <summary>
-    /// Проверяет мёртв ли босс
-    /// </summary>
-    bool IsBossDead()
-    {
-        if (boss == null)
-        {
-            Log("⚠️ Босс = null (уничтожен)");
-            return true;
-        }
-        
-        if (!boss.activeInHierarchy)
-        {
-            Log("⚠️ Босс неактивен");
-            return true;
-        }
-        
-        if (bossHealth != null)
-        {
-            bool isDead = bossHealth.IsDead;
-            if (isDead)
-            {
-                Log("✅ Босс мёртв (Health.IsDead = true)");
-            }
-            return isDead;
-        }
-        
+        if (boss == null) return true;
+        if (!boss.activeInHierarchy) return true;
+        if (bossHealth != null) return bossHealth.IsDead;
         return false;
     }
 
-    /// <summary>
-    /// Логирование
-    /// </summary>
-    void Log(string message)
+    private void Log(string message)
     {
         if (debugMode)
-        {
             Debug.Log($"[BossArena] {message}");
-        }
     }
 
-    /// <summary>
-    /// Визуальная отладка в Scene View
-    /// </summary>
     void OnDrawGizmos()
     {
-        // Красная рамка = границы арены
-        Gizmos.color = Color.red;
-        
-        // Рисуем примерные границы (если стены назначены)
-        if (wallNorth != null && wallSouth != null && wallEast != null && wallWest != null)
+        if (entranceTrigger != null)
         {
-            // Север-юг
+            Gizmos.color = gizmoTriggerColor;
+
+            if (entranceTrigger is BoxCollider box)
+            {
+                Gizmos.matrix = entranceTrigger.transform.localToWorldMatrix;
+                Gizmos.DrawCube(box.center, box.size);
+            }
+            else if (entranceTrigger is SphereCollider sphere)
+            {
+                Gizmos.DrawWireSphere(
+                    entranceTrigger.transform.position + sphere.center,
+                    sphere.radius);
+            }
+        }
+
+        Gizmos.color = gizmoWallColor;
+        GameObject[] walls = { wallNorth, wallSouth, wallEast, wallWest };
+
+        for (int i = 0; i < walls.Length; i++)
+        {
+            if (walls[i] == null) continue;
+            Collider col = walls[i].GetComponent<Collider>();
+
+            if (col is BoxCollider wallBox)
+            {
+                Gizmos.matrix = walls[i].transform.localToWorldMatrix;
+                Gizmos.DrawWireCube(wallBox.center, wallBox.size);
+            }
+            else if (col != null)
+            {
+                Gizmos.DrawWireSphere(walls[i].transform.position, 0.5f);
+            }
+        }
+
+        if (wallNorth != null && wallSouth != null &&
+            wallEast != null && wallWest != null)
+        {
+            Gizmos.color = Color.red;
             Gizmos.DrawLine(wallNorth.transform.position, wallEast.transform.position);
             Gizmos.DrawLine(wallEast.transform.position, wallSouth.transform.position);
             Gizmos.DrawLine(wallSouth.transform.position, wallWest.transform.position);

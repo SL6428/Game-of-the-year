@@ -1,12 +1,10 @@
-Assets\Scripts\HealthUI.cs(35,28): warning CS0618: 'Object.FindObjectOfType<T>()' is obsolete: 'Object.FindObjectOfType has been deprecated. Use Object.FindFirstObjectByType instead or if finding any instance is acceptable the faster Object.FindAnyObjectByType'
+Assets\Scripts\LevelUpShrine.cs(123,36): error CS0246: The type or namespace name 'CanvasScaler' could not be found (are you missing a using directive or an assembly reference?)
 
-Assets\Scripts\FPSDisplay.cs(33,13): error CS0246: The type or namespace name 'CanvasScaler' could not be found (are you missing a using directive or an assembly reference?)
+Assets\Scripts\LevelUpShrine.cs(124,17): error CS0103: The name 'CanvasScaler' does not exist in the current context
 
-Assets\Scripts\FPSDisplay.cs(33,58): error CS0246: The type or namespace name 'CanvasScaler' could not be found (are you missing a using directive or an assembly reference?)
+Assets\Scripts\LevelUpShrine.cs(125,37): error CS0246: The type or namespace name 'CanvasScaler' could not be found (are you missing a using directive or an assembly reference?)
 
-Assets\Scripts\FPSDisplay.cs(34,34): error CS0103: The name 'CanvasScaler' does not exist in the current context
+Assets\Scripts\LevelUpShrine.cs(140,9): error CS0246: The type or namespace name 'Image' could not be found (are you missing a using directive or an assembly reference?)
 
-Assets\Scripts\Weapon.cs(86,28): warning CS0618: 'Object.FindObjectOfType<T>()' is obsolete: 'Object.FindObjectOfType has been deprecated. Use Object.FindFirstObjectByType instead or if finding any instance is acceptable the faster Object.FindAnyObjectByType'
-
-Assets\Scripts\SettingsManager.cs(212,9): warning CS0618: 'Screen.SetResolution(int, int, FullScreenMode, int)' is obsolete: 'SetResolution(int, int, FullScreenMode, int) is obsolete. Use SetResolution(int, int, FullScreenMode, RefreshRate) instead.'
+Assets\Scripts\LevelUpShrine.cs(140,39): error CS0246: The type or namespace name 'Image' could not be found (are you missing a using directive or an assembly reference?)
 
