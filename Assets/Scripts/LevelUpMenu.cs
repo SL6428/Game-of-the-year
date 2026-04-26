@@ -1,162 +1,173 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems;
+using System;
 
 public class LevelUpMenu : MonoBehaviour
 {
-    private static LevelUpMenu _instance;
-    public static bool IsOpen => _instance != null && _instance.isOpen;
+    public static LevelUpMenu Instance { get; private set; }
+    public static bool IsOpen => Instance != null && Instance._isOpen;
+    public static bool JustClosed { get; private set; }
 
-    private bool isOpen;
-
-    private const int STAT_COUNT = 6;
+    private CanvasGroup cg;
+    private bool _isOpen;
+    private bool built;
+    private bool buttonsBound;
 
     private TextMeshProUGUI soulLevelText;
     private TextMeshProUGUI currencyText;
     private TextMeshProUGUI totalCostText;
 
-    private TextMeshProUGUI[] nameTexts = new TextMeshProUGUI[STAT_COUNT];
-    private TextMeshProUGUI[] levelTexts = new TextMeshProUGUI[STAT_COUNT];
-    private TextMeshProUGUI[] costTexts = new TextMeshProUGUI[STAT_COUNT];
-    private TextMeshProUGUI[] bonusTexts = new TextMeshProUGUI[STAT_COUNT];
-    private Button[] plusButtons = new Button[STAT_COUNT];
-    private Button[] minusButtons = new Button[STAT_COUNT];
-
+    private TextMeshProUGUI[] nameTexts = new TextMeshProUGUI[6];
+    private TextMeshProUGUI[] bonusTexts = new TextMeshProUGUI[6];
+    private TextMeshProUGUI[] levelTexts = new TextMeshProUGUI[6];
+    private TextMeshProUGUI[] costTexts = new TextMeshProUGUI[6];
+    private Button[] plusButtons = new Button[6];
+    private Button[] minusButtons = new Button[6];
     private Button confirmButton;
     private Button resetButton;
     private Button closeButton;
 
-    private int[] plannedLevels = new int[STAT_COUNT];
-    private int[] savedLevels = new int[STAT_COUNT];
+    private int[] planned = new int[6];
+    private int[] saved = new int[6];
+    private const int MAX_LVL = 99;
 
-    public static void Show()
+    void Awake()
     {
-        if (_instance == null)
-            CreateInstance();
-        _instance.Open();
+        Instance = this;
+        cg = GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = gameObject.AddComponent<CanvasGroup>();
+
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+        _isOpen = false;
     }
 
-    public static void Hide()
+    void OnDestroy()
     {
-        if (_instance != null)
-            _instance.Close();
-    }
-
-    private static void CreateInstance()
-    {
-        if (FindFirstObjectByType<EventSystem>() == null)
-        {
-            GameObject esObj = new GameObject("EventSystem");
-            esObj.AddComponent<EventSystem>();
-            esObj.AddComponent<StandaloneInputModule>();
-        }
-
-        GameObject obj = new GameObject("LevelUpMenu");
-
-        Canvas canvas = obj.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 200;
-
-        CanvasScaler scaler = obj.AddComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920, 1080);
-
-        obj.AddComponent<GraphicRaycaster>();
-
-        _instance = obj.AddComponent<LevelUpMenu>();
-        _instance.BuildUI();
-        obj.SetActive(false);
+        if (Instance == this) Instance = null;
+        if (_isOpen) RestoreGame();
     }
 
     void Update()
     {
-        if (isOpen && Input.GetKeyDown(KeyCode.Escape))
-            Close();
+        if (JustClosed)
+        {
+            JustClosed = false;
+            return;
+        }
+        if (!_isOpen) return;
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Hide();
     }
 
-    private void Open()
+    public void Open()
     {
-        PlayerStats stats = PlayerStats.Instance;
-        if (stats == null) return;
-
-        for (int i = 0; i < STAT_COUNT; i++)
+        var s = PlayerStats.Instance;
+        if (s == null)
         {
-            savedLevels[i] = stats.GetStatLevel((StatType)i);
-            plannedLevels[i] = savedLevels[i];
+            Debug.LogError("[LevelUpMenu] PlayerStats.Instance is NULL!");
+            return;
         }
 
-        gameObject.SetActive(true);
-        isOpen = true;
+        if (!built)
+        {
+            RectTransform rt = GetComponent<RectTransform>();
+            if (rt == null) rt = GetComponentInChildren<RectTransform>(true);
+            if (rt != null)
+                Build(rt);
+            else
+            {
+                Debug.LogError("[LevelUpMenu] No RectTransform found!");
+                return;
+            }
+        }
+
+        for (int i = 0; i < 6; i++)
+        {
+            saved[i] = s.GetStatLevel((StatType)i);
+            planned[i] = saved[i];
+        }
+
+        if (!buttonsBound)
+        {
+            BindButtons();
+            buttonsBound = true;
+        }
+
+        cg.alpha = 1f;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+        _isOpen = true;
 
         Time.timeScale = 0f;
-
-        PlayerController pc = FindFirstObjectByType<PlayerController>();
+        var pc = FindFirstObjectByType<PlayerController>();
         if (pc != null) pc.enabled = false;
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        RefreshDisplay();
+        Refresh();
     }
 
-    private void Close()
+    public void Hide()
     {
-        isOpen = false;
-        gameObject.SetActive(false);
+        _isOpen = false;
+        JustClosed = true;
+        RestoreGame();
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+    }
 
+    private void RestoreGame()
+    {
         Time.timeScale = 1f;
-
-        PlayerController pc = FindFirstObjectByType<PlayerController>();
+        var pc = FindFirstObjectByType<PlayerController>();
         if (pc != null) pc.enabled = true;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    private void BuildUI()
+    private void Build(RectTransform panel)
     {
-        GameObject panel = new GameObject("MenuPanel");
-        panel.transform.SetParent(transform, false);
-
-        RectTransform panelRt = panel.AddComponent<RectTransform>();
-        panelRt.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRt.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRt.pivot = new Vector2(0.5f, 0.5f);
-        panelRt.anchoredPosition = Vector2.zero;
-        panelRt.sizeDelta = new Vector2(500, 620);
-
-        Image bg = panel.AddComponent<Image>();
-        bg.color = new Color(0.05f, 0.05f, 0.1f, 0.95f);
+        for (int i = panel.childCount - 1; i >= 0; i--)
+        {
+            Transform child = panel.GetChild(i);
+            if (child.GetComponent<Image>() != null && child.GetComponent<Button>() == null)
+                continue;
+            Destroy(child.gameObject);
+        }
 
         float y = -25f;
 
-        soulLevelText = MakeText("SoulLevel", panel.transform, new Vector2(0, y), new Vector2(-40, 25));
+        soulLevelText = MakeText("SoulLevel", panel, new Vector2(0, y), new Vector2(-40, 25));
         soulLevelText.fontSize = 22;
         soulLevelText.color = Color.white;
         soulLevelText.alignment = TextAlignmentOptions.Center;
         y -= 35f;
 
-        currencyText = MakeText("Currency", panel.transform, new Vector2(0, y), new Vector2(-40, 25));
+        currencyText = MakeText("Currency", panel, new Vector2(0, y), new Vector2(-40, 25));
         currencyText.fontSize = 20;
         currencyText.color = new Color(1f, 0.85f, 0.3f);
         currencyText.alignment = TextAlignmentOptions.Center;
         y -= 45f;
 
-        for (int i = 0; i < STAT_COUNT; i++)
+        for (int i = 0; i < 6; i++)
         {
-            BuildStatRow(i, panel.transform, y);
+            BuildRow(i, panel, y);
             y -= 70f;
         }
 
-        totalCostText = MakeText("TotalCost", panel.transform, new Vector2(0, y), new Vector2(-40, 25));
+        totalCostText = MakeText("TotalCost", panel, new Vector2(0, y), new Vector2(-40, 25));
         totalCostText.fontSize = 20;
         totalCostText.color = new Color(1f, 0.9f, 0.5f);
         totalCostText.alignment = TextAlignmentOptions.Center;
         y -= 40f;
 
         GameObject btnRow = new GameObject("Buttons");
-        btnRow.transform.SetParent(panel.transform, false);
+        btnRow.transform.SetParent(panel, false);
         RectTransform btnRt = btnRow.AddComponent<RectTransform>();
         btnRt.anchorMin = new Vector2(0, 1);
         btnRt.anchorMax = new Vector2(1, 1);
@@ -164,90 +175,82 @@ public class LevelUpMenu : MonoBehaviour
         btnRt.anchoredPosition = new Vector2(0, y);
         btnRt.sizeDelta = new Vector2(-40f, 40f);
 
-        confirmButton = MakeButton(btnRow.transform, "ConfirmBtn", "Подтвердить", new Vector2(-170f, 0), new Vector2(100f, 35f));
-        confirmButton.onClick.AddListener(OnConfirmClicked);
+        confirmButton = MakeButton(btnRow.transform, "ConfirmBtn", "Confirm", new Vector2(-150f, 0), new Vector2(110f, 35f));
+        resetButton = MakeButton(btnRow.transform, "ResetBtn", "Reset", new Vector2(0f, 0), new Vector2(80f, 35f));
+        closeButton = MakeButton(btnRow.transform, "CloseBtn", "Close", new Vector2(150f, 0), new Vector2(80f, 35f));
 
-        resetButton = MakeButton(btnRow.transform, "ResetBtn", "Сброс", new Vector2(0f, 0), new Vector2(80f, 35f));
-        resetButton.onClick.AddListener(OnResetClicked);
-
-        closeButton = MakeButton(btnRow.transform, "CloseBtn", "Закрыть", new Vector2(170f, 0), new Vector2(80f, 35f));
-        closeButton.onClick.AddListener(OnCloseClicked);
+        built = true;
     }
 
-    private void BuildStatRow(int index, Transform parent, float yPos)
+    private void BuildRow(int idx, Transform parent, float yPos)
     {
-        GameObject row = new GameObject($"StatRow_{index}");
+        GameObject row = new GameObject($"StatRow_{idx}");
         row.transform.SetParent(parent, false);
 
-        RectTransform rowRt = row.AddComponent<RectTransform>();
-        rowRt.anchorMin = new Vector2(0, 1);
-        rowRt.anchorMax = new Vector2(1, 1);
-        rowRt.pivot = new Vector2(0, 1);
-        rowRt.anchoredPosition = new Vector2(20f, yPos);
-        rowRt.sizeDelta = new Vector2(-40f, 55f);
+        RectTransform rt = row.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0, 1);
+        rt.anchorMax = new Vector2(1, 1);
+        rt.pivot = new Vector2(0, 1);
+        rt.anchoredPosition = new Vector2(20f, yPos);
+        rt.sizeDelta = new Vector2(-40f, 55f);
 
         GameObject nameObj = new GameObject("Name");
         nameObj.transform.SetParent(row.transform, false);
-        RectTransform nameRt = nameObj.AddComponent<RectTransform>();
-        nameRt.anchorMin = new Vector2(0, 0.6f);
-        nameRt.anchorMax = new Vector2(0.5f, 1f);
-        nameRt.offsetMin = Vector2.zero;
-        nameRt.offsetMax = Vector2.zero;
-        nameTexts[index] = nameObj.AddComponent<TextMeshProUGUI>();
-        nameTexts[index].fontSize = 18;
-        nameTexts[index].color = Color.white;
-        nameTexts[index].alignment = TextAlignmentOptions.Left;
-        nameTexts[index].raycastTarget = false;
+        RectTransform nRt = nameObj.AddComponent<RectTransform>();
+        nRt.anchorMin = new Vector2(0, 0.6f);
+        nRt.anchorMax = new Vector2(0.5f, 1f);
+        nRt.offsetMin = Vector2.zero;
+        nRt.offsetMax = Vector2.zero;
+        nameTexts[idx] = nameObj.AddComponent<TextMeshProUGUI>();
+        nameTexts[idx].fontSize = 18;
+        nameTexts[idx].color = Color.white;
+        nameTexts[idx].alignment = TextAlignmentOptions.Left;
+        nameTexts[idx].raycastTarget = false;
 
         GameObject bonusObj = new GameObject("Bonus");
         bonusObj.transform.SetParent(row.transform, false);
-        RectTransform bonusRt = bonusObj.AddComponent<RectTransform>();
-        bonusRt.anchorMin = new Vector2(0, 0f);
-        bonusRt.anchorMax = new Vector2(0.5f, 0.55f);
-        bonusRt.offsetMin = Vector2.zero;
-        bonusRt.offsetMax = Vector2.zero;
-        bonusTexts[index] = bonusObj.AddComponent<TextMeshProUGUI>();
-        bonusTexts[index].fontSize = 12;
-        bonusTexts[index].color = new Color(0.7f, 0.7f, 0.7f);
-        bonusTexts[index].alignment = TextAlignmentOptions.Left;
-        bonusTexts[index].raycastTarget = false;
+        RectTransform bRt = bonusObj.AddComponent<RectTransform>();
+        bRt.anchorMin = new Vector2(0, 0f);
+        bRt.anchorMax = new Vector2(0.5f, 0.55f);
+        bRt.offsetMin = Vector2.zero;
+        bRt.offsetMax = Vector2.zero;
+        bonusTexts[idx] = bonusObj.AddComponent<TextMeshProUGUI>();
+        bonusTexts[idx].fontSize = 12;
+        bonusTexts[idx].color = new Color(0.7f, 0.7f, 0.7f);
+        bonusTexts[idx].alignment = TextAlignmentOptions.Left;
+        bonusTexts[idx].raycastTarget = false;
 
-        GameObject levelObj = new GameObject("Level");
-        levelObj.transform.SetParent(row.transform, false);
-        RectTransform levelRt = levelObj.AddComponent<RectTransform>();
-        levelRt.anchorMin = new Vector2(0.5f, 0.6f);
-        levelRt.anchorMax = new Vector2(0.7f, 1f);
-        levelRt.offsetMin = Vector2.zero;
-        levelRt.offsetMax = Vector2.zero;
-        levelTexts[index] = levelObj.AddComponent<TextMeshProUGUI>();
-        levelTexts[index].fontSize = 18;
-        levelTexts[index].color = Color.white;
-        levelTexts[index].alignment = TextAlignmentOptions.Center;
-        levelTexts[index].raycastTarget = false;
+        GameObject lvlObj = new GameObject("Level");
+        lvlObj.transform.SetParent(row.transform, false);
+        RectTransform lRt = lvlObj.AddComponent<RectTransform>();
+        lRt.anchorMin = new Vector2(0.5f, 0.6f);
+        lRt.anchorMax = new Vector2(0.7f, 1f);
+        lRt.offsetMin = Vector2.zero;
+        lRt.offsetMax = Vector2.zero;
+        levelTexts[idx] = lvlObj.AddComponent<TextMeshProUGUI>();
+        levelTexts[idx].fontSize = 18;
+        levelTexts[idx].color = Color.white;
+        levelTexts[idx].alignment = TextAlignmentOptions.Center;
+        levelTexts[idx].raycastTarget = false;
 
-        minusButtons[index] = MakeButton(row.transform, "MinusBtn", "<", new Vector2(-60f, -20f), new Vector2(30f, 30f));
-        int minusIdx = index;
-        minusButtons[index].onClick.AddListener(() => OnMinusClicked(minusIdx));
-
-        plusButtons[index] = MakeButton(row.transform, "PlusBtn", ">", new Vector2(60f, -20f), new Vector2(30f, 30f));
-        int plusIdx = index;
-        plusButtons[index].onClick.AddListener(() => OnPlusClicked(plusIdx));
+        minusButtons[idx] = MakeButton(row.transform, "MinusBtn", "<", new Vector2(-60f, -20f), new Vector2(30f, 30f));
+        plusButtons[idx] = MakeButton(row.transform, "PlusBtn", ">", new Vector2(60f, -20f), new Vector2(30f, 30f));
 
         GameObject costObj = new GameObject("Cost");
         costObj.transform.SetParent(row.transform, false);
-        RectTransform costRt = costObj.AddComponent<RectTransform>();
-        costRt.anchorMin = new Vector2(0.72f, 0f);
-        costRt.anchorMax = new Vector2(1f, 1f);
-        costRt.offsetMin = Vector2.zero;
-        costRt.offsetMax = Vector2.zero;
-        costTexts[index] = costObj.AddComponent<TextMeshProUGUI>();
-        costTexts[index].fontSize = 15;
-        costTexts[index].color = new Color(1f, 0.85f, 0.3f);
-        costTexts[index].alignment = TextAlignmentOptions.Right;
-        costTexts[index].raycastTarget = false;
+        RectTransform cRt = costObj.AddComponent<RectTransform>();
+        cRt.anchorMin = new Vector2(0.72f, 0f);
+        cRt.anchorMax = new Vector2(1f, 1f);
+        cRt.offsetMin = Vector2.zero;
+        cRt.offsetMax = Vector2.zero;
+        costTexts[idx] = costObj.AddComponent<TextMeshProUGUI>();
+        costTexts[idx].fontSize = 15;
+        costTexts[idx].color = new Color(1f, 0.85f, 0.3f);
+        costTexts[idx].alignment = TextAlignmentOptions.Right;
+        costTexts[idx].raycastTarget = false;
     }
 
-    private TextMeshProUGUI MakeText(string name, Transform parent, Vector2 anchoredPos, Vector2 sizeDelta)
+    private TextMeshProUGUI MakeText(string name, Transform parent, Vector2 pos, Vector2 size)
     {
         GameObject obj = new GameObject(name);
         obj.transform.SetParent(parent, false);
@@ -255,43 +258,43 @@ public class LevelUpMenu : MonoBehaviour
         rt.anchorMin = new Vector2(0, 1);
         rt.anchorMax = new Vector2(1, 1);
         rt.pivot = new Vector2(0.5f, 1);
-        rt.anchoredPosition = anchoredPos;
-        rt.sizeDelta = sizeDelta;
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = size;
         return obj.AddComponent<TextMeshProUGUI>();
     }
 
     private Button MakeButton(Transform parent, string name, string label, Vector2 pos, Vector2 size)
     {
-        GameObject btnObj = new GameObject(name);
-        btnObj.transform.SetParent(parent, false);
+        GameObject obj = new GameObject(name);
+        obj.transform.SetParent(parent, false);
 
-        RectTransform rt = btnObj.AddComponent<RectTransform>();
+        RectTransform rt = obj.AddComponent<RectTransform>();
         rt.anchorMin = new Vector2(0.5f, 0.5f);
         rt.anchorMax = new Vector2(0.5f, 0.5f);
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = pos;
         rt.sizeDelta = size;
 
-        Image img = btnObj.AddComponent<Image>();
+        Image img = obj.AddComponent<Image>();
         img.color = new Color(0.3f, 0.3f, 0.4f, 0.9f);
 
-        Button btn = btnObj.AddComponent<Button>();
+        Button btn = obj.AddComponent<Button>();
         btn.targetGraphic = img;
 
-        ColorBlock colors = btn.colors;
-        colors.highlightedColor = new Color(0.5f, 0.5f, 0.6f);
-        colors.pressedColor = new Color(0.2f, 0.2f, 0.3f);
-        btn.colors = colors;
+        ColorBlock cb = btn.colors;
+        cb.highlightedColor = new Color(0.5f, 0.5f, 0.6f);
+        cb.pressedColor = new Color(0.2f, 0.2f, 0.3f);
+        btn.colors = cb;
 
-        GameObject labelObj = new GameObject("Label");
-        labelObj.transform.SetParent(btnObj.transform, false);
-        RectTransform labelRt = labelObj.AddComponent<RectTransform>();
-        labelRt.anchorMin = Vector2.zero;
-        labelRt.anchorMax = Vector2.one;
-        labelRt.offsetMin = Vector2.zero;
-        labelRt.offsetMax = Vector2.zero;
+        GameObject lbl = new GameObject("Label");
+        lbl.transform.SetParent(obj.transform, false);
+        RectTransform lRt = lbl.AddComponent<RectTransform>();
+        lRt.anchorMin = Vector2.zero;
+        lRt.anchorMax = Vector2.one;
+        lRt.offsetMin = Vector2.zero;
+        lRt.offsetMax = Vector2.zero;
 
-        TextMeshProUGUI tmp = labelObj.AddComponent<TextMeshProUGUI>();
+        TextMeshProUGUI tmp = lbl.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
         tmp.fontSize = 14;
         tmp.color = Color.white;
@@ -301,75 +304,84 @@ public class LevelUpMenu : MonoBehaviour
         return btn;
     }
 
-    private void OnPlusClicked(int index)
+    private void BindButtons()
     {
-        plannedLevels[index]++;
-        RefreshDisplay();
-    }
-
-    private void OnMinusClicked(int index)
-    {
-        if (plannedLevels[index] > savedLevels[index])
+        for (int i = 0; i < 6; i++)
         {
-            plannedLevels[index]--;
-            RefreshDisplay();
+            int idx = i;
+            if (plusButtons[i] != null)
+                plusButtons[i].onClick.AddListener(() => OnPlus(idx));
+            if (minusButtons[i] != null)
+                minusButtons[i].onClick.AddListener(() => OnMinus(idx));
         }
+        if (confirmButton != null) confirmButton.onClick.AddListener(OnConfirm);
+        if (resetButton != null) resetButton.onClick.AddListener(OnReset);
+        if (closeButton != null) closeButton.onClick.AddListener(OnClose);
     }
 
-    private void OnConfirmClicked()
+    private void OnPlus(int i) { if (planned[i] < MAX_LVL) { planned[i]++; Refresh(); } }
+    private void OnMinus(int i) { if (planned[i] > saved[i]) { planned[i]--; Refresh(); } }
+
+    private void OnConfirm()
     {
-        PlayerStats stats = PlayerStats.Instance;
-        if (stats == null) return;
-
-        int totalCost = CalculateTotalCost();
-        if (stats.Currency < totalCost) return;
-
-        for (int i = 0; i < STAT_COUNT; i++)
+        var s = PlayerStats.Instance;
+        if (s == null)
         {
-            StatType type = (StatType)i;
-            int current = stats.GetStatLevel(type);
-            while (current < plannedLevels[i])
+            Debug.LogError("[LevelUpMenu] OnConfirm: PlayerStats is NULL!");
+            return;
+        }
+
+        int total = CalcTotalCost();
+        Debug.Log($"[LevelUpMenu] OnConfirm: currency={s.Currency}, totalCost={total}, planned=[{planned[0]},{planned[1]},{planned[2]},{planned[3]},{planned[4]},{planned[5]}]");
+
+        if (s.Currency < total)
+        {
+            Debug.LogWarning($"[LevelUpMenu] Not enough currency! Have {s.Currency}, need {total}");
+            return;
+        }
+
+        for (int i = 0; i < 6; i++)
+        {
+            StatType t = (StatType)i;
+            int cur = s.GetStatLevel(t);
+            while (cur < planned[i])
             {
-                if (!stats.LevelUpStat(type)) break;
-                current++;
+                bool ok = s.LevelUpStat(t);
+                Debug.Log($"[LevelUpMenu] LevelUpStat({t}): cur={cur}, planned={planned[i]}, success={ok}");
+                if (!ok) break;
+                cur++;
             }
         }
-
-        for (int i = 0; i < STAT_COUNT; i++)
-            savedLevels[i] = stats.GetStatLevel((StatType)i);
-
-        RefreshDisplay();
+        for (int i = 0; i < 6; i++)
+            saved[i] = s.GetStatLevel((StatType)i);
+        Refresh();
     }
 
-    private void OnResetClicked()
+    private void OnReset()
     {
-        for (int i = 0; i < STAT_COUNT; i++)
-            plannedLevels[i] = savedLevels[i];
-        RefreshDisplay();
+        for (int i = 0; i < 6; i++) planned[i] = saved[i];
+        Refresh();
     }
 
-    private void OnCloseClicked()
-    {
-        Close();
-    }
+    private void OnClose() { Hide(); }
 
-    private void RefreshDisplay()
+    private void Refresh()
     {
-        PlayerStats stats = PlayerStats.Instance;
-        if (stats == null) return;
+        var s = PlayerStats.Instance;
+        if (s == null) return;
 
         if (soulLevelText != null)
-            soulLevelText.text = $"Уровень души: {stats.SoulLevel}";
+            soulLevelText.text = $"Soul Level: {s.SoulLevel}";
         if (currencyText != null)
-            currencyText.text = $"Души: {stats.Currency:N0}";
+            currencyText.text = $"Souls: {s.Currency:N0}";
 
         int totalCost = 0;
 
-        for (int i = 0; i < STAT_COUNT; i++)
+        for (int i = 0; i < 6; i++)
         {
-            int currentLevel = stats.GetStatLevel((StatType)i);
-            int planned = plannedLevels[i];
-            int diff = planned - currentLevel;
+            int cur = s.GetStatLevel((StatType)i);
+            int pln = planned[i];
+            int diff = pln - cur;
 
             if (nameTexts[i] != null)
                 nameTexts[i].text = PlayerStats.StatNames[i];
@@ -378,68 +390,56 @@ public class LevelUpMenu : MonoBehaviour
                 bonusTexts[i].text = PlayerStats.StatDescriptions[i];
 
             if (levelTexts[i] != null)
+                levelTexts[i].text = diff > 0
+                    ? $"{cur} -> <color=#FFD700>{pln}</color>"
+                    : cur.ToString();
+
+            int statCost = 0, ts = s.SoulLevel, tl = cur;
+            for (int j = cur; j < pln; j++)
             {
-                if (diff > 0)
-                    levelTexts[i].text = $"{currentLevel} → <color=#FFD700>{planned}</color>";
-                else
-                    levelTexts[i].text = currentLevel.ToString();
+                float c = s.BaseCurrencyCost
+                    * (1f + s.SoulLevelCostRate * (ts - s.StartSoulLevel))
+                    * (1f + s.StatLevelCostRate * (tl - s.BaseStatLevel));
+                int r = Mathf.Max(1, Mathf.RoundToInt(c));
+                statCost += r; totalCost += r; ts++; tl++;
             }
 
-            int cost = CalculateStatCost(i);
-            if (diff > 0) totalCost += cost;
-
             if (costTexts[i] != null)
-                costTexts[i].text = diff > 0 ? cost.ToString() : "";
+                costTexts[i].text = diff > 0 ? $"{statCost}" : "";
 
+            if (plusButtons[i] != null)
+                plusButtons[i].interactable = pln < MAX_LVL;
             if (minusButtons[i] != null)
                 minusButtons[i].interactable = diff > 0;
         }
 
         if (totalCostText != null)
-            totalCostText.text = totalCost > 0 ? $"Итого: {totalCost:N0} душ" : "";
+            totalCostText.text = totalCost > 0 ? $"Total: {totalCost} souls" : "";
 
         if (confirmButton != null)
-            confirmButton.interactable = totalCost > 0 && stats.Currency >= totalCost;
+            confirmButton.interactable = totalCost > 0 && s.Currency >= totalCost;
 
         if (resetButton != null)
             resetButton.interactable = totalCost > 0;
     }
 
-    private int CalculateTotalCost()
+    private int CalcTotalCost()
     {
-        int total = 0;
-        for (int i = 0; i < STAT_COUNT; i++)
-            total += CalculateStatCost(i);
-        return total;
-    }
-
-    private int CalculateStatCost(int statIndex)
-    {
-        PlayerStats stats = PlayerStats.Instance;
-        if (stats == null) return 0;
-
-        int current = stats.GetStatLevel((StatType)statIndex);
-        int planned = plannedLevels[statIndex];
-        if (planned <= current) return 0;
-
-        int total = 0;
-        int tempSoul = stats.SoulLevel;
-        int tempStat = current;
-
-        for (int j = current; j < planned; j++)
+        var s = PlayerStats.Instance;
+        if (s == null) return 0;
+        int total = 0, ts = s.SoulLevel;
+        for (int i = 0; i < 6; i++)
         {
-            int soulAboveStart = tempSoul - stats.StartSoulLevel;
-            int statAboveBase = tempStat - stats.BaseStatLevel;
-
-            float cost = stats.BaseCurrencyCost
-                * (1f + stats.SoulLevelCostRate * soulAboveStart)
-                * (1f + stats.StatLevelCostRate * statAboveBase);
-
-            total += Mathf.Max(1, Mathf.RoundToInt(cost));
-            tempSoul++;
-            tempStat++;
+            int cur = s.GetStatLevel((StatType)i), tl = cur;
+            for (int j = cur; j < planned[i]; j++)
+            {
+                float c = s.BaseCurrencyCost
+                    * (1f + s.SoulLevelCostRate * (ts - s.StartSoulLevel))
+                    * (1f + s.StatLevelCostRate * (tl - s.BaseStatLevel));
+                total += Mathf.Max(1, Mathf.RoundToInt(c)); ts++; tl++;
+            }
         }
-
         return total;
     }
 }
+

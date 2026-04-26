@@ -66,6 +66,7 @@ public class GameMenu : MonoBehaviour
     void Update()
     {
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
+        if (LevelUpMenu.IsOpen || LevelUpMenu.JustClosed) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

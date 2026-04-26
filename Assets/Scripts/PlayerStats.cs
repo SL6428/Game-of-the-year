@@ -16,6 +16,14 @@ public class PlayerStats : MonoBehaviour
 {
     public static PlayerStats Instance { get; private set; }
 
+    public static void EnsureExists()
+    {
+        if (Instance != null) return;
+        GameObject obj = new GameObject("PlayerStats");
+        DontDestroyOnLoad(obj);
+        obj.AddComponent<PlayerStats>();
+    }
+
     public const int STAT_COUNT = 6;
 
     [Header("Base Settings")]
@@ -113,7 +121,6 @@ public class PlayerStats : MonoBehaviour
 
     void Start()
     {
-        EnsureCurrencyUI();
         ApplyStatBonuses();
         SubscribePlayerDefense();
     }
@@ -130,7 +137,6 @@ public class PlayerStats : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        EnsureCurrencyUI();
         ApplyStatBonuses();
         SubscribePlayerDefense();
     }
@@ -146,11 +152,6 @@ public class PlayerStats : MonoBehaviour
             health.OnModifyIncomingDamage -= ApplyDefense;
             health.OnModifyIncomingDamage += ApplyDefense;
         }
-    }
-
-    private void EnsureCurrencyUI()
-    {
-        CurrencyUI.EnsureExists();
     }
 
     public int GetStatLevel(StatType type)
@@ -199,12 +200,9 @@ public class PlayerStats : MonoBehaviour
     {
         int modified = amount + LuckBonus;
         currency += modified;
+        SaveStats();
         OnCurrencyChanged?.Invoke(currency);
-    }
-
-    public float ModifyIncomingDamage(float damage)
-    {
-        return Mathf.Max(1f, damage - DefenseBonus);
+        Debug.Log($"[PlayerStats] AddCurrency: +{modified} (base {amount} + luck {LuckBonus}), total={currency}");
     }
 
     private float ApplyDefense(float damage)
@@ -254,5 +252,23 @@ public class PlayerStats : MonoBehaviour
         }
 
         OnCurrencyChanged?.Invoke(currency);
+    }
+
+    public void ResetAllToDefault()
+    {
+        Debug.Log("[PlayerStats] ResetAllToDefault() executing...");
+
+        currency = startingCurrency;
+        for (int i = 0; i < STAT_COUNT; i++)
+            statLevels[i] = baseStatLevel;
+
+        SaveStats();
+        ApplyStatBonuses();
+        SubscribePlayerDefense();
+
+        OnStatsChanged?.Invoke();
+        OnCurrencyChanged?.Invoke(currency);
+
+        Debug.Log("[PlayerStats] Stats and currency reset complete!");
     }
 }

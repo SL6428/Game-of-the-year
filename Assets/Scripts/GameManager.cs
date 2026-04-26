@@ -52,15 +52,25 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (LevelUpMenu.IsOpen || LevelUpMenu.JustClosed) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            Debug.Log("[GameManager] F9 pressed — resetting stats");
+            if (PlayerStats.Instance != null)
+                PlayerStats.Instance.ResetAllToDefault();
         }
     }
 
     public void TogglePause()
     {
         isPaused = !isPaused;
+        Debug.Log($"[GameManager] TogglePause -> isPaused={isPaused}");
         SetPause(isPaused);
     }
 
@@ -79,7 +89,7 @@ public class GameManager : MonoBehaviour
         if (pauseMenu != null)
             pauseMenu.SetActive(paused);
 
-        Debug.Log(paused ? "Game Paused" : "Game Resumed");
+        Debug.Log($"[GameManager] SetPause({paused}), timeScale={Time.timeScale}");
     }
 
     public bool IsGamePaused()

@@ -456,6 +456,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            Debug.Log("[PlayerController] F9 pressed — resetting stats");
+            if (PlayerStats.Instance != null)
+                PlayerStats.Instance.ResetAllToDefault();
+        }
+
         // Применяем grounded
         if (isGrounded && playerVelocity.y < 0)
             playerVelocity.y = -2f;

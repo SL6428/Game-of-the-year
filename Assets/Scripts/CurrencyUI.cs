@@ -11,33 +11,33 @@ public class CurrencyUI : MonoBehaviour
     private int displayedAmount = -1;
     private bool uiReady;
 
-    public static void EnsureExists()
+    void Awake()
     {
-        if (_instance != null) return;
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        GameObject obj = new GameObject("CurrencyCanvas");
-        DontDestroyOnLoad(obj);
-
-        Canvas canvas = obj.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 50;
-
-        CanvasScaler scaler = obj.AddComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920, 1080);
-
-        _instance = obj.AddComponent<CurrencyUI>();
+        _instance = this;
+        DontDestroyOnLoad(gameObject);
+        BuildText();
+        uiReady = true;
     }
 
-    void Start()
+    void OnDestroy()
     {
-        BuildPanel();
-        uiReady = true;
+        if (_instance == this)
+            _instance = null;
     }
 
     void Update()
     {
-        if (!uiReady || PlayerStats.Instance == null) return;
+        if (!uiReady || PlayerStats.Instance == null)
+        {
+            if (uiReady) PlayerStats.EnsureExists();
+            return;
+        }
 
         int actual = PlayerStats.Instance.Currency;
         if (actual != targetAmount)
@@ -52,48 +52,75 @@ public class CurrencyUI : MonoBehaviour
             else
             {
                 int diff = targetAmount - displayedAmount;
-                int step = Mathf.Max(1, Mathf.CeilToInt(200f * Time.unscaledDeltaTime));
+                int linear = Mathf.Max(1, Mathf.CeilToInt(200f * Time.unscaledDeltaTime));
+                int accel = Mathf.Max(1, Mathf.CeilToInt(Mathf.Abs(diff) * 2f * Time.unscaledDeltaTime));
+                int step = Mathf.Max(linear, accel);
                 if (Mathf.Abs(diff) <= step)
                     displayedAmount = targetAmount;
                 else
                     displayedAmount += (int)Mathf.Sign(diff) * step;
             }
 
-            currencyText.text = displayedAmount.ToString("N0");
+            currencyText.text = $"Души: {displayedAmount:N0}";
         }
     }
 
-    private void BuildPanel()
+    private void BuildText()
     {
-        GameObject panelObj = new GameObject("CurrencyPanel");
-        panelObj.transform.SetParent(transform, false);
+        Canvas canvas;
+        if (!TryGetComponent(out canvas))
+        {
+            canvas = gameObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 250;
 
-        RectTransform panelRt = panelObj.AddComponent<RectTransform>();
-        panelRt.anchorMin = new Vector2(1, 1);
-        panelRt.anchorMax = new Vector2(1, 1);
-        panelRt.pivot = new Vector2(1, 1);
-        panelRt.anchoredPosition = new Vector2(-20, -20);
-        panelRt.sizeDelta = new Vector2(250, 50);
+            CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+        }
 
-        Image bg = panelObj.AddComponent<Image>();
-        bg.color = new Color(0, 0, 0, 0.5f);
-        bg.raycastTarget = false;
+        TMP_FontAsset font = ResolveFont();
 
         GameObject textObj = new GameObject("CurrencyText");
-        textObj.transform.SetParent(panelObj.transform, false);
+        textObj.transform.SetParent(transform, false);
 
-        RectTransform textRt = textObj.AddComponent<RectTransform>();
-        textRt.anchorMin = Vector2.zero;
-        textRt.anchorMax = Vector2.one;
-        textRt.offsetMin = new Vector2(10, 5);
-        textRt.offsetMax = new Vector2(-10, -5);
+        RectTransform rt = textObj.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(1, 1);
+        rt.anchorMax = new Vector2(1, 1);
+        rt.pivot = new Vector2(1, 1);
+        rt.anchoredPosition = new Vector2(-20, -20);
+        rt.sizeDelta = new Vector2(300, 40);
 
         currencyText = textObj.AddComponent<TextMeshProUGUI>();
+        currencyText.font = font;
         currencyText.fontSize = 28;
         currencyText.color = new Color(1f, 0.85f, 0.3f);
         currencyText.alignment = TextAlignmentOptions.Right;
         currencyText.raycastTarget = false;
         currencyText.fontStyle = FontStyles.Bold;
-        currencyText.text = "0";
+        currencyText.outlineColor = Color.black;
+        currencyText.outlineWidth = 0.3f;
+        currencyText.text = "Души: 0";
+    }
+
+    private TMP_FontAsset ResolveFont()
+    {
+        if (TMP_Settings.defaultFontAsset != null)
+            return TMP_Settings.defaultFontAsset;
+
+        TMP_FontAsset[] fonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+        if (fonts.Length > 0) return fonts[0];
+
+        Debug.LogError("CurrencyUI: TMP font not found!");
+        return null;
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void AutoCreate()
+    {
+        if (_instance != null) return;
+        GameObject obj = new GameObject("CurrencyCanvas");
+        DontDestroyOnLoad(obj);
+        obj.AddComponent<CurrencyUI>();
     }
 }
