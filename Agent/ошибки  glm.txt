@@ -1,78 +1,16 @@
-Weapon: Коллайдер настроен - Хитбокс оружия врага, IsTrigger: True
-UnityEngine.Debug:Log (object)
-Weapon:Awake () (at Assets/Scripts/Weapon.cs:52)
-
-Weapon: Коллайдер настроен - Хитбокс оружия босса, IsTrigger: True
-UnityEngine.Debug:Log (object)
-Weapon:Awake () (at Assets/Scripts/Weapon.cs:52)
-
-Weapon: Коллайдер настроен - Хитбокс оружия ГГ, IsTrigger: True
-UnityEngine.Debug:Log (object)
-Weapon:Awake () (at Assets/Scripts/Weapon.cs:52)
-
-DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-UnityEngine.Object:DontDestroyOnLoad (UnityEngine.Object)
-PlayerStats:Awake () (at Assets/Scripts/PlayerStats.cs:110)
-
-HealthUI: Обновление HP 110 / 110
-UnityEngine.Debug:Log (object)
-HealthUI:UpdateHealthUI (single,single) (at Assets/Scripts/HealthUI.cs:89)
-Health:SetMaxHealth (single) (at Assets/Scripts/Health.cs:121)
-PlayerStats:ApplyStatBonuses () (at Assets/Scripts/PlayerStats.cs:222)
-PlayerStats:OnSceneLoaded (UnityEngine.SceneManagement.Scene,UnityEngine.SceneManagement.LoadSceneMode) (at Assets/Scripts/PlayerStats.cs:140)
-UnityEngine.SceneManagement.SceneManager:Internal_SceneLoaded (UnityEngine.SceneManagement.Scene,UnityEngine.SceneManagement.LoadSceneMode)
-
-Resume button not assigned in inspector!
+[QuickAccessUI] Sprite 'Фан эстус ОРИГ' not found! Check path Assets/Sprites/ or place in Resources/Sprites/
 UnityEngine.Debug:LogWarning (object)
-GameMenu:Start () (at Assets/Scripts/GameMenu.cs:38)
+QuickAccessUI:FindSprite (string) (at Assets/Scripts/QuickAccessUI.cs:168)
+QuickAccessUI:BuildUI () (at Assets/Scripts/QuickAccessUI.cs:93)
+QuickAccessUI:Awake () (at Assets/Scripts/QuickAccessUI.cs:26)
+UnityEngine.GameObject:AddComponent<QuickAccessUI> ()
+QuickAccessUI:AutoCreate () (at Assets/Scripts/QuickAccessUI.cs:199)
 
-HealthUI: Обновление HP 110 / 110
-UnityEngine.Debug:Log (object)
-HealthUI:UpdateHealthUI (single,single) (at Assets/Scripts/HealthUI.cs:89)
-HealthUI:Start () (at Assets/Scripts/HealthUI.cs:57)
-
-=== Weapon Start ===
-UnityEngine.Debug:Log (object)
-Weapon:Start () (at Assets/Scripts/Weapon.cs:62)
-
-weaponCollider после Awake: Хитбокс оружия врага (UnityEngine.BoxCollider)
-UnityEngine.Debug:Log (object)
-Weapon:Start () (at Assets/Scripts/Weapon.cs:63)
-
-[BossArena] Wall 'Стена на выходе' collider DISABLED
-UnityEngine.Debug:Log (object)
-BossArena:Log (string) (at Assets/Scripts/BossArena.cs:166)
-BossArena:DisableWallColliders () (at Assets/Scripts/BossArena.cs:93)
-BossArena:Start () (at Assets/Scripts/BossArena.cs:33)
-
-[BossArena] Wall 'Стена на входе' collider DISABLED
-UnityEngine.Debug:Log (object)
-BossArena:Log (string) (at Assets/Scripts/BossArena.cs:166)
-BossArena:DisableWallColliders () (at Assets/Scripts/BossArena.cs:93)
-BossArena:Start () (at Assets/Scripts/BossArena.cs:33)
-
-weaponCollider после Awake: Хитбокс оружия босса (UnityEngine.BoxCollider)
-UnityEngine.Debug:Log (object)
-Weapon:Start () (at Assets/Scripts/Weapon.cs:63)
-
-weaponCollider после Awake: Хитбокс оружия ГГ (UnityEngine.BoxCollider)
-UnityEngine.Debug:Log (object)
-Weapon:Start () (at Assets/Scripts/Weapon.cs:63)
-
-PlayerController: Added Stamina
-UnityEngine.Debug:Log (object)
-PlayerController:Start () (at Assets/Scripts/PlayerController.cs:449)
-
-[Door] 🚪 Дверь открывается...
-UnityEngine.Debug:Log (object)
-Door:OpenDoor () (at Assets/Scripts/Door.cs:153)
-Door:TryOpenDoor () (at Assets/Scripts/Door.cs:135)
-Door:Update () (at Assets/Scripts/Door.cs:117)
-
-[Door] ✅ Дверь открыта!
-UnityEngine.Debug:Log (object)
-Door:UpdateAnimation () (at Assets/Scripts/Door.cs:172)
-Door:Update () (at Assets/Scripts/Door.cs:92)
-
-Default GameObject Tag: Player already registered
+[QuickAccessUI] Sprite 'Фан эстус ЧБ' not found! Check path Assets/Sprites/ or place in Resources/Sprites/
+UnityEngine.Debug:LogWarning (object)
+QuickAccessUI:FindSprite (string) (at Assets/Scripts/QuickAccessUI.cs:168)
+QuickAccessUI:BuildUI () (at Assets/Scripts/QuickAccessUI.cs:108)
+QuickAccessUI:Awake () (at Assets/Scripts/QuickAccessUI.cs:26)
+UnityEngine.GameObject:AddComponent<QuickAccessUI> ()
+QuickAccessUI:AutoCreate () (at Assets/Scripts/QuickAccessUI.cs:199)
 

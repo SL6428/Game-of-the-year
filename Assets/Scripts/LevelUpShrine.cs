@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems;
 
 public class LevelUpShrine : MonoBehaviour
 {
@@ -39,7 +38,7 @@ public class LevelUpShrine : MonoBehaviour
     {
         if (LevelUpMenu.IsOpen)
         {
-            if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(interactKey))
                 CloseMenu();
             return;
         }
@@ -87,7 +86,6 @@ public class LevelUpShrine : MonoBehaviour
                 menu = levelUpPanel.AddComponent<LevelUpMenu>();
             }
 
-            EnsureEventSystem();
             menu.Open();
             return;
         }
@@ -96,7 +94,6 @@ public class LevelUpShrine : MonoBehaviour
         if (menu == null)
             menu = CreateAutoMenu();
 
-        EnsureEventSystem();
         menu.Open();
     }
 
@@ -104,9 +101,6 @@ public class LevelUpShrine : MonoBehaviour
     {
         if (menu != null)
             menu.Hide();
-
-        if (levelUpPanel != null)
-            levelUpPanel.SetActive(false);
     }
 
     private LevelUpMenu CreateAutoMenu()
@@ -141,16 +135,6 @@ public class LevelUpShrine : MonoBehaviour
         cg.blocksRaycasts = false;
 
         return panel.AddComponent<LevelUpMenu>();
-    }
-
-    private void EnsureEventSystem()
-    {
-        if (FindFirstObjectByType<EventSystem>() == null)
-        {
-            GameObject es = new GameObject("EventSystem");
-            es.AddComponent<EventSystem>();
-            es.AddComponent<StandaloneInputModule>();
-        }
     }
 
     private void ShowPrompt()

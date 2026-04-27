@@ -3,7 +3,7 @@ using System;
 
 /// <summary>
 /// Система регенерации игрока с лимитами.
-/// 5 использований, +1 каждые 15 секунд.
+/// 5 использований, +1 каждые 15 секунд (последовательно, как в Dark Souls).
 /// </summary>
 public class PlayerRegeneration : MonoBehaviour
 {
@@ -17,8 +17,8 @@ public class PlayerRegeneration : MonoBehaviour
 
     // Текущие заряды
     private int currentCharges;
-    private float[] chargeTimers; // Таймер для каждого заряда
-    private bool[] chargeReady;   // Готов ли каждый заряд
+    private float[] queueTimers;  // Таймеры зарядов, ожидающих восстановления
+    private int queueCount;       // Сколько зарядов сейчас в очереди
 
     // События для UI
     public event Action<int, int> OnChargesChanged;
@@ -30,16 +30,8 @@ public class PlayerRegeneration : MonoBehaviour
 
     void Awake()
     {
-        // Инициализация массивов
-        chargeTimers = new float[maxCharges];
-        chargeReady = new bool[maxCharges];
-
-        // Все заряды готовы при старте
-        for (int i = 0; i < maxCharges; i++)
-        {
-            chargeReady[i] = true;
-        }
-
+        queueTimers = new float[maxCharges];
+        queueCount = 0;
         currentCharges = maxCharges;
 
         // Если здоровье не назначено, ищем на себе
@@ -92,7 +84,7 @@ public class PlayerRegeneration : MonoBehaviour
 
         // Рассчитываем лечение: 30% от текущего HP
         float healAmount = playerHealth.CurrentHealth * (healPercent / 100f);
-        
+
         // Если HP очень мало, лечим хотя бы на 10% от максимума
         if (healAmount < playerHealth.MaxHealth * 0.1f)
         {
@@ -108,7 +100,7 @@ public class PlayerRegeneration : MonoBehaviour
     }
 
     /// <summary>
-    /// Использовать заряд.
+    /// Использовать заряд и поставить его в очередь на восстановление.
     /// </summary>
     private void UseCharge()
     {
@@ -116,65 +108,54 @@ public class PlayerRegeneration : MonoBehaviour
 
         currentCharges--;
 
-        // Помечаем последний готовый заряд как использованный
-        for (int i = maxCharges - 1; i >= 0; i--)
+        if (queueCount < maxCharges)
         {
-            if (chargeReady[i])
-            {
-                chargeReady[i] = false;
-                chargeTimers[i] = 0f;
-                break;
-            }
+            queueTimers[queueCount] = 0f;
+            queueCount++;
         }
 
         OnChargesChanged?.Invoke(currentCharges, maxCharges);
     }
 
     /// <summary>
-    /// Обновление таймеров перезарядки.
+    /// Обновление таймеров перезарядки (только первый в очереди тикает).
     /// </summary>
     private void UpdateChargeTimers()
     {
-        bool chargesChanged = false;
+        if (queueCount <= 0) return;
 
-        for (int i = 0; i < maxCharges; i++)
+        queueTimers[0] += Time.deltaTime;
+
+        if (queueTimers[0] >= rechargeTime)
         {
-            if (!chargeReady[i])
+            queueTimers[0] = rechargeTime;
+            currentCharges++;
+            queueCount--;
+
+            // Сдвигаем очередь
+            for (int i = 0; i < queueCount; i++)
             {
-                chargeTimers[i] += Time.deltaTime;
-
-                if (chargeTimers[i] >= rechargeTime)
-                {
-                    chargeReady[i] = true;
-                    chargeTimers[i] = rechargeTime;
-                    currentCharges++;
-                    chargesChanged = true;
-
-                    OnChargeRecharged?.Invoke(chargeTimers[i] / rechargeTime);
-                    Debug.Log($"PlayerRegeneration: Заряд #{i + 1} восстановлен! Всего: {currentCharges}/{maxCharges}");
-                }
+                queueTimers[i] = queueTimers[i + 1];
             }
-        }
+            if (queueCount < maxCharges)
+            {
+                queueTimers[queueCount] = 0f;
+            }
 
-        if (chargesChanged)
-        {
+            OnChargeRecharged?.Invoke(1f);
             OnChargesChanged?.Invoke(currentCharges, maxCharges);
+            Debug.Log($"PlayerRegeneration: Заряд восстановлен! Всего: {currentCharges}/{maxCharges}");
         }
     }
 
     /// <summary>
-    /// Получить прогресс перезарядки следующего заряда (0-1).
+    /// Получить прогресс перезарядки следующего заряда в очереди (0-1).
     /// </summary>
     public float GetNextChargeProgress()
     {
-        for (int i = 0; i < maxCharges; i++)
-        {
-            if (!chargeReady[i])
-            {
-                return chargeTimers[i] / rechargeTime;
-            }
-        }
-        return 1f; // Все заряды готовы
+        if (queueCount > 0)
+            return Mathf.Clamp01(queueTimers[0] / rechargeTime);
+        return 1f;
     }
 
     /// <summary>
@@ -182,7 +163,10 @@ public class PlayerRegeneration : MonoBehaviour
     /// </summary>
     public bool[] GetChargeStatus()
     {
-        return (bool[])chargeReady.Clone();
+        bool[] ready = new bool[maxCharges];
+        for (int i = 0; i < currentCharges; i++)
+            ready[i] = true;
+        return ready;
     }
 
     /// <summary>
@@ -191,12 +175,9 @@ public class PlayerRegeneration : MonoBehaviour
     public void ResetCharges()
     {
         currentCharges = maxCharges;
-
+        queueCount = 0;
         for (int i = 0; i < maxCharges; i++)
-        {
-            chargeReady[i] = true;
-            chargeTimers[i] = 0f;
-        }
+            queueTimers[i] = 0f;
 
         OnChargesChanged?.Invoke(currentCharges, maxCharges);
     }

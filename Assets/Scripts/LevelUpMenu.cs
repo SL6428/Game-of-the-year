@@ -7,7 +7,6 @@ public class LevelUpMenu : MonoBehaviour
 {
     public static LevelUpMenu Instance { get; private set; }
     public static bool IsOpen => Instance != null && Instance._isOpen;
-    public static bool JustClosed { get; private set; }
 
     private CanvasGroup cg;
     private bool _isOpen;
@@ -48,19 +47,13 @@ public class LevelUpMenu : MonoBehaviour
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        if (_isOpen) RestoreGame();
-    }
-
-    void Update()
-    {
-        if (JustClosed)
+        if (_isOpen)
         {
-            JustClosed = false;
-            return;
+            if (GameMenu.Instance != null)
+                GameMenu.Instance.PopMenuPause();
+            else
+                SetPauseFallback(false);
         }
-        if (!_isOpen) return;
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Hide();
     }
 
     public void Open()
@@ -102,11 +95,10 @@ public class LevelUpMenu : MonoBehaviour
         cg.blocksRaycasts = true;
         _isOpen = true;
 
-        Time.timeScale = 0f;
-        var pc = FindFirstObjectByType<PlayerController>();
-        if (pc != null) pc.enabled = false;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        if (GameMenu.Instance != null)
+            GameMenu.Instance.PushMenuPause();
+        else
+            SetPauseFallback(true);
 
         Refresh();
     }
@@ -114,20 +106,33 @@ public class LevelUpMenu : MonoBehaviour
     public void Hide()
     {
         _isOpen = false;
-        JustClosed = true;
-        RestoreGame();
+        if (GameMenu.Instance != null)
+            GameMenu.Instance.PopMenuPause();
+        else
+            SetPauseFallback(false);
         cg.alpha = 0f;
         cg.interactable = false;
         cg.blocksRaycasts = false;
     }
 
-    private void RestoreGame()
+    private void SetPauseFallback(bool pause)
     {
-        Time.timeScale = 1f;
-        var pc = FindFirstObjectByType<PlayerController>();
-        if (pc != null) pc.enabled = true;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (pause)
+        {
+            Time.timeScale = 0f;
+            var pc = FindFirstObjectByType<PlayerController>();
+            if (pc != null) pc.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            var pc = FindFirstObjectByType<PlayerController>();
+            if (pc != null) pc.enabled = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     private void Build(RectTransform panel)

@@ -50,30 +50,6 @@ public class GameManager : MonoBehaviour
         SetPause(false);
     }
 
-    void Update()
-    {
-        if (LevelUpMenu.IsOpen || LevelUpMenu.JustClosed) return;
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F9))
-        {
-            Debug.Log("[GameManager] F9 pressed — resetting stats");
-            if (PlayerStats.Instance != null)
-                PlayerStats.Instance.ResetAllToDefault();
-        }
-    }
-
-    public void TogglePause()
-    {
-        isPaused = !isPaused;
-        Debug.Log($"[GameManager] TogglePause -> isPaused={isPaused}");
-        SetPause(isPaused);
-    }
-
     public void SetPause(bool paused)
     {
         isPaused = paused;

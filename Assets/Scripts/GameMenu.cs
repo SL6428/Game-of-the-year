@@ -6,6 +6,8 @@ using System.Collections;
 
 public class GameMenu : MonoBehaviour
 {
+    public static GameMenu Instance { get; private set; }
+
     [Header("Панели меню")]
     public GameObject GameMenuPanel;
     public GameObject SystemSubMenu;
@@ -15,7 +17,7 @@ public class GameMenu : MonoBehaviour
     [Header("Текст таймера")]
     public TextMeshProUGUI GameTimeText;
 
-    [Header("Кнопки")] 
+    [Header("Кнопки")]
     public Button resumeButton;
 
     private bool isMenuOpen = false;
@@ -24,6 +26,12 @@ public class GameMenu : MonoBehaviour
     private Coroutine timeCoroutine;
     private string mainMenuSceneName = "Sinematic";
     private SettingsUI settingsUI;
+    private int pauseDepth = 0;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -66,11 +74,17 @@ public class GameMenu : MonoBehaviour
     void Update()
     {
         if (SceneManager.GetActiveScene().name == "MainMenu") return;
-        if (LevelUpMenu.IsOpen || LevelUpMenu.JustClosed) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ToggleMenu();
+            if (LevelUpMenu.IsOpen)
+            {
+                LevelUpMenu.Instance?.Hide();
+            }
+            else
+            {
+                ToggleMenu();
+            }
         }
     }
 
@@ -122,7 +136,8 @@ public class GameMenu : MonoBehaviour
         if (SettingsPanel != null)
             SettingsPanel.SetActive(false);
         isMenuOpen = true;
-        Time.timeScale = 0f;
+
+        PushMenuPause();
     }
 
     public void CloseAllMenus()
@@ -134,20 +149,38 @@ public class GameMenu : MonoBehaviour
             SettingsPanel.SetActive(false);
         isMenuOpen = false;
 
-        if (SceneManager.GetActiveScene().name != "Sinematic")
+        PopMenuPause();
+    }
+
+    public void PushMenuPause()
+    {
+        if (pauseDepth == 0)
+        {
+            Time.timeScale = 0f;
+            var pc = FindFirstObjectByType<PlayerController>();
+            if (pc != null) pc.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        pauseDepth++;
+    }
+
+    public void PopMenuPause()
+    {
+        pauseDepth = Mathf.Max(0, pauseDepth - 1);
+        if (pauseDepth == 0)
         {
             Time.timeScale = 1f;
+            var pc = FindFirstObjectByType<PlayerController>();
+            if (pc != null) pc.enabled = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 
     public void OnResumeClicked()
     {
         CloseAllMenus();
-
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.SetPause(false);
-        }
     }
 
     public void OnInventoryClicked()
@@ -198,25 +231,10 @@ public class GameMenu : MonoBehaviour
 
     public void OnQuitToMenuConfirmed()
     {
+        pauseDepth = 0;
         Time.timeScale = 1f;
         PlayerPrefs.SetFloat("LastSessionTime", Time.time - gameStartTime);
-        StartCoroutine(LoadMainMenuWithDelay());
         SceneManager.LoadScene("Sinematic");
-    }
-
-    IEnumerator LoadMainMenuWithDelay()
-    {
-        yield return new WaitForSecondsRealtime(0.1f);
-
-        try
-        {
-            SceneManager.LoadScene("Sinematic");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Ошибка загрузки главной сцены: " + e.Message);
-            SceneManager.LoadScene(1);
-        }
     }
 
     public void OnQuitToDesktopConfirmed()
