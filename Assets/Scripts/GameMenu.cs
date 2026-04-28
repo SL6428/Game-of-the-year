@@ -24,7 +24,7 @@ public class GameMenu : MonoBehaviour
     private float gameStartTime;
     private bool isGameStarted = false;
     private Coroutine timeCoroutine;
-    private string mainMenuSceneName = "Sinematic";
+    private string mainMenuSceneName = "MainMenu";
     private SettingsUI settingsUI;
     private int pauseDepth = 0;
 
@@ -234,7 +234,7 @@ public class GameMenu : MonoBehaviour
         pauseDepth = 0;
         Time.timeScale = 1f;
         PlayerPrefs.SetFloat("LastSessionTime", Time.time - gameStartTime);
-        SceneManager.LoadScene("Sinematic");
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void OnQuitToDesktopConfirmed()

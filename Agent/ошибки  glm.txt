@@ -1,16 +1,54 @@
-[QuickAccessUI] Sprite 'Фан эстус ОРИГ' not found! Check path Assets/Sprites/ or place in Resources/Sprites/
-UnityEngine.Debug:LogWarning (object)
-QuickAccessUI:FindSprite (string) (at Assets/Scripts/QuickAccessUI.cs:168)
-QuickAccessUI:BuildUI () (at Assets/Scripts/QuickAccessUI.cs:93)
-QuickAccessUI:Awake () (at Assets/Scripts/QuickAccessUI.cs:26)
-UnityEngine.GameObject:AddComponent<QuickAccessUI> ()
-QuickAccessUI:AutoCreate () (at Assets/Scripts/QuickAccessUI.cs:199)
+[BossArena] OnTriggerEnter fired by 'Knight (Redact)' (tag=Player)
+UnityEngine.Debug:LogError (object)
+BossArena:LogError (string) (at Assets/Scripts/BossArena.cs:251)
+BossArena:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:193)
 
-[QuickAccessUI] Sprite 'Фан эстус ЧБ' not found! Check path Assets/Sprites/ or place in Resources/Sprites/
-UnityEngine.Debug:LogWarning (object)
-QuickAccessUI:FindSprite (string) (at Assets/Scripts/QuickAccessUI.cs:168)
-QuickAccessUI:BuildUI () (at Assets/Scripts/QuickAccessUI.cs:108)
-QuickAccessUI:Awake () (at Assets/Scripts/QuickAccessUI.cs:26)
-UnityEngine.GameObject:AddComponent<QuickAccessUI> ()
-QuickAccessUI:AutoCreate () (at Assets/Scripts/QuickAccessUI.cs:199)
+[BossArena] Player 'Knight (Redact)' entered arena trigger!
+UnityEngine.Debug:Log (object)
+BossArena:Log (string) (at Assets/Scripts/BossArena.cs:240)
+BossArena:OnPlayerEntered (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:215)
+BossArena:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:194)
+
+[BossArena] Wall 'Стена на выходе' collider ENABLED
+UnityEngine.Debug:Log (object)
+BossArena:Log (string) (at Assets/Scripts/BossArena.cs:240)
+BossArena:EnableWallColliders () (at Assets/Scripts/BossArena.cs:143)
+BossArena:ActivateArena () (at Assets/Scripts/BossArena.cs:156)
+BossArena:OnPlayerEntered (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:216)
+BossArena:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:194)
+
+[BossArena] Wall 'Стена на входе' collider ENABLED
+UnityEngine.Debug:Log (object)
+BossArena:Log (string) (at Assets/Scripts/BossArena.cs:240)
+BossArena:EnableWallColliders () (at Assets/Scripts/BossArena.cs:143)
+BossArena:ActivateArena () (at Assets/Scripts/BossArena.cs:156)
+BossArena:OnPlayerEntered (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:216)
+BossArena:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:194)
+
+[BossArena] Arena ACTIVATED - walls are up!
+UnityEngine.Debug:Log (object)
+BossArena:Log (string) (at Assets/Scripts/BossArena.cs:240)
+BossArena:ActivateArena () (at Assets/Scripts/BossArena.cs:162)
+BossArena:OnPlayerEntered (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:216)
+BossArena:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/BossArena.cs:194)
+
+[TRIGGER] === ВХОД В ТРИГГЕР ===
+UnityEngine.Debug:Log (object)
+Weapon:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/Weapon.cs:159)
+
+[TRIGGER] Объект: Тригер входа босс арены, Тег: Untagged
+UnityEngine.Debug:Log (object)
+Weapon:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/Weapon.cs:160)
+
+[TRIGGER] canDamage=False, isAttacking=False, hasHitThisAttack=False
+UnityEngine.Debug:Log (object)
+Weapon:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/Weapon.cs:161)
+
+[TRIGGER] weaponCollider.enabled=False
+UnityEngine.Debug:Log (object)
+Weapon:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/Weapon.cs:162)
+
+[TRIGGER] ❌ Отмена: canDamage = false
+UnityEngine.Debug:Log (object)
+Weapon:OnTriggerEnter (UnityEngine.Collider) (at Assets/Scripts/Weapon.cs:166)
 

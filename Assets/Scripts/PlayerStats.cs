@@ -262,6 +262,9 @@ public class PlayerStats : MonoBehaviour
         for (int i = 0; i < STAT_COUNT; i++)
             statLevels[i] = baseStatLevel;
 
+        PlayerPrefs.DeleteKey("HasEstusFlask");
+        PlayerPrefs.Save();
+
         SaveStats();
         ApplyStatBonuses();
         SubscribePlayerDefense();
@@ -269,6 +272,6 @@ public class PlayerStats : MonoBehaviour
         OnStatsChanged?.Invoke();
         OnCurrencyChanged?.Invoke(currency);
 
-        Debug.Log("[PlayerStats] Stats and currency reset complete!");
+        Debug.Log("[PlayerStats] Stats, currency and Estus Flask reset complete!");
     }
 }

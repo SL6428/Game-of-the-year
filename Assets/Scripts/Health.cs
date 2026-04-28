@@ -91,6 +91,25 @@ public class Health : MonoBehaviour
     }
 
     /// <summary>
+    /// Установить конкретное значение HP (для респавна).
+    /// </summary>
+    public void SetCurrentHealth(float value)
+    {
+        currentHealth = Mathf.Clamp(value, 0f, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    /// <summary>
+    /// Воскресить объект (сброс isDead + установка HP).
+    /// </summary>
+    public void Revive(float hp)
+    {
+        isDead = false;
+        currentHealth = Mathf.Clamp(hp, 1f, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    /// <summary>
     /// Смерть объекта.
     /// </summary>
     private void Die()

@@ -30,8 +30,55 @@ public class BossArena : MonoBehaviour
     void Start()
     {
         FindBossHealth();
+        DetachWallsFromParent();
         DisableWallColliders();
         CacheWallColliders();
+        ValidateTrigger();
+    }
+
+    private void DetachWallsFromParent()
+    {
+        GameObject[] walls = { wallNorth, wallSouth, wallEast, wallWest };
+        foreach (var wall in walls)
+        {
+            if (wall == null) continue;
+            if (wall.transform.parent != null)
+            {
+                Vector3 worldPos = wall.transform.position;
+                Quaternion worldRot = wall.transform.rotation;
+                wall.transform.SetParent(null, true);
+                wall.transform.position = worldPos;
+                wall.transform.rotation = worldRot;
+                Log($"Wall '{wall.name}' detached from parent '{wall.transform.parent?.name}'");
+            }
+        }
+    }
+
+    private void ValidateTrigger()
+    {
+        if (entranceTrigger == null)
+        {
+            LogError("entranceTrigger is NOT assigned in Inspector!");
+            return;
+        }
+
+        if (!entranceTrigger.isTrigger)
+        {
+            LogError($"entranceTrigger '{entranceTrigger.name}' must have isTrigger=true!");
+            entranceTrigger.isTrigger = true;
+        }
+
+        if (entranceTrigger.gameObject != gameObject)
+        {
+            LogWarning($"entranceTrigger '{entranceTrigger.name}' is on a different GameObject than BossArena script. " +
+                       "OnTriggerEnter may NOT fire! Move the trigger Collider to the same object as this script, " +
+                       "or ensure the object with the Collider also has a script forwarding OnTriggerEnter.");
+        }
+
+        if (!entranceTrigger.enabled)
+        {
+            LogWarning("entranceTrigger is disabled — arena cannot be entered!");
+        }
     }
 
     void Update()
@@ -89,13 +136,8 @@ public class BossArena : MonoBehaviour
             if (col != null)
             {
                 col.enabled = false;
-                col.isTrigger = false;
                 Log($"Wall '{wall.name}' collider DISABLED");
             }
-
-            Renderer rend = wall.GetComponent<Renderer>();
-            if (rend != null)
-                rend.enabled = false;
         }
     }
 
@@ -111,7 +153,6 @@ public class BossArena : MonoBehaviour
             if (col != null)
             {
                 col.enabled = true;
-                col.isTrigger = false;
                 Log($"Wall '{wall.name}' collider ENABLED");
             }
         }
@@ -143,18 +184,59 @@ public class BossArena : MonoBehaviour
         Log("Arena DEACTIVATED - walls are down!");
     }
 
+    public void ResetArena()
+    {
+        if (!isArenaActive) return;
+
+        DisableWallColliders();
+
+        if (entranceTrigger != null)
+            entranceTrigger.enabled = true;
+
+        isArenaActive = false;
+        Log("Arena RESET after player death - walls down, trigger re-enabled!");
+    }
+
     void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
-        if (bossWasDefeated) return;
+        OnPlayerEntered(other);
+    }
+
+    public void OnPlayerEntered(Collider other)
+    {
+        bool isPlayer = other.CompareTag("Player")
+            || other.GetComponent<PlayerController>() != null
+            || other.GetComponent<CharacterController>() != null;
+
+        if (!isPlayer)
+        {
+            Log($"Trigger ignored: '{other.name}' is not player (tag={other.tag})");
+            return;
+        }
+
+        if (bossWasDefeated)
+        {
+            LogWarning("Player entered but bossWasDefeated = true — arena blocked!");
+            return;
+        }
 
         Log($"Player '{other.name}' entered arena trigger!");
         ActivateArena();
     }
 
+    public void ResetArenaAndHealBoss()
+    {
+        ResetArena();
+        if (bossHealth != null)
+        {
+            bossHealth.ResetHealth();
+            Log("Boss healed to full HP after player death!");
+        }
+    }
+
     private bool IsBossDead()
     {
-        if (boss == null) return true;
+        if (boss == null) return false; // босс не назначен ≠ побеждён
         if (!boss.activeInHierarchy) return true;
         if (bossHealth != null) return bossHealth.IsDead;
         return false;
@@ -164,6 +246,17 @@ public class BossArena : MonoBehaviour
     {
         if (debugMode)
             Debug.Log($"[BossArena] {message}");
+    }
+
+    private void LogWarning(string message)
+    {
+        if (debugMode)
+            Debug.LogWarning($"[BossArena] {message}");
+    }
+
+    private void LogError(string message)
+    {
+        Debug.LogError($"[BossArena] {message}");
     }
 
     void OnDrawGizmos()

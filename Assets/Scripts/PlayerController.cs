@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Unity.Cinemachine;
 
 // ==================== Базовый класс состояния ====================
 public abstract class PlayerState
@@ -178,7 +179,11 @@ public class LocomotionState : PlayerState
         }
         if (Input.GetKeyDown(KeyCode.H))
         {
-            controller.ChangeState(new HealState(controller));
+            PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
+            if (regen != null && regen.HasFlask && regen.CurrentCharges > 0)
+            {
+                controller.ChangeState(new HealState(controller));
+            }
             return;
         }
     }
@@ -315,21 +320,79 @@ public class AttackState : PlayerState
     }
 }
 
+// ==================== Состояние смерти ====================
+public class DeathState : PlayerState
+{
+    private float waitTimer;
+    private bool triggered;
+    private bool wasRootMotion;
+    private CinemachineInputAxisController camInput;
+
+    public DeathState(PlayerController controller) : base(controller) { }
+
+    public override void Enter()
+    {
+        waitTimer = 3f;
+        triggered = false;
+
+        // Отключаем физику и root motion — иначе анимация смерти подбросит персонажа вверх
+        wasRootMotion = controller.animator.applyRootMotion;
+        controller.animator.applyRootMotion = false;
+        controller.animator.SetTrigger("Death");
+
+        if (controller.controller != null)
+        {
+            controller.controller.enabled = false;
+            controller.playerVelocity = Vector3.zero;
+        }
+
+        // Блокируем ввод камеры (Cinemachine)
+        camInput = Object.FindFirstObjectByType<CinemachineInputAxisController>();
+        if (camInput != null)
+            camInput.enabled = false;
+    }
+
+    public override void Update()
+    {
+        waitTimer -= Time.deltaTime;
+        if (waitTimer <= 0f && !triggered)
+        {
+            triggered = true;
+            Health health = controller.GetComponent<Health>();
+            PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
+            DeathManager.Instance?.ShowDeathScreen(
+                controller.RespawnPosition,
+                health, regen, controller
+            );
+        }
+    }
+
+    public override void Exit()
+    {
+        controller.animator.ResetTrigger("Death");
+        controller.animator.applyRootMotion = wasRootMotion;
+
+        if (controller.controller != null)
+            controller.controller.enabled = true;
+
+        if (camInput != null)
+            camInput.enabled = true;
+    }
+}
+
 // ==================== Состояние лечения ====================
 public class HealState : PlayerState
 {
     private float healTimer;
-    private float healDuration = 1.5f;
+    private float healDuration = 0.5f;
 
     public HealState(PlayerController controller) : base(controller) { }
 
     public override void Enter()
     {
-        // Проверяем есть ли доступные заряды
         PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
-        if (regen == null || regen.CurrentCharges <= 0)
+        if (regen == null || !regen.HasFlask || regen.CurrentCharges <= 0)
         {
-            Debug.LogWarning("HealState: Нет доступных зарядов для лечения!");
             controller.ChangeState(new LocomotionState(controller));
             return;
         }
@@ -345,7 +408,7 @@ public class HealState : PlayerState
         {
             // Применяем лечение при завершении анимации
             PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
-            if (regen != null)
+            if (regen != null && regen.HasFlask)
             {
                 regen.TryHeal();
             }
@@ -406,6 +469,16 @@ public class PlayerController : MonoBehaviour
 
     // Текущее состояние
     private PlayerState currentState;
+    public Vector3 RespawnPosition { get; private set; }
+
+    [Header("Respawn")]
+    [Tooltip("Если назначен — игрок респавнится здесь. Если пусто — на стартовой позиции.")]
+    [SerializeField] private Transform respawnPoint;
+
+    void Awake()
+    {
+        RespawnPosition = (respawnPoint != null) ? respawnPoint.position : transform.position;
+    }
 
     void Start()
     {
@@ -449,9 +522,20 @@ public class PlayerController : MonoBehaviour
             Debug.Log("PlayerController: Added Stamina");
         }
 
+        // Подписка на смерть
+        Health health = GetComponent<Health>();
+        if (health != null)
+            health.OnDeath += OnPlayerDeath;
+
         // Начальное состояние - движение
         currentState = new LocomotionState(this);
         currentState.Enter();
+    }
+
+    private void OnPlayerDeath()
+    {
+        if (currentState is DeathState) return;
+        ChangeState(new DeathState(this));
     }
 
     void Update()
@@ -463,12 +547,16 @@ public class PlayerController : MonoBehaviour
                 PlayerStats.Instance.ResetAllToDefault();
         }
 
+        // Обновляем текущее состояние (всегда, даже при отключённом контроллере — иначе DeathState не тикает)
+        currentState?.Update();
+
+        // Guard: движение/гравитация только когда контроллер активен
+        if (controller == null || !controller.enabled)
+            return;
+
         // Применяем grounded
         if (isGrounded && playerVelocity.y < 0)
             playerVelocity.y = -2f;
-
-        // Обновляем текущее состояние
-        currentState?.Update();
 
         // Применяем гравитацию только когда в воздухе
         if (!isGrounded)

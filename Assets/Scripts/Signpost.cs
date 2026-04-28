@@ -8,7 +8,7 @@ public class Signpost : InteractableObject
     [Header("UI References")]
     [Tooltip("Панель подсказки '[Y] Прочитать' (появляется внизу экрана)")]
     [SerializeField] private GameObject promptPanel;
-    
+
     [Tooltip("Панель окна с текстом подсказки")]
     [SerializeField] private GameObject popupPanel;
 
@@ -17,44 +17,60 @@ public class Signpost : InteractableObject
 
     void Awake()
     {
-        // Скрываем UI по умолчанию
-        if (promptPanel != null) promptPanel.SetActive(false);
-        if (popupPanel != null) popupPanel.SetActive(false);
+        ValidatePanels();
+
+        promptPanel?.SetActive(false);
+        popupPanel?.SetActive(false);
     }
 
     protected override void ShowPopupUI()
     {
-        // Скрываем подсказку [Y], показываем текст
-        if (promptPanel != null) promptPanel.SetActive(false);
-        if (popupPanel != null) popupPanel.SetActive(true);
+        promptPanel?.SetActive(false);
+        popupPanel?.SetActive(true);
+
+        // Диагностика: если popupPanel не стал активен — родительский объект выключен
+        if (popupPanel != null && !popupPanel.activeInHierarchy && popupPanel.activeSelf)
+        {
+            Debug.LogWarning(
+                $"[Signpost '{gameObject.name}'] popupPanel '{popupPanel.name}' включён (activeSelf), " +
+                "но не виден (activeInHierarchy = false). Проверь, что его родительский контейнер в Hierarchy тоже активен.",
+                popupPanel);
+        }
     }
 
     protected override void HidePopupUI()
     {
-        // Скрываем текст
-        if (popupPanel != null) popupPanel.SetActive(false);
-        
-        // Если всё ещё в радиусе - показываем подсказку [Y]
-        if (isPlayerInRange && promptPanel != null)
-        {
-            promptPanel.SetActive(true);
-        }
+        popupPanel?.SetActive(false);
+
+        if (isPlayerInRange)
+            promptPanel?.SetActive(true);
 
         if (destroyAfterReading)
-        {
             Destroy(gameObject, 0.5f);
-        }
     }
 
     protected override void OnPlayerEnterRange()
     {
-        // Показываем подсказку [Y]
-        if (promptPanel != null) promptPanel.SetActive(true);
+        promptPanel?.SetActive(true);
     }
 
     protected override void OnPlayerExitRange()
     {
-        // Скрываем подсказку [Y]
-        if (promptPanel != null) promptPanel.SetActive(false);
+        promptPanel?.SetActive(false);
+    }
+
+    private void ValidatePanels()
+    {
+        if (promptPanel == null)
+            Debug.LogError($"[Signpost '{gameObject.name}'] promptPanel не назначен в Inspector!", this);
+
+        if (popupPanel == null)
+            Debug.LogError($"[Signpost '{gameObject.name}'] popupPanel не назначен в Inspector!", this);
+
+        if (promptPanel == popupPanel && promptPanel != null)
+            Debug.LogError($"[Signpost '{gameObject.name}'] promptPanel и popupPanel ссылаются на один и тот же объект!", this);
+
+        if (popupPanel != null && promptPanel != null && popupPanel.transform.IsChildOf(promptPanel.transform))
+            Debug.LogError($"[Signpost '{gameObject.name}'] popupPanel находится внутри promptPanel — это сломает переключение! Вынь popupPanel из promptPanel в Hierarchy.", this);
     }
 }

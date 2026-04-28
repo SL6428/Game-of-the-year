@@ -17,6 +17,7 @@ public class QuickAccessUI : MonoBehaviour
     private Image colorIcon;
     private Image grayOverlay;
     private TextMeshProUGUI badgeText;
+    private Canvas uiCanvas;
 
     private readonly Color grayTint = new Color(0.35f, 0.35f, 0.35f, 1f);
 
@@ -35,6 +36,8 @@ public class QuickAccessUI : MonoBehaviour
         _instance = this;
         DontDestroyOnLoad(gameObject);
         BuildUI();
+        uiCanvas = GetComponent<Canvas>();
+        if (uiCanvas != null) uiCanvas.enabled = false;
     }
 
     void OnDestroy()
@@ -49,6 +52,17 @@ public class QuickAccessUI : MonoBehaviour
         {
             regen = FindFirstObjectByType<PlayerRegeneration>();
             if (regen == null) return;
+        }
+
+        if (uiCanvas != null)
+        {
+            if (!regen.HasFlask)
+            {
+                uiCanvas.enabled = false;
+                return;
+            }
+            if (!uiCanvas.enabled)
+                uiCanvas.enabled = true;
         }
 
         int current = regen.CurrentCharges;
@@ -93,7 +107,7 @@ public class QuickAccessUI : MonoBehaviour
         {
             canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 0; // на уровне HP/Stamina (игровые меню перекрывают)
+            canvas.sortingOrder = -10; // ниже всех окон (меню перекрывают)
 
             CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

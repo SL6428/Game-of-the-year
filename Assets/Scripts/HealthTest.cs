@@ -22,13 +22,6 @@ public class HealthTest : MonoBehaviour
             Debug.Log($"{gameObject.name} получил {testDamage} урона. HP: {health.CurrentHealth}/{health.MaxHealth}");
         }
 
-        // H - лечиться
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            health.Heal(testHeal);
-            Debug.Log($"{gameObject.name} вылечился на {testHeal}. HP: {health.CurrentHealth}/{health.MaxHealth}");
-        }
-
         // R - сброс
         if (Input.GetKeyDown(KeyCode.R))
         {

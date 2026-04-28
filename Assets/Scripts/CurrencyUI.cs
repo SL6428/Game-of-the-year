@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class CurrencyUI : MonoBehaviour
 {
     private static CurrencyUI _instance;
 
+    private Canvas uiCanvas;
     private TextMeshProUGUI currencyText;
     private int targetAmount;
     private int displayedAmount = -1;
@@ -33,9 +35,14 @@ public class CurrencyUI : MonoBehaviour
 
     void Update()
     {
-        if (!uiReady || PlayerStats.Instance == null)
+        string scene = SceneManager.GetActiveScene().name;
+        bool isMenu = scene == "MainMenu" || scene == "Sinematic";
+        if (uiCanvas != null)
+            uiCanvas.enabled = !isMenu;
+
+        if (isMenu || !uiReady || PlayerStats.Instance == null)
         {
-            if (uiReady) PlayerStats.EnsureExists();
+            if (uiReady && !isMenu) PlayerStats.EnsureExists();
             return;
         }
 
@@ -67,12 +74,11 @@ public class CurrencyUI : MonoBehaviour
 
     private void BuildText()
     {
-        Canvas canvas;
-        if (!TryGetComponent(out canvas))
+        if (!TryGetComponent(out uiCanvas))
         {
-            canvas = gameObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 250;
+            uiCanvas = gameObject.AddComponent<Canvas>();
+            uiCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            uiCanvas.sortingOrder = -10;
 
             CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

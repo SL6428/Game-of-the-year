@@ -15,10 +15,16 @@ public class PlayerRegeneration : MonoBehaviour
     [Header("References")]
     [SerializeField] private Health playerHealth;
 
+    // Фляга подобрана?
+    public bool HasFlask { get; private set; }
+
     // Текущие заряды
     private int currentCharges;
     private float[] queueTimers;  // Таймеры зарядов, ожидающих восстановления
     private int queueCount;       // Сколько зарядов сейчас в очереди
+
+    private float baseRechargeTime;
+    private bool deathPenaltyActive;
 
     // События для UI
     public event Action<int, int> OnChargesChanged;
@@ -30,9 +36,13 @@ public class PlayerRegeneration : MonoBehaviour
 
     void Awake()
     {
+        HasFlask = PlayerPrefs.GetInt("HasEstusFlask", 0) == 1;
+
         queueTimers = new float[maxCharges];
         queueCount = 0;
-        currentCharges = maxCharges;
+        currentCharges = HasFlask ? maxCharges : 0;
+        baseRechargeTime = rechargeTime;
+        deathPenaltyActive = false;
 
         // Если здоровье не назначено, ищем на себе
         if (playerHealth == null)
@@ -49,14 +59,10 @@ public class PlayerRegeneration : MonoBehaviour
 
     void Update()
     {
+        if (!HasFlask) return;
+
         // Обновляем таймеры для перезарядки
         UpdateChargeTimers();
-
-        // Проверка нажатия кнопки лечения (H)
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            TryHeal();
-        }
     }
 
     /// <summary>
@@ -64,6 +70,8 @@ public class PlayerRegeneration : MonoBehaviour
     /// </summary>
     public void TryHeal()
     {
+        if (!HasFlask) return;
+
         if (currentCharges <= 0)
         {
             Debug.LogWarning("PlayerRegeneration: Нет доступных зарядов!");
@@ -145,7 +153,26 @@ public class PlayerRegeneration : MonoBehaviour
             OnChargeRecharged?.Invoke(1f);
             OnChargesChanged?.Invoke(currentCharges, maxCharges);
             Debug.Log($"PlayerRegeneration: Заряд восстановлен! Всего: {currentCharges}/{maxCharges}");
+
+            if (deathPenaltyActive && currentCharges >= maxCharges)
+                ClearDeathPenalty();
         }
+    }
+
+    public void ApplyDeathPenalty()
+    {
+        if (deathPenaltyActive) return;
+        deathPenaltyActive = true;
+        rechargeTime = baseRechargeTime * 2f;
+        Debug.Log($"PlayerRegeneration: Death penalty active — recharge time = {rechargeTime}s");
+    }
+
+    private void ClearDeathPenalty()
+    {
+        if (!deathPenaltyActive) return;
+        deathPenaltyActive = false;
+        rechargeTime = baseRechargeTime;
+        Debug.Log($"PlayerRegeneration: Death penalty cleared — recharge time = {rechargeTime}s");
     }
 
     /// <summary>
@@ -170,15 +197,64 @@ public class PlayerRegeneration : MonoBehaviour
     }
 
     /// <summary>
-    /// Сбросить все заряды (для респауна).
+    /// Подобрать флягу (вызывается из EstusPickup).
     /// </summary>
-    public void ResetCharges()
+    public void EnableFlask()
     {
+        if (HasFlask) return;
+
+        HasFlask = true;
         currentCharges = maxCharges;
         queueCount = 0;
         for (int i = 0; i < maxCharges; i++)
             queueTimers[i] = 0f;
 
+        PlayerPrefs.SetInt("HasEstusFlask", 1);
+        PlayerPrefs.Save();
+
+        OnChargesChanged?.Invoke(currentCharges, maxCharges);
+        Debug.Log("PlayerRegeneration: Estus Flask acquired!");
+    }
+
+    /// <summary>
+    /// Установить конкретное количество готовых зарядов (без очереди).
+    /// </summary>
+    public void SetCharges(int count)
+    {
+        if (!HasFlask) return;
+        currentCharges = Mathf.Clamp(count, 0, maxCharges);
+        queueCount = 0;
+        for (int i = 0; i < maxCharges; i++)
+            queueTimers[i] = 0f;
+
+        OnChargesChanged?.Invoke(currentCharges, maxCharges);
+    }
+
+    /// <summary>
+    /// Установить готовые заряды и сразу поставить остальные в очередь восстановления.
+    /// </summary>
+    public void SetChargesWithQueue(int readyCount)
+    {
+        if (!HasFlask) return;
+        currentCharges = Mathf.Clamp(readyCount, 0, maxCharges);
+        queueCount = maxCharges - currentCharges;
+        for (int i = 0; i < maxCharges; i++)
+            queueTimers[i] = 0f;
+
+        OnChargesChanged?.Invoke(currentCharges, maxCharges);
+    }
+
+    /// <summary>
+    /// Сбросить все заряды (для респауна).
+    /// </summary>
+    public void ResetCharges()
+    {
+        currentCharges = HasFlask ? maxCharges : 0;
+        queueCount = 0;
+        for (int i = 0; i < maxCharges; i++)
+            queueTimers[i] = 0f;
+
+        ClearDeathPenalty();
         OnChargesChanged?.Invoke(currentCharges, maxCharges);
     }
 }
