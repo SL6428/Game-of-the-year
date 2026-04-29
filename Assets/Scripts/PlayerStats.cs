@@ -148,6 +148,15 @@ public class PlayerStats : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Если загружается MainMenu - сбрасываем кешированные ссылки на игрока
+        if (scene.name == "MainMenu" || scene.name == "Sinematic")
+        {
+            // Очищаем кешированные ссылки, чтобы при следующей загрузке игровой сцены
+            // они были получены заново
+            // (В PlayerStats нет прямого кеша игрока, но вызываем переподключение)
+        }
+        
+        // Переподключаемся к игроку в игровых сценах
         ApplyStatBonuses();
         SubscribePlayerDefense();
     }

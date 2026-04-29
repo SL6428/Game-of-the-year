@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class QuickAccessUI : MonoBehaviour
 {
@@ -40,12 +41,26 @@ public class QuickAccessUI : MonoBehaviour
         BuildUI();
         uiCanvas = GetComponent<Canvas>();
         if (uiCanvas != null) uiCanvas.enabled = false;
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDestroy()
     {
         if (_instance == this)
             _instance = null;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Если загружается MainMenu - сбрасываем кешированную ссылку на PlayerRegeneration
+        if (scene.name == "MainMenu" || scene.name == "Sinematic")
+        {
+            regen = null;
+            lastFrameCharges = -1;
+            if (uiCanvas != null) uiCanvas.enabled = false;
+        }
     }
 
     void Update()

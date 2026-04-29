@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Отображение полоски здоровья в UI.
@@ -47,6 +48,8 @@ public class HealthUI : MonoBehaviour
         // Подписываемся на события
         health.OnHealthChanged += UpdateHealthUI;
         health.OnDeath += OnPlayerDeath;
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Start()
@@ -63,6 +66,40 @@ public class HealthUI : MonoBehaviour
         {
             health.OnHealthChanged -= UpdateHealthUI;
             health.OnDeath -= OnPlayerDeath;
+        }
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Если загружается MainMenu - отписываемся от старого Health
+        if (scene.name == "MainMenu" || scene.name == "Sinematic")
+        {
+            if (health != null)
+            {
+                health.OnHealthChanged -= UpdateHealthUI;
+                health.OnDeath -= OnPlayerDeath;
+            }
+            health = null;
+            playerHealth = null;
+        }
+        else
+        {
+            // В игровой сцене - переподключаемся к новому игроку
+            if (playerHealth == null)
+            {
+                playerHealth = FindFirstObjectByType<Health>();
+                if (playerHealth != null)
+                {
+                    health = playerHealth;
+                    health.OnHealthChanged += UpdateHealthUI;
+                    health.OnDeath += OnPlayerDeath;
+                    
+                    currentFillAmount = health.CurrentHealth / health.MaxHealth;
+                    targetFillAmount = currentFillAmount;
+                    UpdateHealthUI(health.CurrentHealth, health.MaxHealth);
+                }
+            }
         }
     }
 

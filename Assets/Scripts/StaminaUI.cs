@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class StaminaUI : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class StaminaUI : MonoBehaviour
     void Start()
     {
         TryConnect();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnEnable()
@@ -41,6 +43,22 @@ public class StaminaUI : MonoBehaviour
     void OnDestroy()
     {
         Unsubscribe();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Если загружается MainMenu - сбрасываем кешированную ссылку на Stamina
+        if (scene.name == "MainMenu" || scene.name == "Sinematic")
+        {
+            Unsubscribe();
+            stamina = null;
+        }
+        else
+        {
+            // В игровой сцене - переподключаемся
+            TryConnect();
+        }
     }
 
     void Update()

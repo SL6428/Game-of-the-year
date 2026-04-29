@@ -41,6 +41,13 @@ public class CurrencyUI : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         UpdateSceneState(scene);
+        
+        // Если загружается MainMenu - сбрасываем отображаемую валюту
+        if (scene.name == "MainMenu" || scene.name == "Sinematic")
+        {
+            displayedAmount = -1;
+            targetAmount = 0;
+        }
     }
     
     private void UpdateSceneState(Scene scene)

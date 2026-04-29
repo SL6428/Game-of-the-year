@@ -2,6 +2,22 @@
 using System.Collections;
 using Unity.Cinemachine;
 
+// ==================== Кешированные хеши параметров аниматора ====================
+// Объявлены глобально, чтобы все state-классы имели к ним доступ
+public static class AnimatorHashes
+{
+    public static readonly int Speed = Animator.StringToHash("Speed");
+    public static readonly int VelocityX = Animator.StringToHash("VelocityX");
+    public static readonly int VelocityZ = Animator.StringToHash("VelocityZ");
+    public static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
+    public static readonly int IsRunning = Animator.StringToHash("IsRunning");
+    public static readonly int Jump = Animator.StringToHash("Jump");
+    public static readonly int Roll = Animator.StringToHash("Roll");
+    public static readonly int Attack = Animator.StringToHash("Attack");
+    public static readonly int Death = Animator.StringToHash("Death");
+    public static readonly int Heal = Animator.StringToHash("Heal");
+}
+
 // ==================== Базовый класс состояния ====================
 public abstract class PlayerState
 {
@@ -121,7 +137,7 @@ public class LocomotionState : PlayerState
         // 1. Считаем магнитуду ввода для перехода Idle ↔ Walk
         float inputMagnitude = new Vector2(horizontalInput, verticalInput).magnitude;
         float speedValue = (inputMagnitude > 0.15f) ? 1f : 0f;
-        controller.animator.SetFloat("Speed", speedValue, 0.1f, Time.deltaTime);
+        controller.animator.SetFloat(AnimatorHashes.Speed, speedValue, 0.1f, Time.deltaTime);
 
         // 2. РАССЧИТЫВАЕМ VelocityX и VelocityZ ОТНОСИТЕЛЬНО ПЕРСОНАЖА
         if (inputMagnitude > 0.15f)
@@ -143,18 +159,18 @@ public class LocomotionState : PlayerState
             float velocityZ = Mathf.Clamp(localMove.z, -1f, 1f);
 
             // Передаем в Animator
-            controller.animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
-            controller.animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
+            controller.animator.SetFloat(AnimatorHashes.VelocityX, velocityX, 0.1f, Time.deltaTime);
+            controller.animator.SetFloat(AnimatorHashes.VelocityZ, velocityZ, 0.1f, Time.deltaTime);
         }
         else
         {
             // При остановке плавно сбрасываем значения в 0
-            controller.animator.SetFloat("VelocityX", 0f, 0.1f, Time.deltaTime);
-            controller.animator.SetFloat("VelocityZ", 0f, 0.1f, Time.deltaTime);
+            controller.animator.SetFloat(AnimatorHashes.VelocityX, 0f, 0.1f, Time.deltaTime);
+            controller.animator.SetFloat(AnimatorHashes.VelocityZ, 0f, 0.1f, Time.deltaTime);
         }
 
-        controller.animator.SetBool("IsGrounded", controller.isGrounded);
-        controller.animator.SetBool("IsRunning", isRunning);
+        controller.animator.SetBool(AnimatorHashes.IsGrounded, controller.isGrounded);
+        controller.animator.SetBool(AnimatorHashes.IsRunning, isRunning);
     }
 
     private void CheckTransitions()
@@ -203,7 +219,7 @@ public class JumpState : PlayerState
         if (controller.stamina != null)
             controller.stamina.TryUseStamina(controller.stamina.JumpCost);
         controller.playerVelocity.y = Mathf.Sqrt(controller.jumpHeight * -2f * controller.gravity);
-        controller.animator.SetTrigger("Jump");
+        controller.animator.SetTrigger(AnimatorHashes.Jump);
     }
 
     public override void Update()
@@ -216,7 +232,7 @@ public class JumpState : PlayerState
 
     public override void Exit()
     {
-        controller.animator.ResetTrigger("Jump");
+        controller.animator.ResetTrigger(AnimatorHashes.Jump);
     }
 }
 
@@ -233,7 +249,7 @@ public class RollState : PlayerState
     {
         if (controller.stamina != null)
             controller.stamina.TryUseStamina(controller.stamina.RollCost);
-        controller.animator.SetTrigger("Roll");
+        controller.animator.SetTrigger(AnimatorHashes.Roll);
         rollTimer = 0f;
     }
 
@@ -253,7 +269,7 @@ public class RollState : PlayerState
 
     public override void Exit()
     {
-        controller.animator.ResetTrigger("Roll");
+        controller.animator.ResetTrigger(AnimatorHashes.Roll);
     }
 }
 
@@ -269,7 +285,7 @@ public class AttackState : PlayerState
     {
         if (controller.stamina != null)
             controller.stamina.TryUseStamina(controller.stamina.AttackCost);
-        controller.animator.SetTrigger("Attack");
+        controller.animator.SetTrigger(AnimatorHashes.Attack);
         attackTimer = 0f;
         
         // Включаем хитбокс оружия (используем кешированное оружие)
@@ -296,7 +312,7 @@ public class AttackState : PlayerState
 
     public override void Exit()
     {
-        controller.animator.ResetTrigger("Attack");
+        controller.animator.ResetTrigger(AnimatorHashes.Attack);
         
         // Гарантированно выключаем хитбокс
         if (controller.weapon != null)
@@ -324,7 +340,7 @@ public class DeathState : PlayerState
         // Отключаем физику и root motion — иначе анимация смерти подбросит персонажа вверх
         wasRootMotion = controller.animator.applyRootMotion;
         controller.animator.applyRootMotion = false;
-        controller.animator.SetTrigger("Death");
+        controller.animator.SetTrigger(AnimatorHashes.Death);
 
         if (controller.controller != null)
         {
@@ -353,7 +369,7 @@ public class DeathState : PlayerState
 
     public override void Exit()
     {
-        controller.animator.ResetTrigger("Death");
+        controller.animator.ResetTrigger(AnimatorHashes.Death);
         controller.animator.applyRootMotion = wasRootMotion;
 
         if (controller.controller != null)
@@ -380,7 +396,7 @@ public class HealState : PlayerState
             return;
         }
 
-        controller.animator.SetTrigger("Heal");
+        controller.animator.SetTrigger(AnimatorHashes.Heal);
         healTimer = 0f;
     }
 
@@ -401,7 +417,7 @@ public class HealState : PlayerState
 
     public override void Exit()
     {
-        controller.animator.ResetTrigger("Heal");
+        controller.animator.ResetTrigger(AnimatorHashes.Heal);
     }
 }
 
