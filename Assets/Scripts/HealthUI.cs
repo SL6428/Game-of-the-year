@@ -86,8 +86,6 @@ public class HealthUI : MonoBehaviour
 
     private void UpdateHealthUI(float currentHP, float maxHP)
     {
-        Debug.Log($"HealthUI: Обновление HP {currentHP} / {maxHP}");
-        
         targetFillAmount = currentHP / maxHP;
 
         if (showText && hpText != null)

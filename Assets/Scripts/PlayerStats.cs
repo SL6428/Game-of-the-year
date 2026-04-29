@@ -101,6 +101,17 @@ public class PlayerStats : MonoBehaviour
         "-1 к получаемому урону",
         "+10 к получаемым душам"
     };
+    
+    // Кешированные ключи для PlayerPrefs (избегаем аллокаций строк)
+    private static readonly string[] StatKeys = new string[]
+    {
+        "PS_Stat_0",
+        "PS_Stat_1",
+        "PS_Stat_2",
+        "PS_Stat_3",
+        "PS_Stat_4",
+        "PS_Stat_5"
+    };
 
     void Awake()
     {
@@ -202,7 +213,6 @@ public class PlayerStats : MonoBehaviour
         currency += modified;
         SaveStats();
         OnCurrencyChanged?.Invoke(currency);
-        Debug.Log($"[PlayerStats] AddCurrency: +{modified} (base {amount} + luck {LuckBonus}), total={currency}");
     }
 
     private float ApplyDefense(float damage)
@@ -234,7 +244,7 @@ public class PlayerStats : MonoBehaviour
     {
         PlayerPrefs.SetInt("PS_Currency", currency);
         for (int i = 0; i < STAT_COUNT; i++)
-            PlayerPrefs.SetInt($"PS_Stat_{i}", statLevels[i]);
+            PlayerPrefs.SetInt(StatKeys[i], statLevels[i]);
         PlayerPrefs.Save();
     }
 
@@ -242,11 +252,11 @@ public class PlayerStats : MonoBehaviour
     {
         currency = PlayerPrefs.GetInt("PS_Currency", startingCurrency);
 
-        bool hasSaved = PlayerPrefs.HasKey("PS_Stat_0");
+        bool hasSaved = PlayerPrefs.HasKey(StatKeys[0]);
         for (int i = 0; i < STAT_COUNT; i++)
         {
             if (hasSaved)
-                statLevels[i] = PlayerPrefs.GetInt($"PS_Stat_{i}", baseStatLevel);
+                statLevels[i] = PlayerPrefs.GetInt(StatKeys[i], baseStatLevel);
             else
                 statLevels[i] = baseStatLevel;
         }
@@ -254,6 +264,7 @@ public class PlayerStats : MonoBehaviour
         OnCurrencyChanged?.Invoke(currency);
     }
 
+#if UNITY_EDITOR
     public void ResetAllToDefault()
     {
         Debug.Log("[PlayerStats] ResetAllToDefault() executing...");
@@ -274,4 +285,5 @@ public class PlayerStats : MonoBehaviour
 
         Debug.Log("[PlayerStats] Stats, currency and Estus Flask reset complete!");
     }
+#endif
 }

@@ -9,7 +9,6 @@ public class Health : MonoBehaviour
 {
     [Header("Health Settings")]
     [SerializeField] private float baseMaxHealth = 100f;
-    [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float currentHealth = -1f;
     [SerializeField] private bool isDead = false;
 
@@ -19,16 +18,16 @@ public class Health : MonoBehaviour
     public event Func<float, float> OnModifyIncomingDamage;
 
     public float BaseMaxHealth => baseMaxHealth;
-    public float MaxHealth => maxHealth;
+    public float MaxHealth => baseMaxHealth; // Используем baseMaxHealth напрямую
     public float CurrentHealth => currentHealth;
     public bool IsDead => isDead;
 
     void Awake()
     {
         // Принудительная инициализация
-        if (currentHealth < 0 || currentHealth > maxHealth)
+        if (currentHealth < 0 || currentHealth > baseMaxHealth)
         {
-            currentHealth = maxHealth;
+            currentHealth = baseMaxHealth;
         }
     }
 
@@ -45,20 +44,15 @@ public class Health : MonoBehaviour
         float oldHealth = currentHealth;
         currentHealth = Mathf.Max(0, currentHealth - modifiedDamage);
 
-        // Выводим информацию о полученном уроне
-        float healthPercent = (currentHealth / maxHealth) * 100f;
-        Debug.Log($"[{gameObject.name}] DMG: {damage:F0}(raw) {modifiedDamage:F0}(final) | HP: {oldHealth:F0} -> {currentHealth:F0}");
-
         // Вызываем событие получения урона
         OnDamageTaken?.Invoke();
 
         // Вызываем событие изменения HP
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
 
         // Проверяем смерть
         if (currentHealth <= 0 && oldHealth > 0)
         {
-            Debug.Log($"💀 [{gameObject.name}] Умер! HP: {oldHealth:F0} → 0 (0%)");
             Die();
         }
     }
@@ -71,12 +65,9 @@ public class Health : MonoBehaviour
         if (isDead) return;
 
         float oldHealth = currentHealth;
-        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        currentHealth = Mathf.Min(baseMaxHealth, currentHealth + amount);
         
-        float healthPercent = (currentHealth / maxHealth) * 100f;
-        Debug.Log($"💚 [{gameObject.name}] Лечение +{amount:F0} HP | HP: {oldHealth:F0} → {currentHealth:F0} ({healthPercent:F0}%)");
-        
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
     }
 
     /// <summary>
@@ -86,8 +77,8 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
 
-        currentHealth = maxHealth;
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        currentHealth = baseMaxHealth;
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
     }
 
     /// <summary>
@@ -95,8 +86,8 @@ public class Health : MonoBehaviour
     /// </summary>
     public void SetCurrentHealth(float value)
     {
-        currentHealth = Mathf.Clamp(value, 0f, maxHealth);
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        currentHealth = Mathf.Clamp(value, 0f, baseMaxHealth);
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
     }
 
     /// <summary>
@@ -105,8 +96,8 @@ public class Health : MonoBehaviour
     public void Revive(float hp)
     {
         isDead = false;
-        currentHealth = Mathf.Clamp(hp, 1f, maxHealth);
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        currentHealth = Mathf.Clamp(hp, 1f, baseMaxHealth);
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
     }
 
     /// <summary>
@@ -124,28 +115,28 @@ public class Health : MonoBehaviour
     public void ResetHealth()
     {
         isDead = false;
-        currentHealth = maxHealth;
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        currentHealth = baseMaxHealth;
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
     }
 
     public void SetMaxHealth(float newMax)
     {
-        float oldMax = maxHealth;
-        maxHealth = Mathf.Max(1f, newMax);
-        float diff = maxHealth - oldMax;
+        float oldMax = baseMaxHealth;
+        baseMaxHealth = Mathf.Max(1f, newMax);
+        float diff = baseMaxHealth - oldMax;
         if (diff > 0)
-            currentHealth = Mathf.Min(maxHealth, currentHealth + diff);
+            currentHealth = Mathf.Min(baseMaxHealth, currentHealth + diff);
         else
-            currentHealth = Mathf.Min(currentHealth, maxHealth);
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+            currentHealth = Mathf.Min(currentHealth, baseMaxHealth);
+        OnHealthChanged?.Invoke(currentHealth, baseMaxHealth);
     }
 
 #if UNITY_EDITOR
     // Для отладки в редакторе
     void OnValidate()
     {
-        if (currentHealth > maxHealth)
-            currentHealth = maxHealth;
+        if (currentHealth > baseMaxHealth)
+            currentHealth = baseMaxHealth;
         if (currentHealth < 0)
             currentHealth = 0;
     }

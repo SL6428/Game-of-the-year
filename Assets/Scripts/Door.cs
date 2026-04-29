@@ -39,6 +39,9 @@ public class Door : MonoBehaviour
     private Quaternion closedRotation;
     private Quaternion openRotation;
     private float animationTimer = 0f;
+    
+    // Кешированный квадрат радиуса для оптимизации
+    private float sqrInteractionRadius;
 
     void Start()
     {
@@ -48,6 +51,9 @@ public class Door : MonoBehaviour
             if (playerObj != null)
                 player = playerObj.transform;
         }
+
+        // Кешируем квадрат радиуса для оптимизации
+        sqrInteractionRadius = interactionRadius * interactionRadius;
 
         // Сохраняем начальную позицию (закрытая дверь)
         closedRotation = transform.rotation;
@@ -95,9 +101,9 @@ public class Door : MonoBehaviour
 
         if (player == null || isOpen) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float sqrDistance = (transform.position - player.position).sqrMagnitude;
         bool wasInRange = isPlayerInRange;
-        isPlayerInRange = distance <= interactionRadius;
+        isPlayerInRange = sqrDistance <= sqrInteractionRadius;
 
         // Игрок вошёл в радиус
         if (isPlayerInRange && !wasInRange)
@@ -149,8 +155,6 @@ public class Door : MonoBehaviour
         {
             openSound.Play();
         }
-
-        Debug.Log($"[Door] 🚪 Дверь открывается...");
     }
 
     void UpdateAnimation()
@@ -169,7 +173,6 @@ public class Door : MonoBehaviour
         {
             isAnimating = false;
             transform.rotation = openRotation;
-            Debug.Log($"[Door] ✅ Дверь открыта!");
         }
     }
 

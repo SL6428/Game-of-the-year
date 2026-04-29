@@ -12,6 +12,7 @@ public class CurrencyUI : MonoBehaviour
     private int targetAmount;
     private int displayedAmount = -1;
     private bool uiReady;
+    private bool isMenuScene = false;
 
     void Awake()
     {
@@ -25,24 +26,36 @@ public class CurrencyUI : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         BuildText();
         uiReady = true;
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        UpdateSceneState(SceneManager.GetActiveScene());
     }
 
     void OnDestroy()
     {
         if (_instance == this)
             _instance = null;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        UpdateSceneState(scene);
+    }
+    
+    private void UpdateSceneState(Scene scene)
+    {
+        isMenuScene = scene.name == "MainMenu" || scene.name == "Sinematic";
     }
 
     void Update()
     {
-        string scene = SceneManager.GetActiveScene().name;
-        bool isMenu = scene == "MainMenu" || scene == "Sinematic";
         if (uiCanvas != null)
-            uiCanvas.enabled = !isMenu;
+            uiCanvas.enabled = !isMenuScene;
 
-        if (isMenu || !uiReady || PlayerStats.Instance == null)
+        if (isMenuScene || !uiReady || PlayerStats.Instance == null)
         {
-            if (uiReady && !isMenu) PlayerStats.EnsureExists();
+            if (uiReady && !isMenuScene) PlayerStats.EnsureExists();
             return;
         }
 

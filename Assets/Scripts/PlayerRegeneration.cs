@@ -74,19 +74,16 @@ public class PlayerRegeneration : MonoBehaviour
 
         if (currentCharges <= 0)
         {
-            Debug.LogWarning("PlayerRegeneration: Нет доступных зарядов!");
             return;
         }
 
         if (playerHealth.IsDead)
         {
-            Debug.LogWarning("PlayerRegeneration: Игрок мёртв!");
             return;
         }
 
         if (playerHealth.CurrentHealth >= playerHealth.MaxHealth)
         {
-            Debug.Log("PlayerRegeneration: Здоровье уже полное!");
             return;
         }
 
@@ -104,7 +101,6 @@ public class PlayerRegeneration : MonoBehaviour
 
         // Лечим
         playerHealth.Heal(healAmount);
-        Debug.Log($"PlayerRegeneration: Лечение на {healAmount:F1} (+{healPercent}%). HP: {playerHealth.CurrentHealth:F1}/{playerHealth.MaxHealth:F1}");
     }
 
     /// <summary>
@@ -152,7 +148,6 @@ public class PlayerRegeneration : MonoBehaviour
 
             OnChargeRecharged?.Invoke(1f);
             OnChargesChanged?.Invoke(currentCharges, maxCharges);
-            Debug.Log($"PlayerRegeneration: Заряд восстановлен! Всего: {currentCharges}/{maxCharges}");
 
             if (deathPenaltyActive && currentCharges >= maxCharges)
                 ClearDeathPenalty();
@@ -164,7 +159,6 @@ public class PlayerRegeneration : MonoBehaviour
         if (deathPenaltyActive) return;
         deathPenaltyActive = true;
         rechargeTime = baseRechargeTime * 2f;
-        Debug.Log($"PlayerRegeneration: Death penalty active — recharge time = {rechargeTime}s");
     }
 
     private void ClearDeathPenalty()
@@ -172,7 +166,6 @@ public class PlayerRegeneration : MonoBehaviour
         if (!deathPenaltyActive) return;
         deathPenaltyActive = false;
         rechargeTime = baseRechargeTime;
-        Debug.Log($"PlayerRegeneration: Death penalty cleared — recharge time = {rechargeTime}s");
     }
 
     /// <summary>
@@ -213,7 +206,6 @@ public class PlayerRegeneration : MonoBehaviour
         PlayerPrefs.Save();
 
         OnChargesChanged?.Invoke(currentCharges, maxCharges);
-        Debug.Log("PlayerRegeneration: Estus Flask acquired!");
     }
 
     /// <summary>

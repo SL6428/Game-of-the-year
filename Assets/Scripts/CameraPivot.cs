@@ -11,6 +11,7 @@ public class CameraPivot : MonoBehaviour
 
     private bool isLockedOn = false;
     private Transform lockOnTarget;
+    private Camera mainCamera;
 
     // Публичное свойство для получения текущей позиции камеры
     public Transform CameraTransform => transform;
@@ -23,6 +24,9 @@ public class CameraPivot : MonoBehaviour
             if (playerObj != null)
                 player = playerObj.transform;
         }
+        
+        // Кешируем Camera.main
+        mainCamera = Camera.main;
     }
 
     void LateUpdate()
@@ -34,12 +38,12 @@ public class CameraPivot : MonoBehaviour
         transform.position = player.position;
 
         // Поворачиваем pivot по направлению камеры (только горизонталь)
-        if (Camera.main != null)
+        if (mainCamera != null)
         {
-            Vector3 cameraForward = Camera.main.transform.forward;
+            Vector3 cameraForward = mainCamera.transform.forward;
             cameraForward.y = 0; // Убираем вертикальную составляющую
             
-            if (cameraForward.magnitude > 0.01f)
+            if (cameraForward.sqrMagnitude > 0.0001f)
             {
                 cameraForward.Normalize();
                 transform.rotation = Quaternion.LookRotation(cameraForward);
@@ -57,7 +61,7 @@ public class CameraPivot : MonoBehaviour
             Vector3 directionToTarget = (target.position - player.position).normalized;
             directionToTarget.y = 0;
 
-            if (directionToTarget.magnitude > 0.01f)
+            if (directionToTarget.sqrMagnitude > 0.0001f)
             {
                 transform.rotation = Quaternion.LookRotation(directionToTarget);
             }

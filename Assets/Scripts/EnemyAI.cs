@@ -60,6 +60,12 @@ public class EnemyAI : MonoBehaviour
     // Для респауна
     private Vector3 spawnPosition; // Позиция появления
     private Quaternion spawnRotation; // Поворот при появлении
+    
+    // Кеш компонентов для оптимизации
+    private Renderer[] cachedRenderers;
+    private Collider[] cachedColliders;
+    private float sqrDetectionRange; // Кешированный квадрат дистанции
+    private float sqrAttackRange;
 
     void Start()
     {
@@ -73,6 +79,14 @@ public class EnemyAI : MonoBehaviour
 
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
+
+        // Кешируем компоненты для оптимизации
+        cachedRenderers = GetComponentsInChildren<Renderer>();
+        cachedColliders = GetComponents<Collider>();
+        
+        // Кешируем квадраты дистанций для оптимизации
+        sqrDetectionRange = detectionRange * detectionRange;
+        sqrAttackRange = attackRange * attackRange;
 
         // Проверяем что агент на NavMesh
         if (!agent.isOnNavMesh)
@@ -110,20 +124,11 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        // Проверяем смерть - но не вызываем Die() здесь,
-        // потому что OnDeath уже вызывается из Health.OnDeath
-        if (health == null || health.IsDead)
+        // Проверяем смерть
+        if (health == null || health.IsDead || isDead)
         {
-            if (!isDead)
-            {
-                // Это нужно только если OnDeath не был вызван
-                // В нормальном случае OnDeath вызывается из Health
-                Debug.LogWarning($"[{gameObject.name}] Update: health.IsDead=true но isDead=false. Возможно OnDeath не сработал!");
-            }
             return;
         }
-
-        if (isDead) return;
 
         // Если в состоянии смерти - не обновляем AI
         if (currentState == EnemyState.Dead) return;
@@ -197,16 +202,7 @@ public class EnemyAI : MonoBehaviour
         // Двигаемся к игроку
         if (agent.isOnNavMesh)
         {
-            try
-            {
-                agent.SetDestination(player.position);
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"{gameObject.name}: Ошибка преследования: {e.Message}");
-                currentState = EnemyState.Patrol;
-                return;
-            }
+            agent.SetDestination(player.position);
         }
         else
         {
@@ -215,10 +211,10 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        // Проверяем дистанцию атаки
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        // Проверяем дистанцию атаки (используем sqrMagnitude для оптимизации)
+        float sqrDistanceToPlayer = (transform.position - player.position).sqrMagnitude;
 
-        if (distanceToPlayer <= attackRange)
+        if (sqrDistanceToPlayer <= sqrAttackRange)
         {
             currentState = EnemyState.Attack;
         }
@@ -242,9 +238,9 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float sqrDistanceToPlayer = (transform.position - player.position).sqrMagnitude;
 
-        if (distanceToPlayer > attackRange)
+        if (sqrDistanceToPlayer > sqrAttackRange)
         {
             // Игрок вышел из радиуса атаки — преследуем
             agent.isStopped = false;
@@ -256,7 +252,7 @@ public class EnemyAI : MonoBehaviour
         // Поворачиваемся к игроку
         Vector3 direction = (player.position - transform.position).normalized;
         direction.y = 0;
-        if (direction.magnitude > 0.01f)
+        if (direction.sqrMagnitude > 0.0001f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
@@ -300,10 +296,10 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return false;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Проверка дистанции
-        if (distanceToPlayer > detectionRange)
+        // Проверка дистанции (используем sqrMagnitude для оптимизации)
+        float sqrDistanceToPlayer = (transform.position - player.position).sqrMagnitude;
+        
+        if (sqrDistanceToPlayer > sqrDetectionRange)
             return false;
 
         // Проверка угла обзора
@@ -361,16 +357,10 @@ public class EnemyAI : MonoBehaviour
         if (isAttacking) return;
         isAttacking = true;
 
-        Debug.Log($"{gameObject.name} атакует игрока!");
-
         // Проигрываем анимацию атаки
         if (enemyAnimator != null)
         {
             enemyAnimator.PlayAttack();
-        }
-        else
-        {
-            Debug.LogWarning($"[{gameObject.name}] ❌ EnemyAnimator НЕ назначен! Анимация атаки не проиграется!");
         }
 
         // Останавливаем движение на время атаки
@@ -394,15 +384,6 @@ public class EnemyAI : MonoBehaviour
             {
                 playerHealth.TakeDamage(damage);
             }
-            else
-            {
-                if (playerHealth == null)
-                    Debug.LogWarning($"[{gameObject.name}] ❌ Health не найден у игрока! Проверь тег 'Player' и компонент Health");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"[{gameObject.name}] ❌ Игрок не найден для атаки! Проверь поле 'player' в инспекторе");
         }
     }
 
@@ -418,10 +399,10 @@ public class EnemyAI : MonoBehaviour
         yield return StartCoroutine(SinkUnderGround());
         
         // После погружения отключаем рендеры (враг уже под полом)
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        foreach (var rend in renderers)
+        foreach (var rend in cachedRenderers)
         {
-            rend.enabled = false;
+            if (rend != null)
+                rend.enabled = false;
         }
         
         // Возвращаем на начальную позицию (под полом, невидимый)
@@ -453,10 +434,10 @@ public class EnemyAI : MonoBehaviour
         float elapsed = 0f;
         
         // Включаем рендеры чтобы было видно погружение
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        foreach (var rend in renderers)
+        foreach (var rend in cachedRenderers)
         {
-            rend.enabled = true;
+            if (rend != null)
+                rend.enabled = true;
         }
         
         while (elapsed < sinkSpeed)
@@ -483,7 +464,6 @@ public class EnemyAI : MonoBehaviour
     {
         if (isDead)
         {
-            Debug.LogWarning($"[{gameObject.name}] Die() вызван но уже мёртв!");
             return;
         }
 
@@ -510,10 +490,10 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Отключаем коллайдеры
-        Collider[] colliders = GetComponents<Collider>();
-        foreach (var col in colliders)
+        foreach (var col in cachedColliders)
         {
-            col.enabled = false;
+            if (col != null)
+                col.enabled = false;
         }
 
         // Запускаем coroutine: ждать анимацию -> погрузиться -> возродиться
@@ -529,10 +509,10 @@ public class EnemyAI : MonoBehaviour
         health.ResetHealth();
 
         // Включаем коллайдеры
-        Collider[] colliders = GetComponents<Collider>();
-        foreach (var col in colliders)
+        foreach (var col in cachedColliders)
         {
-            col.enabled = true;
+            if (col != null)
+                col.enabled = true;
         }
 
         // Возвращаем на позицию появления
@@ -569,10 +549,10 @@ public class EnemyAI : MonoBehaviour
         transform.position = startPos;
         
         // Включаем рендеры
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        foreach (var rend in renderers)
+        foreach (var rend in cachedRenderers)
         {
-            rend.enabled = true;
+            if (rend != null)
+                rend.enabled = true;
         }
         
         float elapsed = 0f;

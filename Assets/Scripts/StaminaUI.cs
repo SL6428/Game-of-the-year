@@ -20,6 +20,8 @@ public class StaminaUI : MonoBehaviour
     private float currentFill;
     private float targetFill;
     private bool subscribed;
+    private float reconnectTimer = 0f;
+    private const float RECONNECT_INTERVAL = 0.5f;
 
     void Start()
     {
@@ -45,7 +47,12 @@ public class StaminaUI : MonoBehaviour
     {
         if (stamina == null)
         {
-            TryConnect();
+            reconnectTimer -= Time.unscaledDeltaTime;
+            if (reconnectTimer <= 0f)
+            {
+                TryConnect();
+                reconnectTimer = RECONNECT_INTERVAL;
+            }
             return;
         }
 

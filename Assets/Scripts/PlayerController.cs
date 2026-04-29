@@ -179,8 +179,7 @@ public class LocomotionState : PlayerState
         }
         if (Input.GetKeyDown(KeyCode.H))
         {
-            PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
-            if (regen != null && regen.HasFlask && regen.CurrentCharges > 0)
+            if (controller.regeneration != null && controller.regeneration.HasFlask && controller.regeneration.CurrentCharges > 0)
             {
                 controller.ChangeState(new HealState(controller));
             }
@@ -273,21 +272,10 @@ public class AttackState : PlayerState
         controller.animator.SetTrigger("Attack");
         attackTimer = 0f;
         
-        // Включаем хитбокс оружия (ищем на себе или дочерних)
-        Weapon weapon = controller.GetComponent<Weapon>();
-        if (weapon == null)
+        // Включаем хитбокс оружия (используем кешированное оружие)
+        if (controller.weapon != null)
         {
-            weapon = controller.GetComponentInChildren<Weapon>();
-        }
-        
-        if (weapon != null)
-        {
-            weapon.EnableHitbox();
-            Debug.Log("AttackState: Hitbox включён!");
-        }
-        else
-        {
-            Debug.LogWarning("AttackState: Weapon не найден на персонаже или дочерних!");
+            controller.weapon.EnableHitbox();
         }
     }
 
@@ -297,10 +285,9 @@ public class AttackState : PlayerState
         if (attackTimer >= attackDuration)
         {
             // Выключаем хитбокс при выходе из атаки
-            Weapon weapon = controller.GetComponent<Weapon>();
-            if (weapon != null)
+            if (controller.weapon != null)
             {
-                weapon.DisableHitbox();
+                controller.weapon.DisableHitbox();
             }
             
             controller.ChangeState(new LocomotionState(controller));
@@ -312,10 +299,9 @@ public class AttackState : PlayerState
         controller.animator.ResetTrigger("Attack");
         
         // Гарантированно выключаем хитбокс
-        Weapon weapon = controller.GetComponent<Weapon>();
-        if (weapon != null)
+        if (controller.weapon != null)
         {
-            weapon.DisableHitbox();
+            controller.weapon.DisableHitbox();
         }
     }
 }
@@ -358,11 +344,9 @@ public class DeathState : PlayerState
         if (waitTimer <= 0f && !triggered)
         {
             triggered = true;
-            Health health = controller.GetComponent<Health>();
-            PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
             DeathManager.Instance?.ShowDeathScreen(
                 controller.RespawnPosition,
-                health, regen, controller
+                controller.health, controller.regeneration, controller
             );
         }
     }
@@ -390,8 +374,7 @@ public class HealState : PlayerState
 
     public override void Enter()
     {
-        PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
-        if (regen == null || !regen.HasFlask || regen.CurrentCharges <= 0)
+        if (controller.regeneration == null || !controller.regeneration.HasFlask || controller.regeneration.CurrentCharges <= 0)
         {
             controller.ChangeState(new LocomotionState(controller));
             return;
@@ -407,10 +390,9 @@ public class HealState : PlayerState
         if (healTimer >= healDuration)
         {
             // Применяем лечение при завершении анимации
-            PlayerRegeneration regen = controller.GetComponent<PlayerRegeneration>();
-            if (regen != null && regen.HasFlask)
+            if (controller.regeneration != null && controller.regeneration.HasFlask)
             {
-                regen.TryHeal();
+                controller.regeneration.TryHeal();
             }
 
             controller.ChangeState(new LocomotionState(controller));
@@ -452,6 +434,12 @@ public class PlayerController : MonoBehaviour
 
     // Стамина
     public Stamina stamina { get; private set; }
+    
+    // Оружие (кешируем для оптимизации)
+    public Weapon weapon { get; private set; }
+    
+    // Health (кешируем для оптимизации)
+    public Health health { get; private set; }
 
     // Текущая скорость
     public Vector3 playerVelocity;
@@ -511,7 +499,6 @@ public class PlayerController : MonoBehaviour
         if (regeneration == null)
         {
             regeneration = gameObject.AddComponent<PlayerRegeneration>();
-            Debug.Log("PlayerController: Added PlayerRegeneration");
         }
 
         // Получаем стамину
@@ -519,11 +506,19 @@ public class PlayerController : MonoBehaviour
         if (stamina == null)
         {
             stamina = gameObject.AddComponent<Stamina>();
-            Debug.Log("PlayerController: Added Stamina");
         }
+        
+        // Кешируем оружие
+        weapon = GetComponent<Weapon>();
+        if (weapon == null)
+        {
+            weapon = GetComponentInChildren<Weapon>();
+        }
+        
+        // Кешируем health
+        health = GetComponent<Health>();
 
         // Подписка на смерть
-        Health health = GetComponent<Health>();
         if (health != null)
             health.OnDeath += OnPlayerDeath;
 
@@ -540,12 +535,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.F9))
         {
             Debug.Log("[PlayerController] F9 pressed — resetting stats");
             if (PlayerStats.Instance != null)
                 PlayerStats.Instance.ResetAllToDefault();
         }
+#endif
 
         // Обновляем текущее состояние (всегда, даже при отключённом контроллере — иначе DeathState не тикает)
         currentState?.Update();

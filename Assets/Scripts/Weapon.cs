@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// Оружие персонажа. Наносит урон при анимации атаки.
@@ -9,7 +8,6 @@ public class Weapon : MonoBehaviour
 {
     [Header("Damage Settings")]
     [SerializeField] private float damage = 20f;
-    [SerializeField] private LayerMask enemyLayers;
 
     [Header("References")]
     [SerializeField] private Health playerHealth;
@@ -42,48 +40,26 @@ public class Weapon : MonoBehaviour
             if (weaponCollider == null)
             {
                 weaponCollider = GetComponentInChildren<Collider>();
-                Debug.Log($"Weapon: Найден коллайдер на дочернем объекте: {weaponCollider?.gameObject.name}");
             }
         }
         
         if (weaponCollider != null)
         {
             weaponCollider.isTrigger = true;
-            Debug.Log($"Weapon: Коллайдер настроен - {weaponCollider.gameObject.name}, IsTrigger: {weaponCollider.isTrigger}");
         }
         else
         {
             Debug.LogError("Weapon: Не найден коллайдер для оружия!");
         }
-    }
-
-    void Start()
-    {
-        Debug.Log($"=== Weapon Start ===");
-        Debug.Log($"weaponCollider после Awake: {weaponCollider}");
         
-        // Если всё ещё null, ищем все коллайдеры на дочерних
-        if (weaponCollider == null)
-        {
-            Collider[] allColliders = GetComponentsInChildren<Collider>();
-            Debug.Log($"Найдено коллайдеров на дочерних: {allColliders.Length}");
-            
-            foreach (var col in allColliders)
-            {
-                Debug.Log($"  - {col.gameObject.name}: IsTrigger={col.isTrigger}");
-            }
-            
-            if (allColliders.Length > 0)
-            {
-                weaponCollider = allColliders[0];
-                weaponCollider.isTrigger = true;
-            }
-        }
-        
-        // Если здоровье игрока не назначено, ищем
+        // Если здоровье игрока не назначено, ищем по тегу Player
         if (playerHealth == null)
         {
-            playerHealth = FindFirstObjectByType<Health>();
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                playerHealth = player.GetComponent<Health>();
+            }
         }
     }
 
@@ -109,7 +85,7 @@ public class Weapon : MonoBehaviour
     /// </summary>
     public void EnableHitbox()
     {
-        isAttacking = true;       // ✅ Устанавливаем флаг атаки
+        isAttacking = true;
         canDamage = true;
         hasHitThisAttack = false; // Сбрасываем флаг попадания для новой атаки
 
@@ -117,8 +93,6 @@ public class Weapon : MonoBehaviour
         {
             weaponCollider.enabled = true;
         }
-
-        Debug.Log($"Weapon: Hitbox включён! isAttacking={isAttacking}, canDamage={canDamage}");
     }
 
     /// <summary>
@@ -132,10 +106,9 @@ public class Weapon : MonoBehaviour
         {
             weaponCollider.enabled = false;
         }
-        
-        Debug.Log("Weapon: Hitbox выключен!");
     }
 
+#if UNITY_EDITOR
     void Update()
     {
         // Отладка: проверяем что происходит
@@ -153,34 +126,14 @@ public class Weapon : MonoBehaviour
             }
         }
     }
+#endif
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[TRIGGER] === ВХОД В ТРИГГЕР ===");
-        Debug.Log($"[TRIGGER] Объект: {other.gameObject.name}, Тег: {other.tag}");
-        Debug.Log($"[TRIGGER] canDamage={canDamage}, isAttacking={isAttacking}, hasHitThisAttack={hasHitThisAttack}");
-        Debug.Log($"[TRIGGER] weaponCollider.enabled={weaponCollider?.enabled}");
-
-        if (!canDamage)
+        if (!canDamage || !isAttacking || hasHitThisAttack)
         {
-            Debug.Log("[TRIGGER] ❌ Отмена: canDamage = false");
             return;
         }
-
-        if (!isAttacking)
-        {
-            Debug.Log("[TRIGGER] ❌ Отмена: isAttacking = false");
-            return;
-        }
-
-        // Защита от множественных попаданий за одну атаку
-        if (hasHitThisAttack)
-        {
-            Debug.Log("[TRIGGER] ❌ Отмена: уже было попадание в этой атаке");
-            return;
-        }
-
-        Debug.Log($"[TRIGGER] ✅ Попали в {other.gameObject.name}, тег: {other.tag}");
 
         // Проверяем что это враг
         if (other.CompareTag("Enemy"))
@@ -191,7 +144,6 @@ public class Weapon : MonoBehaviour
             if (enemyHealth == null)
             {
                 enemyHealth = other.GetComponentInParent<Health>();
-                Debug.Log($"[HEALTH] Найден на родителе: {enemyHealth?.gameObject.name}");
             }
 
             if (enemyHealth != null && !enemyHealth.IsDead)
@@ -200,24 +152,12 @@ public class Weapon : MonoBehaviour
                 if (PlayerStats.Instance != null)
                     totalDamage += PlayerStats.Instance.DamageBonus;
 
-                Debug.Log($"[DAMAGE] Hit {other.gameObject.name} for {totalDamage} (base {damage} + str {totalDamage - damage})");
                 enemyHealth.TakeDamage(totalDamage);
 
                 // Помечаем что было попадание и отключаем хитбокс
                 hasHitThisAttack = true;
                 DisableHitbox();
             }
-            else
-            {
-                if (enemyHealth == null)
-                    Debug.LogWarning($"[HEALTH] ❌ Health не найден на {other.gameObject.name}");
-                else if (enemyHealth.IsDead)
-                    Debug.Log($"[HEALTH] ℹ️ Враг уже мёртв!");
-            }
-        }
-        else
-        {
-            Debug.Log($"[TRIGGER] ❌ Объект не с тегом Enemy: {other.tag}");
         }
     }
 

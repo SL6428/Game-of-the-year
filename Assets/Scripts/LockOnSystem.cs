@@ -149,12 +149,12 @@ public class LockOnSystem : MonoBehaviour
             }
         }
 
-        // Сортировка по дистанции (ближайшие первыми)
+        // Сортировка по дистанции (ближайшие первыми) - используем sqrMagnitude для оптимизации
         availableTargets.Sort((a, b) =>
         {
-            float distA = Vector3.Distance(playerTransform.position, a.position);
-            float distB = Vector3.Distance(playerTransform.position, b.position);
-            return distA.CompareTo(distB);
+            float sqrDistA = (playerTransform.position - a.position).sqrMagnitude;
+            float sqrDistB = (playerTransform.position - b.position).sqrMagnitude;
+            return sqrDistA.CompareTo(sqrDistB);
         });
 
         // Если текущая цель больше не в списке, сбрасываем
@@ -169,7 +169,6 @@ public class LockOnSystem : MonoBehaviour
     {
         if (availableTargets.Count == 0)
         {
-            Debug.Log("Нет доступных целей в радиусе!");
             return;
         }
 
@@ -204,8 +203,6 @@ public class LockOnSystem : MonoBehaviour
 
         // Передаем цель в CameraPivot
         cameraPivot.SetLockOnTarget(target);
-
-        Debug.Log($"Lock-On активирован на: {target.name}");
     }
 
     private void ReleaseLockOn()
@@ -223,8 +220,6 @@ public class LockOnSystem : MonoBehaviour
 
         // Сбрасываем CameraPivot
         cameraPivot.SetLockOnTarget(null);
-
-        Debug.Log("Lock-On сброшен");
     }
 
     private void SwitchToNextTarget()
@@ -239,8 +234,6 @@ public class LockOnSystem : MonoBehaviour
 
         currentTarget = availableTargets[currentTargetIndex];
         ActivateLockOn(currentTarget);
-
-        Debug.Log($"Переключен на цель {currentTargetIndex + 1} из {availableTargets.Count}");
     }
 
     // Отладка

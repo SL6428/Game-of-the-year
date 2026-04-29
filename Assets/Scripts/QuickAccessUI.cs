@@ -24,6 +24,8 @@ public class QuickAccessUI : MonoBehaviour
     private int lastFrameCharges = -1;
     private float pulseTimer = 0f;
     private const float PULSE_DURATION = 0.3f;
+    private float reconnectTimer = 0f;
+    private const float RECONNECT_INTERVAL = 0.5f;
 
     void Awake()
     {
@@ -50,7 +52,12 @@ public class QuickAccessUI : MonoBehaviour
     {
         if (regen == null)
         {
-            regen = FindFirstObjectByType<PlayerRegeneration>();
+            reconnectTimer -= Time.unscaledDeltaTime;
+            if (reconnectTimer <= 0f)
+            {
+                regen = FindFirstObjectByType<PlayerRegeneration>();
+                reconnectTimer = RECONNECT_INTERVAL;
+            }
             if (regen == null) return;
         }
 
