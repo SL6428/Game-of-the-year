@@ -86,21 +86,16 @@ public class HealthUIEnemy : MonoBehaviour
     {
         if (hpFillImage == null) return;
 
-        float fillAmount = Mathf.Clamp01(currentHP / maxHP);
+        float fillAmount = currentHP / maxHP;
         hpFillImage.fillAmount = fillAmount;
 
-        // Плавный градиент: красный (0) → оранжевый (0.5) → жёлтый (0.75) → зелёный (1.0)
-        Color low    = new Color(0.78f, 0.10f, 0.10f); // тёмно-красный
-        Color mid    = new Color(0.95f, 0.55f, 0.15f); // оранжевый
-        Color high   = new Color(0.30f, 0.78f, 0.20f); // зелёный
-
-        Color result;
-        if (fillAmount < 0.5f)
-            result = Color.Lerp(low, mid, fillAmount * 2f);
+        // Цвет: зелёный → жёлтый → красный
+        if (fillAmount > 0.6f)
+            hpFillImage.color = Color.green;
+        else if (fillAmount > 0.3f)
+            hpFillImage.color = Color.yellow;
         else
-            result = Color.Lerp(mid, high, (fillAmount - 0.5f) * 2f);
-
-        hpFillImage.color = result;
+            hpFillImage.color = Color.red;
     }
 
     private void OnDamageTaken()
@@ -163,13 +158,13 @@ public class HealthUIEnemy : MonoBehaviour
 
         // Rect
         RectTransform rect = canvasObj.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(3f, 0.45f); // было (2f, 0.3f) — увеличено для читаемости
+        rect.sizeDelta = new Vector2(2f, 0.3f);
 
         // Фон полоски
         GameObject bgObj = new GameObject("Background");
         bgObj.transform.SetParent(canvasObj.transform);
         Image bgImage = bgObj.AddComponent<Image>();
-        bgImage.color = new Color(0.05f, 0.05f, 0.05f, 0.85f); // было (0,0,0,0.5)
+        bgImage.color = new Color(0, 0, 0, 0.5f);
 
         RectTransform bgRect = bgObj.GetComponent<RectTransform>();
         bgRect.anchorMin = Vector2.zero;

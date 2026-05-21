@@ -25464,7 +25464,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 20
+  respawnTime: 10
   respawnEnabled: 1
   deathAnimDuration: 1.8
   sinkSpeed: 0.3
@@ -43605,7 +43605,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 20
+  respawnTime: 10
   respawnEnabled: 1
   deathAnimDuration: 1.8
   sinkSpeed: 0.3
@@ -45825,7 +45825,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   walkSpeed: 3
-  runSpeed: 4.5
+  runSpeed: 6
   rotationSpeed: 10
   gravity: -9.81
   jumpHeight: 1.6
@@ -59137,7 +59137,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 20
+  respawnTime: 10
   respawnEnabled: 1
   deathAnimDuration: 1.8
   sinkSpeed: 0.3
@@ -59833,7 +59833,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 20
+  respawnTime: 10
   respawnEnabled: 1
   deathAnimDuration: 1.8
   sinkSpeed: 0.3
@@ -65421,7 +65421,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 20
+  respawnTime: 10
   respawnEnabled: 1
   deathAnimDuration: 1.8
   sinkSpeed: 0.3
@@ -70447,7 +70447,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 20
+  respawnTime: 10
   respawnEnabled: 1
   deathAnimDuration: 1.8
   sinkSpeed: 0.3
@@ -78438,7 +78438,7 @@ MonoBehaviour:
   showDebugGizmos: 1
   deathEffect: {fileID: 0}
   disappearDelay: 1
-  respawnTime: 10
+  respawnTime: 5
   respawnEnabled: 1
   deathAnimDuration: 2.5
   sinkSpeed: 0.5
