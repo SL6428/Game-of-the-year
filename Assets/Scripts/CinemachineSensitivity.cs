@@ -2,7 +2,6 @@ using UnityEngine;
 using Unity.Cinemachine;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(CinemachineCamera))]
 public class CinemachineSensitivity : MonoBehaviour
 {
     [System.Serializable]
@@ -19,24 +18,23 @@ public class CinemachineSensitivity : MonoBehaviour
     private CinemachineInputAxisController inputController;
     private bool initialized;
 
-    void Start()
+    void OnEnable()
     {
-        inputController = GetComponent<CinemachineInputAxisController>();
-        if (inputController == null)
-            inputController = GetComponentInChildren<CinemachineInputAxisController>();
+        if (!initialized)
+        {
+            inputController = GetComponent<CinemachineInputAxisController>();
+            if (inputController == null)
+                inputController = GetComponentInChildren<CinemachineInputAxisController>();
 
-        if (inputController != null)
-        {
-            CaptureBaseGains();
-            initialized = true;
-        }
-        else
-        {
-            Debug.LogWarning(
-                $"CinemachineSensitivity: CinemachineInputAxisController не найден на {gameObject.name}");
+            if (inputController != null)
+            {
+                CaptureBaseGains();
+                initialized = true;
+            }
         }
 
-        if (SettingsManager.Instance != null)
+        // На случай, если SettingsManager уже сохранил значение до того, как мы успели инициализироваться
+        if (initialized && SettingsManager.Instance != null)
             ApplySensitivity(SettingsManager.Instance.CameraSensitivity);
     }
 
@@ -60,7 +58,21 @@ public class CinemachineSensitivity : MonoBehaviour
 
     public void ApplySensitivity(float multiplier)
     {
-        if (!initialized || inputController == null) return;
+        if (!initialized)
+        {
+            // Ленивая инициализация на случай, если ApplySensitivity вызвали до OnEnable/Start
+            inputController = GetComponent<CinemachineInputAxisController>();
+            if (inputController == null)
+                inputController = GetComponentInChildren<CinemachineInputAxisController>();
+
+            if (inputController == null)
+            {
+                Debug.LogWarning($"CinemachineSensitivity: контроллер не найден на {gameObject.name}");
+                return;
+            }
+            CaptureBaseGains();
+            initialized = true;
+        }
 
         for (int i = 0; i < axisGains.Count && i < inputController.Controllers.Count; i++)
         {

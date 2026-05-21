@@ -224,6 +224,21 @@ public class SettingsManager : MonoBehaviour
             FindObjectsByType<CinemachineSensitivity>(FindObjectsSortMode.None);
         foreach (var a in appliers)
             a.ApplySensitivity(cameraSensitivity);
+
+        // Fallback: если на CinemachineCamera не повешен CinemachineSensitivity
+        // (могло быть забыто в Editor), пробуем найти Input Axis Controller напрямую
+        if (appliers == null || appliers.Length == 0)
+        {
+            var inputControllers = FindObjectsByType<Unity.Cinemachine.CinemachineInputAxisController>(
+                FindObjectsSortMode.None);
+            foreach (var ic in inputControllers)
+            {
+                // Добавляем CinemachineSensitivity автоматически и применяем
+                var sens = ic.GetComponent<CinemachineSensitivity>();
+                if (sens == null) sens = ic.gameObject.AddComponent<CinemachineSensitivity>();
+                sens.ApplySensitivity(cameraSensitivity);
+            }
+        }
     }
 
     public void ApplyDisplayEffects()
