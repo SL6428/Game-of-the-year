@@ -11,15 +11,11 @@ public class Stamina : MonoBehaviour
     [Header("Action Costs")]
     [SerializeField] private float runDrainRate = 15f;
     [SerializeField] private float attackCost = 20f;
-    [SerializeField] private float rollCost = 15f;
-    [SerializeField] private float jumpCost = 10f;
 
     public float MaxStamina => maxStamina;
     public float CurrentStamina => currentStamina;
     public bool IsExhausted => currentStamina <= 0f;
     public float AttackCost => attackCost;
-    public float RollCost => rollCost;
-    public float JumpCost => jumpCost;
     public float RunDrainRate => runDrainRate;
     public float RegenDelay => regenDelay;
 

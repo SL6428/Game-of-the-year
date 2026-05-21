@@ -11,8 +11,6 @@ public static class AnimatorHashes
     public static readonly int VelocityZ = Animator.StringToHash("VelocityZ");
     public static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
     public static readonly int IsRunning = Animator.StringToHash("IsRunning");
-    public static readonly int Jump = Animator.StringToHash("Jump");
-    public static readonly int Roll = Animator.StringToHash("Roll");
     public static readonly int Attack = Animator.StringToHash("Attack");
     public static readonly int Death = Animator.StringToHash("Death");
     public static readonly int Heal = Animator.StringToHash("Heal");
@@ -175,18 +173,6 @@ public class LocomotionState : PlayerState
 
     private void CheckTransitions()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (HasStamina(controller.stamina?.JumpCost ?? 0f))
-                controller.ChangeState(new JumpState(controller));
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            if (HasStamina(controller.stamina?.RollCost ?? 0f))
-                controller.ChangeState(new RollState(controller));
-            return;
-        }
         if (Input.GetMouseButtonDown(0))
         {
             if (HasStamina(controller.stamina?.AttackCost ?? 0f))
@@ -207,69 +193,6 @@ public class LocomotionState : PlayerState
     {
         if (controller.stamina == null) return true;
         return controller.stamina.CurrentStamina >= cost;
-    }
-}
-
-// ==================== Состояние прыжка ====================
-public class JumpState : PlayerState
-{
-    public JumpState(PlayerController controller) : base(controller) { }
-    public override void Enter()
-    {
-        if (controller.stamina != null)
-            controller.stamina.TryUseStamina(controller.stamina.JumpCost);
-        controller.playerVelocity.y = Mathf.Sqrt(controller.jumpHeight * -2f * controller.gravity);
-        controller.animator.SetTrigger(AnimatorHashes.Jump);
-    }
-
-    public override void Update()
-    {
-        if (controller.isGrounded && controller.playerVelocity.y <= 0)
-        {
-            controller.ChangeState(new LocomotionState(controller));
-        }
-    }
-
-    public override void Exit()
-    {
-        controller.animator.ResetTrigger(AnimatorHashes.Jump);
-    }
-}
-
-// ==================== Состояние кувырка ====================
-public class RollState : PlayerState
-{
-    private float rollTimer;
-    private float rollDuration = 0.8f;
-    private float rollSpeed = 6f;
-
-    public RollState(PlayerController controller) : base(controller) { }
-
-    public override void Enter()
-    {
-        if (controller.stamina != null)
-            controller.stamina.TryUseStamina(controller.stamina.RollCost);
-        controller.animator.SetTrigger(AnimatorHashes.Roll);
-        rollTimer = 0f;
-    }
-
-    public override void Update()
-    {
-        // Кувырок в направлении камеры (горизонтальное)
-        Vector3 forward = controller.cameraPivot.GetForwardDirection();
-        forward.y = 0;
-        controller.controller.Move(forward * rollSpeed * Time.deltaTime);
-
-        rollTimer += Time.deltaTime;
-        if (rollTimer >= rollDuration)
-        {
-            controller.ChangeState(new LocomotionState(controller));
-        }
-    }
-
-    public override void Exit()
-    {
-        controller.animator.ResetTrigger(AnimatorHashes.Roll);
     }
 }
 
@@ -431,7 +354,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Action Settings")]
     public float gravity = -9.81f;
-    public float jumpHeight = 1.2f;
 
     // Ссылки
     public Animator animator { get; private set; }
