@@ -10,8 +10,7 @@ public class PlayerRegeneration : MonoBehaviour
     [Header("Regeneration Settings")]
     [SerializeField] private int maxCharges = 5;
     [SerializeField] private float rechargeTime = 15f;
-    [Tooltip("Процент от МАКСИМАЛЬНОГО HP, восстанавливаемый одним зарядом")]
-    [SerializeField, Range(5f, 100f)] private float healPercent = 30f;
+    [SerializeField] private float healPercent = 30f; // 30% от текущего HP
 
     [Header("References")]
     [SerializeField] private Health playerHealth;
@@ -88,8 +87,14 @@ public class PlayerRegeneration : MonoBehaviour
             return;
         }
 
-        // Рассчитываем лечение: фиксированный % от МАКСИМАЛЬНОГО HP
-        float healAmount = playerHealth.MaxHealth * (healPercent / 100f);
+        // Рассчитываем лечение: 30% от текущего HP
+        float healAmount = playerHealth.CurrentHealth * (healPercent / 100f);
+
+        // Если HP очень мало, лечим хотя бы на 10% от максимума
+        if (healAmount < playerHealth.MaxHealth * 0.1f)
+        {
+            healAmount = playerHealth.MaxHealth * 0.1f;
+        }
 
         // Используем заряд
         UseCharge();

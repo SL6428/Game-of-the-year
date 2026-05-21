@@ -40,7 +40,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Death")]
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private float disappearDelay = 1f;
-    [SerializeField] private float respawnTime = 20f; // Время до возрождения
+    [SerializeField] private float respawnTime = 10f; // Время до возрождения
     [SerializeField] private bool respawnEnabled = true; // Включить возрождение
     [SerializeField] private float deathAnimDuration = 2.5f; // Длительность анимации смерти
     [SerializeField] private float sinkSpeed = 2f; // Скорость погружения под пол (секунды)
