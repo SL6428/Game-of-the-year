@@ -426,7 +426,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float walkSpeed = 3f;
-    public float runSpeed = 6f;
+    public float runSpeed = 4.5f;   // было 6f — снижено по фидбеку «персонаж как Flash»
     public float rotationSpeed = 10f;
 
     [Header("Action Settings")]
