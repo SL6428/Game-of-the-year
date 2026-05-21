@@ -381,6 +381,7 @@ public class LevelUpMenu : MonoBehaviour
             currencyText.text = $"Souls: {s.Currency:N0}";
 
         int totalCost = 0;
+        int simulatedSoulLevel = s.SoulLevel;  // ⟵ выносим за внешний цикл — копится по всем статам
 
         for (int i = 0; i < 6; i++)
         {
@@ -390,7 +391,6 @@ public class LevelUpMenu : MonoBehaviour
 
             if (nameTexts[i] != null)
                 nameTexts[i].text = PlayerStats.StatNames[i];
-
             if (bonusTexts[i] != null)
                 bonusTexts[i].text = PlayerStats.StatDescriptions[i];
 
@@ -399,21 +399,24 @@ public class LevelUpMenu : MonoBehaviour
                     ? $"{cur} -> <color=#FFD700>{pln}</color>"
                     : cur.ToString();
 
-            int statCost = 0, ts = s.SoulLevel, tl = cur;
-            for (int j = cur; j < pln; j++)
+            int statCost = 0;
+            for (int j = 0; j < diff; j++)
             {
-                float c = s.BaseCurrencyCost
-                    * (1f + s.SoulLevelCostRate * (ts - s.StartSoulLevel))
-                    * (1f + s.StatLevelCostRate * (tl - s.BaseStatLevel));
+                int soulLevelsAboveStart = simulatedSoulLevel - s.StartSoulLevel;
+                if (soulLevelsAboveStart < 0) soulLevelsAboveStart = 0;
+                float c = s.BaseCurrencyCost * Mathf.Pow(1f + s.CostGrowthRate, soulLevelsAboveStart);
                 int r = Mathf.Max(1, Mathf.RoundToInt(c));
-                statCost += r; totalCost += r; ts++; tl++;
+                statCost += r;
+                totalCost += r;
+                simulatedSoulLevel++;
             }
 
             if (costTexts[i] != null)
                 costTexts[i].text = diff > 0 ? $"{statCost}" : "";
 
             if (plusButtons[i] != null)
-                plusButtons[i].interactable = pln < MAX_LVL;
+                plusButtons[i].interactable = pln < MAX_LVL && s.Currency >= totalCost + Mathf.RoundToInt(
+                    s.BaseCurrencyCost * Mathf.Pow(1f + s.CostGrowthRate, (simulatedSoulLevel - s.StartSoulLevel)));
             if (minusButtons[i] != null)
                 minusButtons[i].interactable = diff > 0;
         }
@@ -423,7 +426,6 @@ public class LevelUpMenu : MonoBehaviour
 
         if (confirmButton != null)
             confirmButton.interactable = totalCost > 0 && s.Currency >= totalCost;
-
         if (resetButton != null)
             resetButton.interactable = totalCost > 0;
     }
@@ -432,16 +434,19 @@ public class LevelUpMenu : MonoBehaviour
     {
         var s = PlayerStats.Instance;
         if (s == null) return 0;
-        int total = 0, ts = s.SoulLevel;
+
+        int total = 0;
+        int simulatedSoulLevel = s.SoulLevel;
         for (int i = 0; i < 6; i++)
         {
-            int cur = s.GetStatLevel((StatType)i), tl = cur;
+            int cur = s.GetStatLevel((StatType)i);
             for (int j = cur; j < planned[i]; j++)
             {
-                float c = s.BaseCurrencyCost
-                    * (1f + s.SoulLevelCostRate * (ts - s.StartSoulLevel))
-                    * (1f + s.StatLevelCostRate * (tl - s.BaseStatLevel));
-                total += Mathf.Max(1, Mathf.RoundToInt(c)); ts++; tl++;
+                int soulLevelsAboveStart = simulatedSoulLevel - s.StartSoulLevel;
+                if (soulLevelsAboveStart < 0) soulLevelsAboveStart = 0;
+                float c = s.BaseCurrencyCost * Mathf.Pow(1f + s.CostGrowthRate, soulLevelsAboveStart);
+                total += Mathf.Max(1, Mathf.RoundToInt(c));
+                simulatedSoulLevel++;
             }
         }
         return total;

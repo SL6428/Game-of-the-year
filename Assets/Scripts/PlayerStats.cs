@@ -29,10 +29,10 @@ public class PlayerStats : MonoBehaviour
     [Header("Base Settings")]
     [SerializeField] private int baseStatLevel = 8;
     [SerializeField] private int baseCurrencyCost = 100;
-    [SerializeField, Range(0.01f, 0.15f)]
-    private float soulLevelCostRate = 0.08f;
-    [SerializeField, Range(0.01f, 0.08f)]
-    private float statLevelCostRate = 0.03f;
+    
+    [Header("Cost Growth")]
+    [Tooltip("На сколько % дороже стоит каждая следующая прокачка (по общему Soul Level)")]
+    [SerializeField, Range(0.005f, 0.1f)] private float costGrowthRate = 0.03f;
 
     [Header("Stat Bonuses Per Level Above Base")]
     [SerializeField] private int strengthDamageBonus = 2;
@@ -67,8 +67,7 @@ public class PlayerStats : MonoBehaviour
     public int StartSoulLevel => baseStatLevel * STAT_COUNT;
     public int BaseStatLevel => baseStatLevel;
     public int BaseCurrencyCost => baseCurrencyCost;
-    public float SoulLevelCostRate => soulLevelCostRate;
-    public float StatLevelCostRate => statLevelCostRate;
+    public float CostGrowthRate => costGrowthRate;
 
     public int DamageBonus =>
         (statLevels[(int)StatType.Strength] - baseStatLevel) * strengthDamageBonus;
@@ -186,14 +185,10 @@ public class PlayerStats : MonoBehaviour
 
     public int GetLevelUpCost(StatType type)
     {
-        int currentLevel = statLevels[(int)type];
-        int levelsAboveBase = currentLevel - baseStatLevel;
         int soulLevelsAboveStart = SoulLevel - StartSoulLevel;
+        if (soulLevelsAboveStart < 0) soulLevelsAboveStart = 0;
 
-        float cost = baseCurrencyCost
-            * (1f + soulLevelCostRate * soulLevelsAboveStart)
-            * (1f + statLevelCostRate * levelsAboveBase);
-
+        float cost = baseCurrencyCost * Mathf.Pow(1f + costGrowthRate, soulLevelsAboveStart);
         return Mathf.Max(1, Mathf.RoundToInt(cost));
     }
 
