@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using System;
 
@@ -30,6 +31,8 @@ public class LevelUpMenu : MonoBehaviour
     private int[] planned = new int[6];
     private int[] saved = new int[6];
     private const int MAX_LVL = 99;
+    
+    private PlayerController cachedPlayerController;
 
     void Awake()
     {
@@ -42,6 +45,11 @@ public class LevelUpMenu : MonoBehaviour
         cg.interactable = false;
         cg.blocksRaycasts = false;
         _isOpen = false;
+
+        // Build UI in Awake to prevent freeze on first Open
+        RectTransform rt = GetComponent<RectTransform>();
+        if (rt == null) rt = GetComponentInChildren<RectTransform>(true);
+        if (rt != null && !built) Build(rt);
     }
 
     void OnDestroy()
@@ -56,6 +64,25 @@ public class LevelUpMenu : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (!_isOpen) return;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Hide();
+        }
+    }
+
+    void OnDisable()
+    {
+        if (_isOpen) Hide();
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus && _isOpen) Hide();
+    }
+
     public void Open()
     {
         var s = PlayerStats.Instance;
@@ -63,19 +90,6 @@ public class LevelUpMenu : MonoBehaviour
         {
             Debug.LogError("[LevelUpMenu] PlayerStats.Instance is NULL!");
             return;
-        }
-
-        if (!built)
-        {
-            RectTransform rt = GetComponent<RectTransform>();
-            if (rt == null) rt = GetComponentInChildren<RectTransform>(true);
-            if (rt != null)
-                Build(rt);
-            else
-            {
-                Debug.LogError("[LevelUpMenu] No RectTransform found!");
-                return;
-            }
         }
 
         for (int i = 0; i < 6; i++)
@@ -113,6 +127,7 @@ public class LevelUpMenu : MonoBehaviour
         cg.alpha = 0f;
         cg.interactable = false;
         cg.blocksRaycasts = false;
+        EventSystem.current?.SetSelectedGameObject(null);
     }
 
     private void SetPauseFallback(bool pause)
@@ -120,16 +135,18 @@ public class LevelUpMenu : MonoBehaviour
         if (pause)
         {
             Time.timeScale = 0f;
-            var pc = FindFirstObjectByType<PlayerController>();
-            if (pc != null) pc.enabled = false;
+            if (cachedPlayerController == null)
+                cachedPlayerController = FindFirstObjectByType<PlayerController>();
+            if (cachedPlayerController != null) cachedPlayerController.enabled = false;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
         else
         {
             Time.timeScale = 1f;
-            var pc = FindFirstObjectByType<PlayerController>();
-            if (pc != null) pc.enabled = true;
+            if (cachedPlayerController == null)
+                cachedPlayerController = FindFirstObjectByType<PlayerController>();
+            if (cachedPlayerController != null) cachedPlayerController.enabled = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -337,11 +354,15 @@ public class LevelUpMenu : MonoBehaviour
         }
 
         int total = CalcTotalCost();
+#if UNITY_EDITOR
         Debug.Log($"[LevelUpMenu] OnConfirm: currency={s.Currency}, totalCost={total}, planned=[{planned[0]},{planned[1]},{planned[2]},{planned[3]},{planned[4]},{planned[5]}]");
+#endif
 
         if (s.Currency < total)
         {
+#if UNITY_EDITOR
             Debug.LogWarning($"[LevelUpMenu] Not enough currency! Have {s.Currency}, need {total}");
+#endif
             return;
         }
 
@@ -352,7 +373,9 @@ public class LevelUpMenu : MonoBehaviour
             while (cur < planned[i])
             {
                 bool ok = s.LevelUpStat(t);
+#if UNITY_EDITOR
                 Debug.Log($"[LevelUpMenu] LevelUpStat({t}): cur={cur}, planned={planned[i]}, success={ok}");
+#endif
                 if (!ok) break;
                 cur++;
             }
@@ -381,6 +404,7 @@ public class LevelUpMenu : MonoBehaviour
             currencyText.text = $"Souls: {s.Currency:N0}";
 
         int totalCost = 0;
+        int simulatedSoulLevel = s.SoulLevel;  // ⟵ выносим за внешний цикл — копится по всем статам
 
         for (int i = 0; i < 6; i++)
         {
@@ -390,7 +414,6 @@ public class LevelUpMenu : MonoBehaviour
 
             if (nameTexts[i] != null)
                 nameTexts[i].text = PlayerStats.StatNames[i];
-
             if (bonusTexts[i] != null)
                 bonusTexts[i].text = PlayerStats.StatDescriptions[i];
 
@@ -399,21 +422,24 @@ public class LevelUpMenu : MonoBehaviour
                     ? $"{cur} -> <color=#FFD700>{pln}</color>"
                     : cur.ToString();
 
-            int statCost = 0, ts = s.SoulLevel, tl = cur;
-            for (int j = cur; j < pln; j++)
+            int statCost = 0;
+            for (int j = 0; j < diff; j++)
             {
-                float c = s.BaseCurrencyCost
-                    * (1f + s.SoulLevelCostRate * (ts - s.StartSoulLevel))
-                    * (1f + s.StatLevelCostRate * (tl - s.BaseStatLevel));
+                int soulLevelsAboveStart = simulatedSoulLevel - s.StartSoulLevel;
+                if (soulLevelsAboveStart < 0) soulLevelsAboveStart = 0;
+                float c = s.BaseCurrencyCost * Mathf.Pow(1f + s.CostGrowthRate, soulLevelsAboveStart);
                 int r = Mathf.Max(1, Mathf.RoundToInt(c));
-                statCost += r; totalCost += r; ts++; tl++;
+                statCost += r;
+                totalCost += r;
+                simulatedSoulLevel++;
             }
 
             if (costTexts[i] != null)
                 costTexts[i].text = diff > 0 ? $"{statCost}" : "";
 
             if (plusButtons[i] != null)
-                plusButtons[i].interactable = pln < MAX_LVL;
+                plusButtons[i].interactable = pln < MAX_LVL && s.Currency >= totalCost + Mathf.RoundToInt(
+                    s.BaseCurrencyCost * Mathf.Pow(1f + s.CostGrowthRate, (simulatedSoulLevel - s.StartSoulLevel)));
             if (minusButtons[i] != null)
                 minusButtons[i].interactable = diff > 0;
         }
@@ -423,7 +449,6 @@ public class LevelUpMenu : MonoBehaviour
 
         if (confirmButton != null)
             confirmButton.interactable = totalCost > 0 && s.Currency >= totalCost;
-
         if (resetButton != null)
             resetButton.interactable = totalCost > 0;
     }
@@ -432,16 +457,19 @@ public class LevelUpMenu : MonoBehaviour
     {
         var s = PlayerStats.Instance;
         if (s == null) return 0;
-        int total = 0, ts = s.SoulLevel;
+
+        int total = 0;
+        int simulatedSoulLevel = s.SoulLevel;
         for (int i = 0; i < 6; i++)
         {
-            int cur = s.GetStatLevel((StatType)i), tl = cur;
+            int cur = s.GetStatLevel((StatType)i);
             for (int j = cur; j < planned[i]; j++)
             {
-                float c = s.BaseCurrencyCost
-                    * (1f + s.SoulLevelCostRate * (ts - s.StartSoulLevel))
-                    * (1f + s.StatLevelCostRate * (tl - s.BaseStatLevel));
-                total += Mathf.Max(1, Mathf.RoundToInt(c)); ts++; tl++;
+                int soulLevelsAboveStart = simulatedSoulLevel - s.StartSoulLevel;
+                if (soulLevelsAboveStart < 0) soulLevelsAboveStart = 0;
+                float c = s.BaseCurrencyCost * Mathf.Pow(1f + s.CostGrowthRate, soulLevelsAboveStart);
+                total += Mathf.Max(1, Mathf.RoundToInt(c));
+                simulatedSoulLevel++;
             }
         }
         return total;

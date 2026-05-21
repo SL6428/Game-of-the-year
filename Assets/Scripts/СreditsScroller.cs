@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
@@ -10,66 +11,74 @@ public class CreditsScroller : MonoBehaviour
     public float endDelay = 3f;
 
     [Header("Ссылки")]
-    public RectTransform СreditsContent;
+    public RectTransform СreditsContent;     // ВНИМАНИЕ: кириллическая С — оставлено для совместимости со сценой
     public TextMeshProUGUI СreditsText;
+    public RectTransform viewport;            // если null — берётся RectTransform у самого объекта
 
-    private Vector3 startPosition;
-    private float creditsHeight;
+    private Vector2 startAnchoredPosition;
+    private Coroutine scrollRoutine;
 
-    void Start()
+    void Awake()
     {
-        // Сохраняем начальную позицию
-        startPosition = СreditsContent.anchoredPosition;
+        if (viewport == null)
+            viewport = GetComponent<RectTransform>();
 
-        // Рассчитываем высоту контента
-        creditsHeight = СreditsContent.rect.height;
-
-        // Начинаем прокрутку при включении
-        StartScrolling();
+        if (СreditsContent != null)
+            startAnchoredPosition = СreditsContent.anchoredPosition;
     }
 
     void OnEnable()
     {
-        // Сбрасываем позицию при каждом открытии
-        if (СreditsContent != null)
-        {
-            СreditsContent.anchoredPosition = startPosition;
-            StartScrolling();
-        }
+        if (СreditsContent == null || viewport == null) return;
+
+        // Сброс позиции — на стартовую, сохранённую один раз в Awake
+        СreditsContent.anchoredPosition = startAnchoredPosition;
+        StartScrolling();
+    }
+
+    void OnDisable()
+    {
+        StopScrolling();
     }
 
     public void StartScrolling()
     {
-        StopAllCoroutines();
-        StartCoroutine(ScrollCredits());
-    }
-
-    IEnumerator ScrollCredits()
-    {
-        // Задержка перед началом
-        yield return new WaitForSeconds(startDelay);
-
-        float panelHeight = GetComponent<RectTransform>().rect.height;
-        float targetY = creditsHeight + panelHeight;
-
-        // Прокрутка
-        while (СreditsContent.anchoredPosition.y < targetY)
-        {
-            Vector3 pos = СreditsContent.anchoredPosition;
-            pos.y += scrollSpeed * Time.deltaTime;
-            СreditsContent.anchoredPosition = pos;
-            yield return null;
-        }
-
-        // Задержка в конце
-        yield return new WaitForSeconds(endDelay);
-
-        // Автоматическое закрытие (опционально)
-        // ReturnToMainMenu();
+        if (scrollRoutine != null) StopCoroutine(scrollRoutine);
+        scrollRoutine = StartCoroutine(ScrollCredits());
     }
 
     public void StopScrolling()
     {
-        StopAllCoroutines();
+        if (scrollRoutine != null)
+        {
+            StopCoroutine(scrollRoutine);
+            scrollRoutine = null;
+        }
+    }
+
+    IEnumerator ScrollCredits()
+    {
+        yield return new WaitForSeconds(startDelay);
+
+        // ВАЖНО: даём layout-системе досчитаться, иначе rect.height = 0 у только что включённого объекта
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+
+        float contentHeight = СreditsContent.rect.height;
+        float viewportHeight = viewport.rect.height;
+
+        // Прокручиваем содержимое снизу вверх, пока низ контента не уедет за верхнюю границу viewport
+        float targetY = contentHeight + viewportHeight;
+
+        while (СreditsContent.anchoredPosition.y < targetY)
+        {
+            Vector2 pos = СreditsContent.anchoredPosition;
+            pos.y += scrollSpeed * Time.unscaledDeltaTime; // unscaled — чтобы пауза не ломала титры
+            СreditsContent.anchoredPosition = pos;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(endDelay);
+        scrollRoutine = null;
     }
 }

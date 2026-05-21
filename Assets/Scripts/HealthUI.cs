@@ -30,6 +30,10 @@ public class HealthUI : MonoBehaviour
 
     void Awake()
     {
+        // Увеличиваем размер UI на 50%
+        RectTransform rt = GetComponent<RectTransform>();
+        if (rt != null) rt.localScale = new Vector3(1.5f, 1.5f, 1f);
+
         // Если ссылка не назначена, пробуем найти
         if (playerHealth == null)
         {
@@ -118,6 +122,20 @@ public class HealthUI : MonoBehaviour
                 hpFillImage.fillAmount = currentFillAmount;
 
             UpdateColor(currentFillAmount);
+        }
+
+        // Пульсация при критическом HP — визуальное усиление сигнала
+        if (hpFillImage != null && targetFillAmount > 0f && targetFillAmount <= lowHealthThreshold)
+        {
+            float pulse = 0.85f + 0.15f * Mathf.Sin(Time.unscaledTime * 6f);
+            Color c = hpFillImage.color;
+            c.a = pulse;
+            hpFillImage.color = c;
+        }
+        else if (hpFillImage != null)
+        {
+            Color c = hpFillImage.color;
+            if (c.a < 0.99f) { c.a = 1f; hpFillImage.color = c; }
         }
     }
 
